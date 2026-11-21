@@ -22,7 +22,5 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
           persist-credentials: false
-      - name: Validate current database scope, package closure, links and archived bytes
+      - name: Validate current scope, package closure, links, exact archived bytes and current whitespace
         run: python3 tools/verify_db_scope.py
-      - name: Reject whitespace errors
-        run: git diff --check c62cdb8aee833b6ab1a03e29a3f59f81a1b483f9

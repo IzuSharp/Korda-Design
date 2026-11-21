@@ -110,6 +110,11 @@ def verify_files(data, product_root=None):
     if product_root is not None:
         for path in data["retained_product_paths"]:
             assert (product_root / path).exists(), ("Retained product path missing", path)
+    # A relocated, byte-identical historical blob can contain old whitespace.
+    # Only the exact archive paths whose frozen bytes were proved above are
+    # excluded; current docs/code and every other new file remain checked.
+    exclusions = [":(exclude)" + row["archive_path"] for row in data["archived_specifications"]]
+    subprocess.run(["git", "diff", "--check", FROZEN, "--", ".", *exclusions], cwd=ROOT, check=True)
 
 
 def main():
