@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "task": "DB-CPP-01",
+  "branch": "task/DB-CPP-01-linux",
+  "status": "implementation_checkpoint_recorded",
+  "baseline": {
+    "product": "465cd0f90e6af05ec50eb581156240377cf0825b",
+    "design": "8298dc4128b745cf1809bad0c3cf02c45eb7f522",
+    "plan": "1fe52a8bd792ccdbb4bbea17ba59b0ad0c24349d"
+  },
+  "plan_first": {
+    "pr": "https://github.com/IzuSharp/Plan/pull/26",
+    "commit": "94ade5e6e7df2113be1a500d8ba33c0f0b8d8f11"
+  },
+  "validation_targets": [
+    "linux-x64"
+  ],
+  "native_language": "C++20",
+  "llvm_version": "23.1.5",
+  "clang_format_hook_commit": "ce4bd7270237e95464b37d808b942f02785192c4",
+  "selected_execution_apis": {
+    "postgresql": "libpq",
+    "sqlite": "sqlite3"
+  },
+  "dependency_binary_lock_status": "locked_at_product_checkpoint",
+  "compatibility": [
+    "C# API",
+    "C ABI",
+    "NuGet package identities",
+    "runtime model and DTO metadata",
+    "db-wire/1",
+    "persistent data",
+    "migration history",
+    "bounded streams",
+    "cancellation and errors",
+    "ownership and disposal"
+  ],
+  "consumer_cells": [
+    "postgresql-jit",
+    "postgresql-aot",
+    "sqlite-jit",
+    "sqlite-aot"
+  ],
+  "product_acceptance": "owned_by_plan",
+  "current_checks_claim_product_execution": false,
+  "performance_work_authorized": false,
+  "new_orm_features_authorized": false,
+  "public_database_release_authorized": false,
+  "historical_scope_manifest": "docs/current-scope.json",
+  "historical_scope_gate": "tools/verify_db_scope.py",
+  "current_documents": [
+    "AGENTS.md",
+    "CURRENT-PHASE.md",
+    "README.md",
+    "docs/decisions/ADR-0006-database-cpp-native.md",
+    "docs/database/cpp-migration.md"
+  ],
+  "product_checkpoint": {
+    "repository": "https://github.com/IzuSharp/NativeWeave",
+    "pr": "https://github.com/IzuSharp/NativeWeave/pull/21",
+    "commit": "b383c130903daba059c364ff0615d80798da1a3f",
+    "tree": "4bd509e639f9779092f5d037c7690a57cf8a28d4",
+    "dependency_lock_path": "native/dependencies.lock.json",
+    "dependency_lock_sha256": "dca7f396bce6f438e5ed3a41dcbeeab8d350f8653f43cd60c753713a2758bb55",
+    "native_presets": [
+      "linux-x64-release",
+      "linux-x64-asan-ubsan"
+    ],
+    "meaning": "First published implementation checkpoint, not final product acceptance. Plan records later corrections, final sources, actual tests and merges."
+  }
+}
