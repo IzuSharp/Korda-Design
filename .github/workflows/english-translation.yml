@@ -1,4 +1,4 @@
-name: Verify authoritative English Design
+name: Verify historical English and contract acceptance
 on:
   push:
     branches: [main, docs/english-authoritative-20261113]
@@ -16,7 +16,5 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
           persist-credentials: false
-      - name: Verify frozen English acceptance and current reviewed API refinement
-        run: |
-          python3 tools/verify_public_api.py --history --require-acceptance
-          python3 tools/contract_acceptance_checks.py
+      - name: Verify unchanged complete historical acceptance and negative controls
+        run: python3 tools/verify_db_scope_history.py
