@@ -1,6 +1,6 @@
 # ADR-0006 — C++ implementation of the existing database native contracts
 
-Date: 2026-11-21. Status: owner-directed implementation decision for DB-CPP-01; implementation and product acceptance are pending.
+Date: 2026-11-21. Status: owner-directed implementation decision for DB-CPP-01; the first product implementation checkpoint is recorded in the migration overlay. Plan owns current product acceptance.
 
 ## Authority and fixed inputs
 

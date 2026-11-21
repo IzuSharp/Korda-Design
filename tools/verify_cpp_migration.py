@@ -36,8 +36,17 @@ def main():
     for flag in ("current_checks_claim_product_execution", "performance_work_authorized",
                  "new_orm_features_authorized", "public_database_release_authorized"):
         assert data[flag] is False, flag
-    assert data["status"] == "design_recorded_implementation_pending"
-    assert data["dependency_binary_lock_status"] == "pending_product_checkpoint"
+    assert data["status"] == "implementation_checkpoint_recorded"
+    assert data["dependency_binary_lock_status"] == "locked_at_product_checkpoint"
+    checkpoint = data["product_checkpoint"]
+    assert checkpoint["repository"] == "https://github.com/IzuSharp/NativeWeave"
+    assert checkpoint["pr"] == "https://github.com/IzuSharp/NativeWeave/pull/21"
+    assert all(re.fullmatch(r"[0-9a-f]{40}", checkpoint[key]) for key in ("commit", "tree"))
+    assert checkpoint["commit"] != data["baseline"]["product"]
+    assert checkpoint["dependency_lock_path"] == "native/dependencies.lock.json"
+    assert re.fullmatch(r"[0-9a-f]{64}", checkpoint["dependency_lock_sha256"])
+    assert checkpoint["native_presets"] == ["linux-x64-release", "linux-x64-asan-ubsan"]
+    assert "not final product acceptance" in checkpoint["meaning"]
     for path in ("docs/current-scope.json", "tools/verify_db_scope.py", "tools/verify_db_scope_history.py"):
         assert (ROOT / path).read_bytes() == git_bytes(path), ("Historical gate/input changed", path)
     for relative in data["current_documents"]:

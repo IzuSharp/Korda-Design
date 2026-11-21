@@ -1,6 +1,6 @@
 # Database C++ migration — source decisions and preserved boundaries
 
-Task: DB-CPP-01. Status: design recorded; implementation and product acceptance pending. [ADR-0006](../decisions/ADR-0006-database-cpp-native.md) and [the overlay](cpp-migration.json) are current authority. The Rust behavioral reference is product [`465cd0f90e6af05ec50eb581156240377cf0825b`](https://github.com/IzuSharp/NativeWeave/tree/465cd0f90e6af05ec50eb581156240377cf0825b).
+Task: DB-CPP-01. Status: design and first product implementation checkpoint recorded; actual product acceptance is owned by Plan. [ADR-0006](../decisions/ADR-0006-database-cpp-native.md) and [the overlay](cpp-migration.json) are current authority. The Rust behavioral reference is product [`465cd0f90e6af05ec50eb581156240377cf0825b`](https://github.com/IzuSharp/NativeWeave/tree/465cd0f90e6af05ec50eb581156240377cf0825b).
 
 ## Public entry to native ownership
 
@@ -83,4 +83,4 @@ Create persistent databases with the old product, then read/write/migrate them w
 
 Pack and build the candidate in a clean Linux environment without Rust. Run SQLite JIT/AOT and PostgreSQL JIT/AOT outside the source tree with ordinary PackageReference; inspect package IDs/dependency closure, exports, actual loaded libraries and separate old/new hashes. Change a C# model/DTO and verify that the native hash remains fixed. The existing public API and native binding checks remain gates.
 
-The [Plan batch](https://github.com/IzuSharp/Plan/tree/task/DB-CPP-01-linux/ledger/evidence/batches/DB-CPP-01) records completed commands, outputs, reviews and CI. This document is a decision and acceptance specification. It claims no implemented C++ capability, successful test, published package or merged migration. Known old defects require separate evidence; missing capabilities or unverified cells remain incomplete.
+The [Plan batch](https://github.com/IzuSharp/Plan/tree/task/DB-CPP-01-linux/ledger/evidence/batches/DB-CPP-01) records completed commands, outputs, reviews and CI. This document is a decision and acceptance specification. The [overlay](cpp-migration.json) binds the first published product checkpoint to its exact commit/tree and dependency-lock hash. That checkpoint is not a final acceptance claim: Plan retains actual failures, subsequent corrections, source-bound results and merges. A Design document check does not certify product execution or publication. Known old defects require separate evidence; missing capabilities or unverified cells remain incomplete.

@@ -2,7 +2,7 @@
 
 ## Current task: DB-CPP-01
 
-NativeWeave retains its strongly typed C# Fluent ORM for PostgreSQL and SQLite, with ordinary PackageReference consumption and Native AOT. The owner has authorized replacing the existing Rust native implementation with **C++20, libpq and sqlite3**, preserving the current C# API, C ABI, package identities and database state. This is a behavior-compatible migration of the delivered database product. **Implementation is pending at this Design checkpoint; no C++ execution or migration acceptance is claimed.**
+NativeWeave retains its strongly typed C# Fluent ORM for PostgreSQL and SQLite, with ordinary PackageReference consumption and Native AOT. The owner has authorized replacing the existing Rust native implementation with **C++20, libpq and sqlite3**, preserving the current C# API, C ABI, package identities and database state. This is a behavior-compatible migration of the delivered database product. **The first implementation checkpoint is published in [product PR21](https://github.com/IzuSharp/NativeWeave/pull/21). The Design overlay records its source and dependency lock; actual tests, corrections and final acceptance belong to Plan.**
 
 Start with [CURRENT-PHASE.md](CURRENT-PHASE.md), [ADR-0006](docs/decisions/ADR-0006-database-cpp-native.md), [the source-backed migration specification](docs/database/cpp-migration.md), [the machine-readable overlay](docs/database/cpp-migration.json), and [Plan PR26](https://github.com/IzuSharp/Plan/pull/26). The database scope and API documents listed below are accepted baseline inputs; ADR-0006 supersedes their Rust-specific implementation mandate. They remain byte-identical historical inputs where their acceptance hashes require it.
 
