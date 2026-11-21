@@ -1,0 +1,403 @@
+{
+  "schema_version": 1,
+  "task": "DB-Scope-01",
+  "branch": "task/DB-Scope-01-linux",
+  "platforms": [
+    "linux-x64"
+  ],
+  "historical_design_commit": "c62cdb8aee833b6ab1a03e29a3f59f81a1b483f9",
+  "product_source_inspected": "ea5fa528035d025bd7a28698ee7c71194432236c",
+  "plan_first": {
+    "pr": "https://github.com/IzuSharp/Plan/pull/24",
+    "commit": "b56ef7a6d4fc8c38cf8da04d555f30bae4e0693a"
+  },
+  "product_acceptance": "owned_by_plan",
+  "current_checks_claim_product_execution": false,
+  "performance_work_authorized": false,
+  "new_orm_features_authorized": false,
+  "public_database_release_authorized": false,
+  "retained_capabilities": [
+    "PostgreSQL",
+    "SQLite",
+    "Database Host",
+    "data sources and pools",
+    "sessions",
+    "transactions",
+    "migrations",
+    "parameter binding",
+    "strongly typed Fluent",
+    "static models and DTO mapping",
+    "relations and CRUD",
+    "streaming results",
+    "cancellation",
+    "errors",
+    "resource disposal",
+    "C# to Rust bindings",
+    "Native AOT packaging"
+  ],
+  "removed_products": [
+    "NativeWeave HTTP server",
+    "NativeWeave gRPC server and bindings",
+    "MCP",
+    "routing and protocol wrappers",
+    "independent compression/proof engines",
+    "HelloWorld demo packages"
+  ],
+  "native_database_host": "native/database/host",
+  "managed_database_host": "src/Data.NativeHost",
+  "native_assets": {
+    "database.sqlite": "libnw_database_sqlite.so",
+    "database.postgresql": "libnw_database_postgresql.so"
+  },
+  "packages": {
+    "NativeWeave.Interop.Abi": [],
+    "NativeWeave.Core": [
+      "NativeWeave.Interop.Abi"
+    ],
+    "NativeWeave.Data": [],
+    "NativeWeave.Database.Transactions": [
+      "NativeWeave.Data"
+    ],
+    "NativeWeave.Data.Streaming": [
+      "NativeWeave.Data"
+    ],
+    "NativeWeave.Query.Binding": [
+      "NativeWeave.Data",
+      "NativeWeave.Interop.Abi"
+    ],
+    "NativeWeave.Query.Generator": [],
+    "NativeWeave.Database": [
+      "NativeWeave.Core",
+      "NativeWeave.Data",
+      "NativeWeave.Database.Transactions",
+      "NativeWeave.Data.Streaming",
+      "NativeWeave.Query.Binding"
+    ],
+    "NativeWeave.Database.Sqlite": [
+      "NativeWeave.Core",
+      "NativeWeave.Data",
+      "NativeWeave.Database",
+      "NativeWeave.Query.Generator",
+      "NativeWeave.Database.Sqlite.Native"
+    ],
+    "NativeWeave.Database.PostgreSql": [
+      "NativeWeave.Core",
+      "NativeWeave.Data",
+      "NativeWeave.Database",
+      "NativeWeave.Query.Generator",
+      "NativeWeave.Database.PostgreSql.Native"
+    ],
+    "NativeWeave.Database.Sqlite.Native": [],
+    "NativeWeave.Database.PostgreSql.Native": []
+  },
+  "optional_packages": {
+    "NativeWeave.Database.DependencyInjection": {
+      "project": "src/Data.NativeHost/DependencyInjection/NativeWeave.Database.DependencyInjection.csproj",
+      "dependencies": [
+        "NativeWeave.Database"
+      ],
+      "in_candidate_closure": false
+    }
+  },
+  "consumer_cells": [
+    "postgresql-jit",
+    "postgresql-aot",
+    "sqlite-jit",
+    "sqlite-aot"
+  ],
+  "consumer_proof": [
+    "nuspecs",
+    "project.assets.json",
+    "publish_directory",
+    "actual_loaded_native_libraries",
+    "zero_consumer_rust_invocations",
+    "verified_data"
+  ],
+  "retained_product_paths": [
+    "src/Data.NativeHost",
+    "src/Data.Postgres",
+    "src/Data.Sqlite",
+    "src/Data.Transactions",
+    "src/Data.Migrations",
+    "src/Data.Abstractions",
+    "src/Data.Codecs",
+    "src/Query.Binding",
+    "src/Query.Fluent",
+    "src/Query.Native",
+    "src/Query.Generator",
+    "src/Generators.Model",
+    "src/Data.Materialization",
+    "src/Orm.Relations",
+    "src/Data.Streaming",
+    "src/NativeWeave.Core",
+    "src/Interop.Abi",
+    "native/database/host",
+    "native/database/postgres",
+    "native/database/sqlite",
+    "native/database/transactions",
+    "native/database/migrations",
+    "native/database/codecs",
+    "native/database/binding",
+    "native/database/query",
+    "native/database/relations",
+    "native/database/streaming",
+    "native/interop"
+  ],
+  "active_documents": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "a7ec5fadc44ea45200bcac7117b5508c48fcd88ae4a0430dbc241737382e594f"
+    },
+    {
+      "path": "CURRENT-PHASE.md",
+      "sha256": "80e96e66bf6e1ffc32057d4b31a66655c7b15030a9f585154b2f57052161ab38"
+    },
+    {
+      "path": "README.md",
+      "sha256": "29eca6e60824c607d3d423b1587fc35df3463e46d8bb7096e2c9ce51f8a0d1ec"
+    },
+    {
+      "path": "docs/requirements/charter.md",
+      "sha256": "163e87bb425ac6b776f7c611d30b6de94b57fc978b44239c0031b2ef3f7c7f8c"
+    },
+    {
+      "path": "docs/requirements/coverage-matrix.md",
+      "sha256": "1e171dc8ddadbf0ed2acc164fee4fabc67b5ebccb03bdf1a9575c7de25444b41"
+    },
+    {
+      "path": "docs/architecture/candidate-boundaries.md",
+      "sha256": "e12164924fc190d72029f2920a887309c523caa62419740d7dd09c0c05c68efd"
+    },
+    {
+      "path": "docs/api/README.md",
+      "sha256": "57a099ab4dcf399697368c2b691ddbaa33e5b1e34b6dbdcbe1a6e3ba40d9fb45"
+    },
+    {
+      "path": "docs/api/reference.md",
+      "sha256": "c4dbe98bf334e132c105525f058c7d364693f633a48b7c13ff1d3020a223328d"
+    },
+    {
+      "path": "docs/api/database.md",
+      "sha256": "2c9ea0e64c7f0edf536ac9e7a4973e3b5d23d176cbb3a39515061e3489c29dfd"
+    },
+    {
+      "path": "docs/api/interop.md",
+      "sha256": "f7462ab50a919a717a8408fc1f6f63a4f0e3afb6f4a7d0bb397e136748f517f6"
+    },
+    {
+      "path": "docs/api/nuget-and-consumption.md",
+      "sha256": "15cdbc09261e48b3df8ad848c8c1e9d01ac953ff46340899787a9a499b1312ad"
+    },
+    {
+      "path": "docs/api/getting-started.md",
+      "sha256": "09b18c2233370915135c70572e652d21f5a11399529f9b34ed4975bb5647519c"
+    },
+    {
+      "path": "docs/api/guides.md",
+      "sha256": "ab01ed4810d868e3d489dd423af0a4a09ca4f7f83a0a4491fa0e2211ba2d7d16"
+    },
+    {
+      "path": "docs/api/documentation-system.md",
+      "sha256": "873b7a658c69401d26662dee8027ee63c769bde6375082ecb29e823a8a783c82"
+    },
+    {
+      "path": "docs/database/current-product.md",
+      "sha256": "c9981e651fe7471605a1b7384661a0fa234eaa5b8df82e376bfaee23b3261969"
+    },
+    {
+      "path": "docs/platforms/support-and-aot.md",
+      "sha256": "54749d1397f97dd49a687103df48bdcfbe85bbfcafbdcb9a2ac0e4102a2e340c"
+    },
+    {
+      "path": "docs/platforms/build-package-release.md",
+      "sha256": "c2c7348ba0141af2bffff48dbd9c3214c98f591b024aa3f61c7bf85272cae7d1"
+    },
+    {
+      "path": "docs/verification/models-and-matrix.md",
+      "sha256": "5dab209202a44deab2eda13cc58e764273e9ef2ad6f9d73dfb6fd9778506756d"
+    },
+    {
+      "path": "docs/verification/reference-application.md",
+      "sha256": "a5317655d96613437a9471ae7668b54fc0da8d84f8c2735a0f6a9811b71ea89b"
+    },
+    {
+      "path": "docs/standards/csharp-public-api-and-documentation.md",
+      "sha256": "70965e340ec64f1a2c814cfe082adac10cb45a302ba3460cdf8cdd0f30d36b39"
+    },
+    {
+      "path": "docs/decisions/ADR-0005-database-product-scope.md",
+      "sha256": "ed61b571d21fe9e4b96f27f76defa275a2ae6e7ea35f771372b144a9d9eea2b2"
+    },
+    {
+      "path": "docs/history/pre-db-scope-01/README.md",
+      "sha256": "fe60aa521bf9fb03dbc09d8751bcdd14c7af31502fef9f0f2aa8c3aeed3f4047"
+    }
+  ],
+  "archived_specifications": [
+    {
+      "original_path": "docs/api/README.md",
+      "archive_path": "docs/history/pre-db-scope-01/api/README.md",
+      "sha256": "e9b8a59dcade380d52239f4177e144ab1e16f3353c58038d861741ee4ab55301"
+    },
+    {
+      "original_path": "docs/api/database-coverage.json",
+      "archive_path": "docs/history/pre-db-scope-01/api/database-coverage.json",
+      "sha256": "c8b6af8f50e04d2ac286024a936c8183896999aa7b8434f9c3c870e9cd9b565e"
+    },
+    {
+      "original_path": "docs/api/database-sources.json",
+      "archive_path": "docs/history/pre-db-scope-01/api/database-sources.json",
+      "sha256": "173f89299550e6927b64a4091030730e3e4224af1a258729c27b0176926b6188"
+    },
+    {
+      "original_path": "docs/api/database-symbol-policies.json",
+      "archive_path": "docs/history/pre-db-scope-01/api/database-symbol-policies.json",
+      "sha256": "a21d78f1c603f7a34c2e0b976075b03d26832a63fd4a7a559f17c9f0d5d7beb7"
+    },
+    {
+      "original_path": "docs/api/database.md",
+      "archive_path": "docs/history/pre-db-scope-01/api/database.md",
+      "sha256": "1667c15e905b642717e77e5dfda322a0fc329dc7df31fd72e6d86e57b5c1c0ea"
+    },
+    {
+      "original_path": "docs/api/documentation-system.md",
+      "archive_path": "docs/history/pre-db-scope-01/api/documentation-system.md",
+      "sha256": "49fa32115777c296c361016f99f6921ad3ce1b0087e4dbd39185c107e0c8c03e"
+    },
+    {
+      "original_path": "docs/api/foundation-coverage.json",
+      "archive_path": "docs/history/pre-db-scope-01/api/foundation-coverage.json",
+      "sha256": "6d10e4adda289591246ce9d5e5e6395cf5f1c869cda55c33f44a9fbc4db9cc45"
+    },
+    {
+      "original_path": "docs/api/foundation-sources.json",
+      "archive_path": "docs/history/pre-db-scope-01/api/foundation-sources.json",
+      "sha256": "2efd7e1a05f7cbb35681a438e8a6700973592d58bb9141f5e3ee49012d9bb321"
+    },
+    {
+      "original_path": "docs/api/getting-started.md",
+      "archive_path": "docs/history/pre-db-scope-01/api/getting-started.md",
+      "sha256": "1a78365da1422d12f793beef06e13e3a543902c2d7ccd84c79cf01bf322affe2"
+    },
+    {
+      "original_path": "docs/api/guides.md",
+      "archive_path": "docs/history/pre-db-scope-01/api/guides.md",
+      "sha256": "40645d16ab0fb88b33fb90847a2beef79d73354293f4c210373f17cda92c5ecf"
+    },
+    {
+      "original_path": "docs/api/interop-coverage.json",
+      "archive_path": "docs/history/pre-db-scope-01/api/interop-coverage.json",
+      "sha256": "e6e1de9c087158a179e73e74fd30d9b8c3c691e069cac25d3371d7743a8c0aa8"
+    },
+    {
+      "original_path": "docs/api/interop-sources.json",
+      "archive_path": "docs/history/pre-db-scope-01/api/interop-sources.json",
+      "sha256": "7660f18a73d08accbc0ce8743e764e0eb212393a8d0575e20bda431cd17395a1"
+    },
+    {
+      "original_path": "docs/api/interop-symbol-policies.json",
+      "archive_path": "docs/history/pre-db-scope-01/api/interop-symbol-policies.json",
+      "sha256": "ebd262a177629f6b140493ef2ea9d5405ea4b232a3ad05dea7c3efa716c4088c"
+    },
+    {
+      "original_path": "docs/api/interop.md",
+      "archive_path": "docs/history/pre-db-scope-01/api/interop.md",
+      "sha256": "2b32e5c2dcdfe78dd0b39014949a88bf91d6b2d011f8d75117e00507ecae4b74"
+    },
+    {
+      "original_path": "docs/api/nuget-and-consumption.md",
+      "archive_path": "docs/history/pre-db-scope-01/api/nuget-and-consumption.md",
+      "sha256": "7aab2485a5bfe21042b701bb1eda43b630330fe896b2ca8f80a81f93d3ffced9"
+    },
+    {
+      "original_path": "docs/api/public-api.json",
+      "archive_path": "docs/history/pre-db-scope-01/api/public-api.json",
+      "sha256": "d3e989c4f8732f2514c66a2c1ecf038b460fc29e3581d0b36855612751e974e4"
+    },
+    {
+      "original_path": "docs/api/reference.md",
+      "archive_path": "docs/history/pre-db-scope-01/api/reference.md",
+      "sha256": "4bf3d37cbc423eacf9a308fe420b7564b4f92548fb3d164c65f53e16c9348b48"
+    },
+    {
+      "original_path": "docs/api/server-coverage.json",
+      "archive_path": "docs/history/pre-db-scope-01/api/server-coverage.json",
+      "sha256": "e7227247075b8d2cc68c107ef3be8c1f5b61e1d63cedb923584ab3d9d90805c4"
+    },
+    {
+      "original_path": "docs/api/server-sources.json",
+      "archive_path": "docs/history/pre-db-scope-01/api/server-sources.json",
+      "sha256": "f333f15c7f07b9994c37d265bb9a2e3ebdee981fab37f51edc0cad9fb5e18a68"
+    },
+    {
+      "original_path": "docs/api/server-symbol-policies.json",
+      "archive_path": "docs/history/pre-db-scope-01/api/server-symbol-policies.json",
+      "sha256": "2cfa139c8c50bf711bf553722b2be06ea6ab5f8bcd04860a37ede0c41802c9eb"
+    },
+    {
+      "original_path": "docs/api/server.md",
+      "archive_path": "docs/history/pre-db-scope-01/api/server.md",
+      "sha256": "188d8b24b8912e89dd1b36bb15c496d94727af2dbede638b0ff8b36bff3f6ea2"
+    },
+    {
+      "original_path": "docs/server/body-retirement-protocol.md",
+      "archive_path": "docs/history/pre-db-scope-01/server/body-retirement-protocol.md",
+      "sha256": "ef7c3f5a32a1d9b047d884edada7b2bafd409b36d79b798d8da273be1a4338cd"
+    },
+    {
+      "original_path": "docs/server/hosting-and-streaming.md",
+      "archive_path": "docs/history/pre-db-scope-01/server/hosting-and-streaming.md",
+      "sha256": "959fdedf623d69ab284cdba685a260f24260e2e34014574fee7d890cbd221d73"
+    },
+    {
+      "original_path": "docs/server/protocols-and-observability.md",
+      "archive_path": "docs/history/pre-db-scope-01/server/protocols-and-observability.md",
+      "sha256": "34f2aeb124b24d3d22b5ca5ccd9a35a05555ad1c3870edca255a4e7d4228799c"
+    }
+  ],
+  "historical_compatibility_inputs": [
+    {
+      "path": "docs/api/database-coverage.json",
+      "sha256": "c8b6af8f50e04d2ac286024a936c8183896999aa7b8434f9c3c870e9cd9b565e"
+    },
+    {
+      "path": "docs/api/database-sources.json",
+      "sha256": "173f89299550e6927b64a4091030730e3e4224af1a258729c27b0176926b6188"
+    },
+    {
+      "path": "docs/api/database-symbol-policies.json",
+      "sha256": "a21d78f1c603f7a34c2e0b976075b03d26832a63fd4a7a559f17c9f0d5d7beb7"
+    },
+    {
+      "path": "docs/api/foundation-coverage.json",
+      "sha256": "6d10e4adda289591246ce9d5e5e6395cf5f1c869cda55c33f44a9fbc4db9cc45"
+    },
+    {
+      "path": "docs/api/foundation-sources.json",
+      "sha256": "2efd7e1a05f7cbb35681a438e8a6700973592d58bb9141f5e3ee49012d9bb321"
+    },
+    {
+      "path": "docs/api/interop-coverage.json",
+      "sha256": "e6e1de9c087158a179e73e74fd30d9b8c3c691e069cac25d3371d7743a8c0aa8"
+    },
+    {
+      "path": "docs/api/interop-sources.json",
+      "sha256": "7660f18a73d08accbc0ce8743e764e0eb212393a8d0575e20bda431cd17395a1"
+    },
+    {
+      "path": "docs/api/interop-symbol-policies.json",
+      "sha256": "ebd262a177629f6b140493ef2ea9d5405ea4b232a3ad05dea7c3efa716c4088c"
+    },
+    {
+      "path": "docs/api/public-api.json",
+      "sha256": "d3e989c4f8732f2514c66a2c1ecf038b460fc29e3581d0b36855612751e974e4"
+    }
+  ],
+  "retired_active_paths": [
+    "docs/server",
+    "docs/api/server.md",
+    "docs/api/server-coverage.json",
+    "docs/api/server-sources.json",
+    "docs/api/server-symbol-policies.json"
+  ]
+}
