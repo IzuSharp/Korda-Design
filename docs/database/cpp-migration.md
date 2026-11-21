@@ -36,7 +36,9 @@ SeaQuery 1.0.2 and NativeWeave's own compiler/validator are the semantic referen
 
 Use the mature libpq C API. The [async contract](https://www.postgresql.org/docs/18/libpq-async.html) and [chunk contract](https://www.postgresql.org/docs/18/libpq-single-row-mode.html) require sending a command, immediately enabling single-row or chunked mode, then draining PGresult objects to a final null return. Free each PGresult. A final empty PGRES_TUPLES_OK does not itself complete draining. Bound NativeWeave-owned outstanding batches and stop consumption when the reader applies backpressure. Already-delivered rows may be followed by a fatal error; propagate it.
 
-Use [PQcancelCreate/Start/Poll/Finish](https://www.postgresql.org/docs/18/libpq-cancel.html) for cancellation, retaining encrypted cancel requirements. Successful dispatch is not proof that the server canceled the query. The operation owns its deadline and must drain to a known reusable state or discard the connection. Do not return a still-busy or failed-transaction connection to the pool. Preserve [TLS configuration](https://www.postgresql.org/docs/18/libpq-ssl.html), certificate verification and [connection/transaction status](https://www.postgresql.org/docs/18/libpq-status.html). A connection loss while awaiting COMMIT acknowledgment yields the existing unknown outcome; it never permits automatic replay.
+Source review of the fixed provider (`native/database/postgres/src/stream.rs`) established that reader stop never opened a cancel-key connection: it dropped the SQLx stream and drained through a bounded ping. Preserve that behavior. The C++ path uses prepare/describe for metadata, starts execution on first fetch in single-row mode, and drains to the final null result on stop; it discards after the existing five-second cleanup deadline. Sending PQcancel during ordinary early reader disposal would newly abort an enclosing PostgreSQL transaction, so the available libpq cancellation API is not used for that path. Cancellation and deadlines end caller admission while the native owner retains the drain/retirement obligation. Do not return a still-busy or failed-transaction connection to the pool. Preserve [TLS configuration](https://www.postgresql.org/docs/18/libpq-ssl.html), certificate verification and [connection/transaction status](https://www.postgresql.org/docs/18/libpq-status.html). A connection loss while awaiting COMMIT acknowledgment yields the existing unknown outcome; it never permits automatic replay.
+
+The selected libpq is PostgreSQL 18.0. A small, hash-locked private source patch prevents libpq from inheriting ambient `PG*` defaults, while the Host still rejects the original thirteen forbidden environment overrides. This preserves the fixed SQLx configuration boundary without changing the process environment. The patch and its upstream source/license ship in the dependency inventory.
 
 libpq uses the [PostgreSQL license](https://www.postgresql.org/about/licence/). Record its selected version, source/hash, build flags and actual TLS/shared dependency closure in product packaging evidence. PostgreSQL 18 behavior is the baseline test target; both sides must run the same recorded server version/configuration. Selecting newer documentation is not evidence that a particular library/server binary was tested.
 
@@ -46,6 +48,8 @@ Use [sqlite3_prepare/bind/step/reset/finalize](https://sqlite.org/c3ref/stmt.htm
 
 Preserve [transaction modes and savepoints](https://sqlite.org/lang_transaction.html), lock conflicts and [busy timeouts](https://sqlite.org/c3ref/busy_timeout.html). [sqlite3_interrupt](https://sqlite.org/c3ref/interrupt.html) is cross-thread callable but must not race connection destruction. An interrupted DML operation in an explicit transaction may roll it back; [sqlite3_get_autocommit](https://sqlite.org/c3ref/get_autocommit.html) determines actual transaction state after errors. Do not collapse BUSY, LOCKED, interruption and successful rollback into one generic outcome.
 
+SQLite 3.51.3 is selected: its amalgamation C/header bytes match the baseline bundled libsqlite3-sys 0.37.0 files. Preserve the baseline compile options, including foreign keys, metadata, FTS, URI, thread safety and unlock notification.
+
 The shipped SQLite source is [public domain](https://sqlite.org/copyright.html). Lock the actual version and compile options and record provenance; use the same database version/options for reference and candidate comparisons. A library-language change must not quietly change persistence, journal or durability settings.
 
 ## C++ build and developer checks
@@ -54,7 +58,7 @@ Use LLVM 23.1.5 / clang-format 23.1.5 / clang-tidy 23.1.5 and C++20. [The offici
 
 Independently implement `.clang-format`, `.clang-tidy`, `.pre-commit-config.yaml`, incremental `.gitattributes`/`.gitignore` rules and shared CMake presets using [DesktopPlatform 6e109ef](https://github.com/ArcForges/DesktopPlatform/tree/6e109ef5d01855158c7ae3a63cd42c98db2647f3) as the requested reference. Its AGPL-marked implementation files are not copied. Filter only maintained native source/header/test paths; preserve tracked database/native binary attributes. Exclude third-party/generated sources from style checks and ignore local build/cache/user-preset state.
 
-Intended presets are `linux-x64-release` and `linux-x64-asan-ubsan`, both derived from a Ninja/C++20/compile-commands base with separate build/install locations. Before treating these commands as runnable, the product checkpoint must create the presets and record its exact source identity:
+The product implementation defines presets `linux-x64-release` and `linux-x64-asan-ubsan`, both derived from a Ninja/C++20/compile-commands base with separate build/install locations. Source-bound receipts must record the exact product identity that supplies these presets:
 
 ```bash
 pre-commit install
@@ -66,6 +70,8 @@ cmake --preset linux-x64-asan-ubsan
 cmake --build --preset linux-x64-asan-ubsan
 ctest --preset linux-x64-asan-ubsan
 ```
+
+Linux statically links the exact LLVM libc++/libc++abi runtime archives behind the C ABI, avoiding a new dynamic libstdc++ version requirement for NuGet consumers. Their Apache-2.0 WITH LLVM-exception notices accompany the packages. nlohmann/json 3.12.0 supplies checked JSON parsing; SeaQuery's MIT notice covers adapted query algorithms. OpenSSL 3 and zlib remain declared platform dynamic dependencies.
 
 CI must execute these corresponding preset stages, record the actual compiler real path/version/target triple, reject GCC fallback, run format/tidy and assemble candidates from the Release install tree. Linux uses LLVM clang/clang++; macOS formal builds use the same upstream LLVM plus Apple SDK, with local Apple Clang separately identified; Windows uses LLVM clang-cl with MSVC ABI/runtime and Windows SDK. Only Linux x64 is verified here. Consumer PackageReference projects need none of these native maintenance tools.
 
