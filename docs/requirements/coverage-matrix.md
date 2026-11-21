@@ -9,10 +9,10 @@ This current scope map records inspected implementation ownership and required r
 | Migrations | `src/Data.Migrations` | `native/database/migrations` | Schema/ledger, checksum failures, cleanup and rollback |
 | Parameters and values | `src/Data.Abstractions`, `Data.Codecs`, `Query.Binding` | `native/database/codecs`, `binding` | Ordered parameters, NULL/type mapping, invalid values and ownership |
 | Fluent query | `src/Query.Fluent`, `Query.Native` | `native/database/query` | SeaQuery SQL/value behavior, capabilities and typed negative cases |
-| Static model and DTO | `src/Generators.Model`, `Query.Generator`, `Data.Materialization` | Existing metadata/query host operations | Static mapping, model/DTO edits and AOT |
+| Static model and DTO | `src/Query.Generator`, `src/Data.Materialization` | Existing metadata/query host operations | Static mapping, model/DTO edits, database generator diagnostics and AOT |
 | Relations and CRUD | `src/Orm.Relations` | `native/database/relations` | Nullable/composite relations, tenant keys, version checks and affected rows |
 | Result streams | `src/Data.Streaming` | `native/database/streaming` and Host | Bounded batches, early stop, cancellation and retirement |
-| Interop | `src/NativeWeave.Core`, required `Interop.*`, generators/analyzers | Required `native/interop` crates | ABI, ownership, async/callback/error/buffer regression |
+| Interop | `src/NativeWeave.Core`, required `Interop.*`, database signature generator `tests/Query.Binding/generate.py` | Required `native/interop` crates and `native/database/binding/signatures-v1.json` | ABI, database signature generation, ownership, async/callback/error/buffer regression |
 | NuGet/AOT | Retained packaging/build/compatibility tools | Precompiled provider libraries | Four external PackageReference executions and dependency/load closure |
 
 ## Explicit exclusions

@@ -164,7 +164,7 @@
     },
     {
       "path": "docs/requirements/coverage-matrix.md",
-      "sha256": "1e171dc8ddadbf0ed2acc164fee4fabc67b5ebccb03bdf1a9575c7de25444b41"
+      "sha256": "74ddc78afe4be0f4fe0439edcd8678333a86743c7cf0ed025f3688881afe0bff"
     },
     {
       "path": "docs/architecture/candidate-boundaries.md",
