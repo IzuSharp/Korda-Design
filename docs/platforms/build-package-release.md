@@ -8,6 +8,10 @@ Start from fresh product main and apply only DB-Scope-01 pruning/regression repa
 
 Keep formatter, compiler/analyzer, locked dependency, API/XML/reference/compatibility, native ABI/dependency, security and provenance checks for retained scope. A failing retained check is fixed, not skipped. Source/package/version identity is exact; never relabel a Perf-01 binary or measurement as a DB-Scope candidate.
 
+Retain shared tooling only where the actual database chain uses it. `Build.Integration/ApiReference`, `compose_docs.py`, the Core API configuration and documentation fixture checks remain; its generic `build_native.py`, `NativeWeave.Build.targets`, proof profiles and exclusive samples/fixtures retire. Actual database native assets use the explicit provider producer. Remove generic Generators.Model/CSharp/Rust/Metadata and Analyzers products and their obsolete API configurations; keep `Query.Generator`, database binding generation, SDK/compiler diagnostics and database API checks.
+
+`Packaging.Release/release.py`, its MSBuild `BuildTasks`/`buildTransitive` and API checks remain dependencies of real `Packaging.Domain`. Retire the artificial package producer, conformance consumer/native sample and exclusive default CI chain after moving their relevant unique guards to the real database candidates. The retained MSBuild task must still reject invalid/duplicate JSON or schema, nonexact dependency edges, unsupported RID/CPU profiles, malformed ABI/identities, source/output traversal, missing/duplicate native selections, hash drift before compilation/build and native basename collisions. Retain applicable publication/recovery tests on the real database closure.
+
 Pack fresh database candidates from the pruned source. Record clean/dirty producer state accurately, immutable source/tree identities, dependency closure and package/native hashes. Native assets are maintainer outputs selected through normal NuGet RID handling and retained manifest checks. No application target invokes Cargo.
 
 ## Independent consumer

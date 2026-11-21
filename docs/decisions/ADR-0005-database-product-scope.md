@@ -16,6 +16,8 @@ Remove NativeWeave-owned HTTP/gRPC/MCP server/protocol bindings, routing/wrapper
 
 The database candidate closure has twelve package IDs, with optional DI documented separately. Provider installations must not pull Server/protocol/proof/demo packages or libraries. Consumer builds never invoke Rust tools.
 
+The dependency correction in [Plan PR24 commit d74f6bc](https://github.com/IzuSharp/Plan/commit/d74f6bcc8b0e6c4b04105449e8436335bf34bd47) precedes this Design correction and the additional orphan-code pruning. Database static generation uses Query.Generator and exact database native binding generation uses the Query.Binding script/signature inventory. Generic Generators.Model/CSharp/Rust/Metadata and Analyzers products are outside the database dependency closure. Retire their exclusive proof tooling; keep actual API documentation and Packaging.Release tools. Move relevant artificial-package guard cases to real database candidates before removing their old fixture. Historical acceptance of those generic tools remains historical and unchanged.
+
 ## Consequences
 
 Current requirements, API/package docs, default build/test/pack/release paths and CI reflect the reduced scope. Mixed verification retains unique database assertions. Removing failing retained checks, suppressing security checks, changing protections or inventing results is not permitted.

@@ -6,6 +6,8 @@
 
 Product API changes retain exact namespace/type/member signatures, parameter names/defaults, nullability, constraints, ownership, cancellation, errors, concurrency, capability and cost semantics. Existing generated/API compatibility checks remain. This batch removes out-of-scope APIs and preserves the database surface; it introduces no new public feature.
 
+Keep the actual `Build.Integration/ApiReference` and `compose_docs.py` tools, Core API configuration, documentation fixture data/project and `tests/Build.Integration/verify_docs.py`. Remove API configurations for the retired generic generators/Metadata/Analyzers products. Their absence does not remove the database `Query.Generator` diagnostics or SDK/compiler analysis. Generic native-build proof tooling is not required to generate database API references.
+
 ## Evidence labels
 
 Source inspection, static review, compilation, JIT execution, AOT publication and AOT executable execution are different states. Record source/toolchain/platform/command/exit status and artifact identities for each claimed execution. Candidate package verification must use ordinary PackageReference outside the source tree. Runtime data and native mappings are observed, not inferred from package names.

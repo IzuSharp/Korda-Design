@@ -41,7 +41,10 @@
     "MCP",
     "routing and protocol wrappers",
     "independent compression/proof engines",
-    "HelloWorld demo packages"
+    "HelloWorld demo packages",
+    "orphan generic Generators.Model/CSharp/Rust/Metadata products",
+    "orphan generic Analyzers product",
+    "generic native-build and artificial-package proof products"
   ],
   "native_database_host": "native/database/host",
   "managed_database_host": "src/Data.NativeHost",
@@ -125,7 +128,6 @@
     "src/Query.Fluent",
     "src/Query.Native",
     "src/Query.Generator",
-    "src/Generators.Model",
     "src/Data.Materialization",
     "src/Orm.Relations",
     "src/Data.Streaming",
@@ -198,11 +200,11 @@
     },
     {
       "path": "docs/api/documentation-system.md",
-      "sha256": "873b7a658c69401d26662dee8027ee63c769bde6375082ecb29e823a8a783c82"
+      "sha256": "4ef730a06f70f6715d89441fec79619c2445f80b66c75bec1a497145e4c5733d"
     },
     {
       "path": "docs/database/current-product.md",
-      "sha256": "c9981e651fe7471605a1b7384661a0fa234eaa5b8df82e376bfaee23b3261969"
+      "sha256": "1a40ea21418ff2a742a15d40cf1510aa2ecad5f84c80d550adf675a889d0c712"
     },
     {
       "path": "docs/platforms/support-and-aot.md",
@@ -210,7 +212,7 @@
     },
     {
       "path": "docs/platforms/build-package-release.md",
-      "sha256": "c2c7348ba0141af2bffff48dbd9c3214c98f591b024aa3f61c7bf85272cae7d1"
+      "sha256": "2503e0fd597d829d7fe900203b86fb361e69d144610c04cf9ed7c441bc39f19b"
     },
     {
       "path": "docs/verification/models-and-matrix.md",
@@ -226,7 +228,7 @@
     },
     {
       "path": "docs/decisions/ADR-0005-database-product-scope.md",
-      "sha256": "ed61b571d21fe9e4b96f27f76defa275a2ae6e7ea35f771372b144a9d9eea2b2"
+      "sha256": "406e4ded0361e031d2ea37a11387d891d3816d9004e17736ad3ce86b2d0dd63f"
     },
     {
       "path": "docs/history/pre-db-scope-01/README.md",
@@ -399,5 +401,45 @@
     "docs/api/server-coverage.json",
     "docs/api/server-sources.json",
     "docs/api/server-symbol-policies.json"
+  ],
+  "dependency_scope_correction": {
+    "plan_pr": "https://github.com/IzuSharp/Plan/pull/24",
+    "plan_commit": "d74f6bcc8b0e6c4b04105449e8436335bf34bd47",
+    "audit_path": "ledger/evidence/batches/DB-Scope-01/dependency-audit.json",
+    "product_source_inspected": "ea5fa528035d025bd7a28698ee7c71194432236c",
+    "reason": "Retain actual Query.Generator/database signature generation and real API/packaging tools; generic proof generator/analyzer/build/package products have no database dependency.",
+    "order": "Published Plan correction, this Design checkpoint, then orphan code pruning and relevant guard migration."
+  },
+  "retained_tooling_paths": [
+    "tests/Query.Binding/generate.py",
+    "native/database/binding/signatures-v1.json",
+    "src/Build.Integration/ApiReference",
+    "src/Build.Integration/compose_docs.py",
+    "src/Build.Integration/api/core.json",
+    "tests/Build.Integration/ApiFixture",
+    "tests/Build.Integration/verify_docs.py",
+    "src/Packaging.Release/release.py",
+    "src/Packaging.Release/BuildTasks",
+    "src/Packaging.Release/buildTransitive",
+    "tests/Packaging.Release/ApiCheck",
+    "src/Packaging.Domain",
+    "tests/Packaging.Domain",
+    "src/Packaging.Linux/linux_profile.py",
+    "src/Packaging.Linux/packages.py"
+  ],
+  "retired_product_paths": [
+    "src/Generators.Model",
+    "src/Generators.CSharp",
+    "src/Generators.Rust",
+    "src/Analyzers",
+    "src/Build.Integration/build_native.py",
+    "src/Build.Integration/NativeWeave.Build.targets",
+    "tests/Build.Integration/native",
+    "samples/api/build-integration",
+    "src/Packaging.Release/prepare.py",
+    "tests/Packaging.Release/consume.py",
+    "tests/Packaging.Release/consume-linux.sh",
+    "tests/Packaging.Release/native.rs",
+    "samples/api/packaging-release"
   ]
 }

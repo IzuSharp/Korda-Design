@@ -26,6 +26,15 @@ RETAIN = {
     "cancellation", "errors", "resource disposal", "C# to Rust bindings", "Native AOT packaging",
 }
 CELLS = {"postgresql-jit", "postgresql-aot", "sqlite-jit", "sqlite-aot"}
+ORPHAN_TOOLING = {"src/Generators.Model", "src/Generators.CSharp", "src/Generators.Rust", "src/Analyzers",
+                  "src/Build.Integration/build_native.py", "src/Build.Integration/NativeWeave.Build.targets",
+                  "src/Packaging.Release/prepare.py"}
+DATABASE_TOOLING = {"tests/Query.Binding/generate.py", "native/database/binding/signatures-v1.json",
+                    "src/Build.Integration/ApiReference", "src/Build.Integration/compose_docs.py",
+                    "src/Build.Integration/api/core.json", "tests/Build.Integration/ApiFixture",
+                    "tests/Build.Integration/verify_docs.py", "src/Packaging.Release/release.py",
+                    "src/Packaging.Release/BuildTasks", "src/Packaging.Release/buildTransitive",
+                    "tests/Packaging.Release/ApiCheck", "src/Packaging.Domain", "tests/Packaging.Domain"}
 
 
 def sha(raw):
@@ -77,6 +86,12 @@ def validate(data):
     assert "NativeWeave.Database.Sqlite.Native" not in postgres
     assert sqlite | postgres == EXPECTED
     assert {"native/database/host", "src/Data.NativeHost"} <= set(data["retained_product_paths"])
+    assert "src/Query.Generator" in data["retained_product_paths"]
+    assert DATABASE_TOOLING <= set(data["retained_tooling_paths"])
+    assert ORPHAN_TOOLING <= set(data["retired_product_paths"])
+    for path in data["retained_product_paths"] + data["retained_tooling_paths"]:
+        assert not any(path == retired or path.startswith(retired + "/") for retired in ORPHAN_TOOLING), "Orphan proof tooling was retained"
+    assert data["dependency_scope_correction"]["plan_commit"] == "d74f6bcc8b0e6c4b04105449e8436335bf34bd47"
     required_proof = {"nuspecs", "project.assets.json", "publish_directory", "actual_loaded_native_libraries", "zero_consumer_rust_invocations", "verified_data"}
     assert set(data["consumer_proof"]) == required_proof
     assert data["current_checks_claim_product_execution"] is False
@@ -108,7 +123,7 @@ def verify_files(data, product_root=None):
     changed = subprocess.check_output(["git", "diff", "--name-only", FROZEN, "--", *protected], cwd=ROOT, text=True).strip()
     assert not changed, ("Historical accepted evidence/prototype changed", changed)
     if product_root is not None:
-        for path in data["retained_product_paths"]:
+        for path in data["retained_product_paths"] + data["retained_tooling_paths"]:
             assert (product_root / path).exists(), ("Retained product path missing", path)
     # A relocated, byte-identical historical blob can contain old whitespace.
     # Only the exact archive paths whose frozen bytes were proved above are
@@ -125,7 +140,7 @@ def main():
     validate(data)
     verify_files(data, args.product_root)
     rejected = []
-    for case in ("removed_database_host", "server_package_added", "missing_provider_aot", "cross_provider_native_dependency", "performance_restarted", "unverified_product_acceptance"):
+    for case in ("removed_database_host", "server_package_added", "missing_provider_aot", "cross_provider_native_dependency", "performance_restarted", "unverified_product_acceptance", "orphan_generator_retained", "database_binding_generator_removed"):
         changed = copy.deepcopy(data)
         if case == "removed_database_host":
             changed["retained_capabilities"].remove("Database Host")
@@ -137,8 +152,12 @@ def main():
             changed["packages"]["NativeWeave.Database.Sqlite"].insert(0, "NativeWeave.Database.PostgreSql.Native")
         elif case == "performance_restarted":
             changed["performance_work_authorized"] = True
-        else:
+        elif case == "unverified_product_acceptance":
             changed["product_acceptance"] = "accepted"
+        elif case == "orphan_generator_retained":
+            changed["retained_product_paths"].append("src/Generators.Model")
+        else:
+            changed["retained_tooling_paths"].remove("tests/Query.Binding/generate.py")
         try:
             validate(changed)
         except AssertionError:
