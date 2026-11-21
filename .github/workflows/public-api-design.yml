@@ -1,7 +1,7 @@
 name: Verify current database API design
 on:
   push:
-    branches: [main, task/DB-Scope-01-linux]
+    branches: [main, task/DB-CPP-01-linux]
   pull_request:
     branches: [main]
 permissions:
@@ -22,5 +22,5 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
           persist-credentials: false
-      - name: Validate current scope, package closure, links, exact archived bytes and current whitespace
-        run: python3 tools/verify_db_scope.py
+      - name: Validate migration decision and unchanged accepted database scope at its frozen input
+        run: python3 tools/verify_cpp_migration.py

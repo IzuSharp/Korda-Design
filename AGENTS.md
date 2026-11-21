@@ -1,4 +1,10 @@
-# NativeWeave Design working rules — DB-Scope-01
+# NativeWeave Design working rules — DB-CPP-01
+
+Read [CURRENT-PHASE.md](CURRENT-PHASE.md), [ADR-0006](docs/decisions/ADR-0006-database-cpp-native.md), [the migration overlay](docs/database/cpp-migration.json), and [Plan PR26](https://github.com/IzuSharp/Plan/pull/26) first. The owner now authorizes the existing database native implementation's migration from Rust to C++ on Linux x64, including implementation, tests, commits, PRs and normal merges. Preserve the public C# and C ABI contracts, package identities, historical data and retained database behavior. Use `task/DB-CPP-01-linux` and `ROOT/.worktree/DB-CPP-01-linux/`; update Plan's `ledger/evidence/batches/DB-CPP-01/handoff-linux.md`. DB-API-01 and DB-Perf-01 are separate tasks.
+
+The rules below describe the accepted DB-Scope-01 baseline. Their Rust implementation mandate and previous task stop condition are superseded by ADR-0006; their retained database scope and compatibility obligations remain inputs. The frozen baseline is Design `8298dc4128b745cf1809bad0c3cf02c45eb7f522`. Do not rewrite its scope hashes or historical verifiers to accept changed current files. Run `python3 tools/verify_cpp_migration.py` for the current decision and the unchanged DB-Scope-01 gate at its frozen worktree. Continue `python3 tools/verify_db_scope_history.py` for the earlier immutable contract gates. A document gate never accepts product execution.
+
+## Accepted DB-Scope-01 rules
 
 Read [CURRENT-PHASE.md](CURRENT-PHASE.md), [the current scope](docs/current-scope.json), and [the Plan batch](https://github.com/IzuSharp/Plan/blob/task/DB-Scope-01-linux/ledger/evidence/batches/DB-Scope-01/plan.md) before changing current design.
 
