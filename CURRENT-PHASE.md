@@ -1,3 +1,11 @@
+# Current task — DB-API-01
+
+Korda's owner authorizes C# Fluent ORM experience enhancements on Linux x64. Read [ADR-0007](docs/decisions/ADR-0007-fluent-orm-experience.md), the [behavior contract](docs/database/fluent-orm.md), the [mapping overlay](docs/database/fluent-orm.json) and the [published Plan-first checkpoint](https://github.com/IzuSharp/Plan/blob/21e98f7591b4cf1f7fd5b7d5e791ab0be4271515/ledger/evidence/batches/DB-API-01/plan.md). Korda AGENTS.md governs current module registration, direct Native AOT checks and automatic release selection. Work uses `task/DB-API-01-linux` and `.worktree/DB-API-01-linux/`.
+
+Preserve C++20/libpq/sqlite3 execution, database-only scope, compatible ABI and independent provider packages. Compare existing samples with the order/customer/detail journey and fill actual gaps. New contracts are prospective until Plan records implementation and real execution. Run `python3 tools/verify_fluent_orm.py`; it retains the unchanged completed migration gate at Design `de1f4796dc199250b405ea99f2129d611f17b1f6`. Continue the earlier immutable history checks. Old task exclusions below retain historical meaning and do not block DB-API-01. This batch authorizes normal merges and observing triggered releases, with no new performance campaign, clean-image/CPU-emulation campaign or other platform acceptance.
+
+## Previous task authority (historical)
+
 # Current phase — DB-CPP-01
 
 The current task is the owner's authorized Linux x64 database native migration from Rust to C++. [Plan PR26](https://github.com/IzuSharp/Plan/pull/26), published commit `94ade5e6e7df2113be1a500d8ba33c0f0b8d8f11`, precedes the Design decision and product implementation. [ADR-0006](docs/decisions/ADR-0006-database-cpp-native.md), [the migration specification](docs/database/cpp-migration.md), and [its overlay](docs/database/cpp-migration.json) define the change. The first C++ implementation checkpoint is published in [product PR21](https://github.com/IzuSharp/NativeWeave/pull/21). The overlay records its exact source and dependency lock; Plan owns subsequent corrections and product acceptance.

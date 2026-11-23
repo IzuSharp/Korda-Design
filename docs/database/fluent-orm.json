@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "task": "DB-API-01",
+  "branch": "task/DB-API-01-linux",
+  "status": "authorized_design",
+  "baseline": {
+    "Korda": "7275396176b928c8879d59f4bf20ad8fa7ffb62c",
+    "NativeWeave-Design": "de1f4796dc199250b405ea99f2129d611f17b1f6",
+    "Plan": "5be447a868be78713ada52f46cee16409f0edc13"
+  },
+  "plan_first": {
+    "repository": "IzuSharp/Plan",
+    "commit": "21e98f7591b4cf1f7fd5b7d5e791ab0be4271515",
+    "path": "ledger/evidence/batches/DB-API-01/plan.md"
+  },
+  "platforms": [
+    "linux-x64"
+  ],
+  "packages": [
+    "Korda.Database.PostgreSql",
+    "Korda.Database.Sqlite"
+  ],
+  "execution": {
+    "native_language": "C++20",
+    "postgresql": "libpq",
+    "sqlite": "sqlite3",
+    "query_owner": "existing native kernel",
+    "mapping": "C# source generation"
+  },
+  "consumer_modes": [
+    "native-aot"
+  ],
+  "clean_image_requested": false,
+  "cpu_emulation_requested": false,
+  "product_acceptance": "owned_by_plan",
+  "current_checks_claim_product_execution": false,
+  "contract_document": "docs/database/fluent-orm.md",
+  "decision": "docs/decisions/ADR-0007-fluent-orm-experience.md",
+  "operations": [
+    {
+      "id": "model-conventions",
+      "modules": [
+        "src/Query.Generator/",
+        "src/Query.Generator/Runtime/",
+        "src/Data.Models/"
+      ],
+      "mapping": "C# source-generated model descriptor -> existing metadata binding -> C++ runtime model registration",
+      "boundary": "Plain class/record and explicit mapping; no reflection or business native specialization.",
+      "acceptance_checks": [
+        "model_projection",
+        "api_compatibility"
+      ],
+      "implementation_status": "pending"
+    },
+    {
+      "id": "projection",
+      "modules": [
+        "src/Query.Generator/",
+        "src/Query.Fluent/",
+        "src/Data.Materialization/"
+      ],
+      "mapping": "Generated Bind/Row -> projection builder/native expression handles -> C++ selection compiler -> bounded row materializer",
+      "boundary": "Only selected expressions; exact aliases/constructor mapping; static ambiguity is a compile diagnostic.",
+      "acceptance_checks": [
+        "model_projection",
+        "query_composition"
+      ],
+      "implementation_status": "pending"
+    },
+    {
+      "id": "value-policies",
+      "modules": [
+        "src/Data.Codecs/",
+        "src/Query.Generator/"
+      ],
+      "mapping": "Shared ValueCodec<T> defaults/overrides -> existing codec encoding -> C++ codec/dialect profile",
+      "boundary": "Custom ID conversion preserves store codec; decimal/JSON configuration is reusable and explicit.",
+      "acceptance_checks": [
+        "reusable_mappings"
+      ],
+      "implementation_status": "pending"
+    },
+    {
+      "id": "query-composition",
+      "modules": [
+        "src/Query.Fluent/"
+      ],
+      "mapping": "Typed predicates/join/aggregate expression composition -> existing query ABI -> C++ query compiler",
+      "boundary": "Reuse existing optional predicates, joins and aggregation; no managed SQL engine or lambda-expression interpreter.",
+      "acceptance_checks": [
+        "query_composition"
+      ],
+      "implementation_status": "pending"
+    },
+    {
+      "id": "composite-cursor",
+      "modules": [
+        "src/Query.Fluent/"
+      ],
+      "mapping": "QueryCursor -> lexicographic predicate operands -> existing query ABI -> C++ dialect compiler",
+      "boundary": "Exact full ORDER BY sequence includes root primary key; nonnullable cursor; mixed directions; reject offset and changed ordering.",
+      "acceptance_checks": [
+        "cursor_relations"
+      ],
+      "implementation_status": "pending"
+    },
+    {
+      "id": "batched-relations",
+      "modules": [
+        "src/Orm.Relations/",
+        "native/database/"
+      ],
+      "mapping": "Bounded parent keys -> existing relation plan -> C++ tagged UNION ALL child selections -> grouped child DTOs",
+      "boundary": "One query for nonempty batch; no query for empty input; preserve duplicate/input index groups and SQL equality semantics.",
+      "acceptance_checks": [
+        "cursor_relations"
+      ],
+      "implementation_status": "pending"
+    },
+    {
+      "id": "writes",
+      "modules": [
+        "src/Orm.Relations/"
+      ],
+      "mapping": "Key/Changes/ConcurrencyCheck/returning -> existing relation ABI -> C++ provider execution",
+      "boundary": "Reuse existing omitted/null change set and optimistic concurrency; simplify calls only where audit demonstrates a gap.",
+      "acceptance_checks": [
+        "writes_concurrency"
+      ],
+      "implementation_status": "pending"
+    },
+    {
+      "id": "transaction-callback",
+      "modules": [
+        "src/Data.Transactions/"
+      ],
+      "mapping": "InTransactionAsync -> Begin/callback/Commit/DisposeAsync -> existing transaction ABI -> libpq/sqlite3",
+      "boundary": "No replay or implicit nesting; pre-cancel skips callback; unknown commit remains unknown; preserve original exception and cleanup outcome.",
+      "acceptance_checks": [
+        "transaction_outcomes"
+      ],
+      "implementation_status": "pending"
+    },
+    {
+      "id": "migration-draft",
+      "modules": [
+        "src/Data.Migrations/",
+        "native/database/"
+      ],
+      "mapping": "Explicit model snapshot diff request -> compatible admin operation -> C++ dialect SQL draft -> reviewed Migration/MigrationBundle",
+      "boundary": "No startup migration; prior snapshot versioned; per-change destructive selection; unsupported conversions/defaults fail before apply.",
+      "acceptance_checks": [
+        "migrations_scaffold"
+      ],
+      "implementation_status": "pending"
+    },
+    {
+      "id": "reverse-scaffold",
+      "modules": [
+        "src/Data.Migrations/",
+        "src/Query.Generator/"
+      ],
+      "mapping": "GetTablesAsync catalog -> explicit ambiguity hints -> C# attributed entity source -> generator compilation",
+      "boundary": "Do not guess missing key order/generated flags/default/type semantics; output must compile as an external consumer.",
+      "acceptance_checks": [
+        "migrations_scaffold"
+      ],
+      "implementation_status": "pending"
+    },
+    {
+      "id": "onboarding",
+      "modules": [
+        "docs/guides/",
+        "samples/api/"
+      ],
+      "mapping": "Independent provider PackageReference -> provider DI -> session/Fluent -> existing diagnostics",
+      "boundary": "Short runnable tutorial, ordinary C# business types, redacted diagnostics, separate provider packages.",
+      "acceptance_checks": [
+        "onboarding",
+        "postgresql_aot",
+        "sqlite_aot",
+        "native_reuse"
+      ],
+      "implementation_status": "pending"
+    }
+  ],
+  "compatibility": {
+    "existing_public_api": "additive unless separately reviewed",
+    "native_abi": "preserve old layouts/actions; negotiate additions",
+    "package_identity": "existing independent top-level providers",
+    "dto_native_rebuild": "not_required"
+  },
+  "evidence_requirements": [
+    "compiled-api-and-xml",
+    "generator-negative-diagnostics",
+    "real-postgresql-aot",
+    "real-sqlite-aot",
+    "external-provider-packagereference",
+    "observed-sql-roundtrips",
+    "dto-change-same-native-hashes",
+    "scoped-independent-review",
+    "exact-pr-checks",
+    "observed-merged-main-ci",
+    "observed-triggered-releases"
+  ]
+}
