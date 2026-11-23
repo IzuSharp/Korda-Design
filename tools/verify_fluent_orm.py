@@ -48,7 +48,7 @@ def validate(data):
         covered.update(row['acceptance_checks'])
     assert covered == CHECKS, 'Missing acceptance mapping'
     assert {'real-postgresql-aot', 'real-sqlite-aot', 'external-provider-packagereference',
-            'observed-sql-roundtrips', 'dto-change-same-native-hashes', 'exact-pr-checks',
+            'observed-sql-executions-and-protocol-submissions', 'dto-change-same-native-hashes', 'exact-pr-checks',
             'observed-merged-main-ci', 'observed-triggered-releases'} <= set(data['evidence_requirements'])
     for path in [data['contract_document'], data['decision']]:
         assert not Path(path).is_absolute() and '..' not in Path(path).parts and (ROOT / path).is_file()

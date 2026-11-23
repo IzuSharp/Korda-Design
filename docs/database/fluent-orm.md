@@ -66,6 +66,28 @@ The intended boundary cost is generated managed metadata plus existing native co
 
 Additive signatures need binary/source compatibility, overload/nullability and XML/reference checks selected by the affected modules. Keep old C ABI layouts, action numbers and capability behavior; negotiate any extension explicitly. New module roots, test paths, dependencies, checks and package outputs must be registered. Internal libraries remain buildable/testable while only independent top-level providers are installable.
 
+The schema-draft extension uses the existing `nw_db_admin_create_v1` entry point
+with new action **4**, guarded by appended capability `db.schema.draft.v1` at bit
+**25**. Existing actions 0–3, capability bits 0–24, ABI version and structure layouts
+retain their meanings. The managed facade rejects a missing capability before
+dispatch. Drafting never opens a database connection. Request control record kind
+5 carries provider field 1 and bounded canonical previous/current model sequences
+in fields 7/8. Result kind 6 carries action 4 and either change sequence field 2
+or bounded rejection text field 6. Each change is kind 21 with its stable ID,
+kind, schema/table/column, quoted SQL and destructive flag. An unsupported
+difference preserves the offending table/column context; it cannot yield partial
+applyable SQL.
+
+The initial draft supports new tables, nullable nongenerated nonkey column
+additions, nonkey column drops and table drops. An unchanged column must preserve
+its type, codec configuration, nullability, key/generated policy, default,
+collation and length metadata. Differences requiring conversion, backfill or
+table rebuild reject. Each destructive operation has an exact stable digest and
+must be individually selected; unknown/repeated selections reject. A no-op draft
+cannot become an empty migration. Reverse scaffolding requires an explicit
+generated-column list and complete ordered composite key, and emits bounded C#
+source with safely escaped identifiers/literals and explicit ambiguous-type hints.
+
 ## Acceptance
 
 Separate external PackageReference projects restore each exact provider package and run directly as Linux x64 Native AOT executables against real PostgreSQL and SQLite. Assert projected columns/business values, optional filters, join/aggregate DTO mapping, cursor boundaries, empty/grouped relations and SQL counts, NULL/omission and concurrency, rollback/cancellation/unknown-commit behavior, reviewed migration choice and generated-entity compilation. After editing only a DTO, recompile/re-run and compare the same native payload/loaded hashes. Record exact source/package/executable provenance.

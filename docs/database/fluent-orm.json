@@ -42,7 +42,7 @@
       "modules": [
         "src/Query.Generator/",
         "src/Query.Generator/Runtime/",
-        "src/Data.Models/"
+        "src/Data.Abstractions/"
       ],
       "mapping": "C# source-generated model descriptor -> existing metadata binding -> C++ runtime model registration",
       "boundary": "Plain class/record and explicit mapping; no reflection or business native specialization.",
@@ -70,6 +70,7 @@
     {
       "id": "value-policies",
       "modules": [
+        "src/Data.Abstractions/",
         "src/Data.Codecs/",
         "src/Query.Generator/"
       ],
@@ -108,7 +109,8 @@
       "id": "batched-relations",
       "modules": [
         "src/Orm.Relations/",
-        "native/database/"
+        "src/Query.Fluent/",
+        "native/cpp/"
       ],
       "mapping": "Bounded parent keys -> existing relation plan -> C++ tagged UNION ALL child selections -> grouped child DTOs",
       "boundary": "One query for nonempty batch; no query for empty input; preserve duplicate/input index groups and SQL equality semantics.",
@@ -132,6 +134,7 @@
     {
       "id": "transaction-callback",
       "modules": [
+        "src/Orm.Relations/",
         "src/Data.Transactions/"
       ],
       "mapping": "InTransactionAsync -> Begin/callback/Commit/DisposeAsync -> existing transaction ABI -> libpq/sqlite3",
@@ -145,6 +148,7 @@
       "id": "migration-draft",
       "modules": [
         "src/Data.Migrations/",
+        "native/cpp/",
         "native/database/"
       ],
       "mapping": "Explicit model snapshot diff request -> compatible admin operation -> C++ dialect SQL draft -> reviewed Migration/MigrationBundle",
@@ -196,7 +200,7 @@
     "real-postgresql-aot",
     "real-sqlite-aot",
     "external-provider-packagereference",
-    "observed-sql-roundtrips",
+    "observed-sql-executions-and-protocol-submissions",
     "dto-change-same-native-hashes",
     "scoped-independent-review",
     "exact-pr-checks",
