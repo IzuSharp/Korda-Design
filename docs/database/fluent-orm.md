@@ -72,7 +72,7 @@ with new action **4**, guarded by appended capability `db.schema.draft.v1` at bi
 retain their meanings. The managed facade rejects a missing capability before
 dispatch. Drafting never opens a database connection. Request control record kind
 5 carries provider field 1 and bounded canonical previous/current model sequences
-in fields 7/8. Result kind 6 carries action 4 and either change sequence field 2
+in fields 7/8. Result control record kind 19 carries action 4 and either change sequence field 2
 or bounded rejection text field 6. Each change is kind 21 with its stable ID,
 kind, schema/table/column, quoted SQL and destructive flag. An unsupported
 difference preserves the offending table/column context; it cannot yield partial
