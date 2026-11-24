@@ -1,27 +1,30 @@
-# Getting started with the database product — DB-Scope-01
+# Getting started with Korda database mappings
 
-The current product is an ordinary C# database library for PostgreSQL and SQLite. It requires neither NativeWeave Server nor a Rust toolchain on the consuming machine. This page describes the existing API route; the [Plan handoff](https://github.com/IzuSharp/Plan/blob/task/DB-Scope-01-linux/ledger/evidence/batches/DB-Scope-01/handoff-linux.md) supplies the exact tested candidate version/feed and execution state. Do not substitute an invented published version.
+For this rename, use the exact locally built candidate version of `Korda.Database.Sqlite` or `Korda.Database.PostgreSql`. The candidate manifest owns the version; the public feed can still contain the previous API until maintainers release the reviewed change. Import `Korda.Data` for mapping attributes, `Korda.Database` for the common facade and the chosen provider namespace.
 
-## Select one provider
+Each top-level provider includes its shared managed assemblies, generator and precompiled native library. An ordinary entity or DTO edit rebuilds C# only.
 
-Create a normal C# project, add `NativeWeave.Database.Sqlite` or `NativeWeave.Database.PostgreSql` using ordinary PackageReference to the candidate feed, and import `NativeWeave.Database` plus that provider namespace. The package supplies its native closure; consumer build targets do not build Rust.
+## Define an entity and immutable DTO
 
-Use `SqliteDataSource.Create(path)` for an application-owned SQLite path or `PostgreSqlDataSource.Create(connectionString, configureOptions)` for PostgreSQL. Explicit options govern TLS, finite capacity and database behavior. Local-development TLS exceptions are never silently applied to remote PostgreSQL configurations. The alternative `DataSourceBuilder().UseSqlite(...)` / `.UsePostgreSql(...)` route configures the same implementation.
+```csharp
+using Korda.Data;
 
-A source owns the database pool/runtime and should normally outlive individual operations. `await using` and `OpenSessionAsync` manage operation/session lifetime. Build alone is not a connection check or migration.
+[DbTable("orders", DescriptorName = "Orders")]
+public sealed record Order(
+    [property: DbKey] long Id,
+    string? Note,
+    [property: DbVersion] long Version);
 
-## Define models and query
+[DbProjection(DescriptorName = "OrderCards")]
+public sealed record OrderCard(long Id, string? Note);
+```
 
-Use existing static `Table<TEntity>`/typed columns and projections, or the existing query generator, to describe the application's entities and DTOs. Ordinary model/DTO additions compile as managed code and reuse the precompiled native asset. The [compiled API reference](reference.md) supplies exact declarations, and the product's runnable database/Fluent consumers supply full compilable examples.
+The explicit table name preserves an existing physical schema. `[DbColumn("store_name")]` supplies an exact column alias, and `[DbIgnore]` excludes a property. A parameterless `[DbTable]` preserves CLR spelling and opts into the documented `Id` convention. Use `[DbConstructor]` and `[DbParameter(nameof(Member))]` for explicit immutable constructor mapping.
 
-The normal query chain is `session.From(table)`, typed filters, explicit ordering/pagination, a static projection and an asynchronous terminal such as `ToListAsync`. `AsAsyncEnumerable` is the existing streaming path. Every value is parameterized; unsupported provider operations fail explicitly. Do not pass arbitrary user SQL or build a managed SQL dialect to compensate for missing capabilities.
+Assembly `[DbCodec]` registrations and member `[DbUseCodec]` selections retain their existing roles. JSON policies still use source-generated `JsonTypeInfo`; no dynamic metadata path is introduced. See the [attribute upgrade table](../database/db-attribute-names.md#upgrade-mapping).
 
-## Share business logic with a chosen server
+## Run the full workflow
 
-Put the database operation in an ordinary application method accepting a cancellation token. A standard ASP.NET Core HTTP endpoint and a standard C# gRPC service method can call that same method. The application owns transport models, response conversion and server configuration. No NativeWeave HTTP/gRPC wrapper is needed or added.
+The product [getting-started guide](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/docs/getting-started.md) supplies installation, ordinary DI, explicit schema creation, typed queries and checked writes. Its [order sample](https://github.com/IzuSharp/Korda/tree/task/DB-Rename-01-linux/samples/api/orm-experience) runs independently against both providers using the same business source. Source, session, query and stream owners retain their documented disposal and cancellation requirements.
 
-## Run JIT and Native AOT
-
-The acceptance fixture uses normal restore/build/run, then `dotnet publish -c Release -r linux-x64 -p:PublishAot=true` and executes the published binary on Linux x64. The consumer lives outside the source checkout, references candidate packages, uses a separate package cache and verifies actual returned/persisted data.
-
-The exact candidate source, package/native/executable hashes, four provider/runtime outcomes and loaded-library closure are required evidence. A successful restore/build is not an executed query; a published binary is not an AOT runtime pass. Current product regressions are separate from the archived design-only fixtures.
+Acceptance restores candidate PackageReference projects outside the source tree, compiles and runs Linux x64 Native AOT executables against real SQLite and PostgreSQL, and compiles reverse-scaffolded entities. A successful restore or publish alone is not an executed read/write result. Plan records actual source/package/native/executable identities and observed outcomes; this page does not claim the current candidate has passed.

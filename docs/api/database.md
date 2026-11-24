@@ -1,4 +1,4 @@
-# Database API behavior — DB-Scope-01
+# Database API behavior — current Korda
 
 [The current product mapping](../database/current-product.md) describes the retained implementation. [The reference index](reference.md) links exact compiled declarations and XML semantics. These authorities replace the old declaration-only API catalog for current consumption.
 
@@ -10,9 +10,11 @@ Transactions preserve their explicit commit/rollback/savepoint behavior. Public 
 
 ## Queries, models and DTOs
 
-`session.From(Table<TEntity>)` creates a typed Fluent query backed by native SeaQuery state. Existing filters, ordering, joins, aggregates, pagination, projections and terminals retain their source-defined capabilities. Arguments are typed and snapshotted as specified; values are parameters, not SQL text interpolation. SQLite-incompatible operations fail explicitly before dispatch.
+The current generator uses `[DbTable]`, `[DbColumn]`, `[DbKey]`, `[DbVersion]`, `[DbIgnore]`, `[DbProjection]`, `[DbConstructor]`, `[DbParameter]`, `[DbCodec]` and `[DbUseCodec]` in `Korda.Data`. See the [naming contract](../database/db-attribute-names.md) and [Fluent ORM behavior](../database/fluent-orm.md).
 
-Static `Table<TEntity>`, typed columns/codecs and `Projection<T>` or the existing query generator provide AOT-friendly metadata and DTO construction. Ordinary model/DTO edits rebuild managed code, not Rust. Exact result count/shape/aliases/codecs/nullability are checked; missing columns are not silently NULL. SQL three-valued logic remains SQL behavior; no complete LINQ provider or hidden managed/client evaluation is added.
+`session.From(Table<TEntity>)` creates a typed Fluent query backed by the existing native query state. Existing filters, ordering, joins, aggregates, pagination, projections and terminals retain their source-defined capabilities. Arguments are typed and snapshotted as specified; values are parameters, not SQL text interpolation. SQLite-incompatible operations fail explicitly before dispatch.
+
+Static `Table<TEntity>`, typed columns/codecs and `Projection<T>` or the existing query generator provide AOT-friendly metadata and DTO construction. Ordinary model/DTO edits rebuild managed code and reuse the packaged native engine. Exact result count/shape/aliases/codecs/nullability are checked; missing columns are not silently NULL. SQL three-valued logic remains SQL behavior; no complete LINQ provider or hidden managed/client evaluation is added.
 
 ## Relations, changes and administration
 
@@ -24,4 +26,4 @@ Retain `InsertAsync`, `FindAsync`, explicit changesets, concurrency/version chec
 
 `AsAsyncEnumerable` retains bounded cursor/result storage and explicit early-break/disposal. A terminal that buffers results still obeys its row/byte budgets. Cancellation requests do not free memory still used by native operations. `CloseAsync` can report pending cleanup; `DisposeAsync` follows actual retirement.
 
-Preserve argument/disposal/cancellation exceptions, structured provider diagnostics, unsupported-capability errors and unknown transaction outcomes. Do not log secret connection strings or parameter values by default. Database consumers acquire no NativeWeave Server/protocol runtime.
+Preserve argument/disposal/cancellation exceptions, structured provider diagnostics, unsupported-capability errors and unknown transaction outcomes. Do not log secret connection strings or parameter values by default. Database consumers acquire no Korda Server/protocol runtime.

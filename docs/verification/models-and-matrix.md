@@ -1,36 +1,37 @@
-# DB-Scope-01 verification and acceptance matrix
+# DB-Rename-01 verification and acceptance matrix
 
-Plan owns actual acceptance. This design defines required evidence without premarking execution. Current rows use fresh pruned source; original accepted research and old test results retain their original identities.
+Plan and the product PR record actual execution. This document states requirements without premarking tests as passed. The [current naming contract](../database/db-attribute-names.md), retained [DB-API-01 behavior](../database/fluent-orm.md) and [Korda AGENTS](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/AGENTS.md) govern scope and dependency-selected checks. Frozen DB-Scope-01 JSON and its execution matrix remain historical inputs.
 
 | Gate | Required observation |
 | --- | --- |
-| Stop/clean | Old PR19/23 closed unmerged, task-owned processes/timers/autopush stopped or access limitation recorded, old directories removed |
-| Plan first | Plan commit/push/PR precedes Design edits; Design checkpoint precedes product edits |
-| Rust workspace | Retained crates build/test with locked dependencies and native quality checks |
-| C# workspace | Retained projects build; formatter/analyzers/API/XML/reference/compatibility and lock checks pass |
-| PostgreSQL regressions | Real provider normal/error/cancel/transaction/migration/relations/stream/disposal assertions |
-| SQLite regressions | Real provider normal/error/cancel/transaction/migration/relations/stream/disposal assertions |
-| PostgreSQL JIT consumer | Out-of-tree PackageReference, typed Fluent/DTO and verified real data |
-| PostgreSQL AOT consumer | Actual Native AOT publish and executable run, same correctness assertions |
-| SQLite JIT consumer | Out-of-tree PackageReference, typed Fluent/DTO and verified real data |
-| SQLite AOT consumer | Actual Native AOT publish and executable run, same correctness assertions |
-| Closure | All nuspecs, project.assets, publish directories and actual native mappings exclude removed products |
-| Consumer Rust independence | Precompiled assets; zero cargo/rustc/rustup calls; distinguish trap from pristine no-Rust image |
-| Independent review | Retained coverage and real dependency pruning reviewed by a distinct executor; findings resolved |
-| Completion | Required PR checks, normal merges and exact merged-main CI verified in all three repos |
+| Current names | Ten `Db*Attribute` declarations in the preserved namespace; matching generator, diagnostics, generated C# and reverse scaffolding |
+| Generator and mapping | Entities, immutable DTOs and reverse-scaffolded entities compile; ambiguity and other retained negatives produce expected diagnostics |
+| Module-selected checks | Committed-diff routing includes affected consumers; required managed/native, formatter/analyzer, API/XML/reference, compatibility and lock checks pass |
+| PostgreSQL regressions | Retained real-provider normal/error/cancellation/transaction/migration/relation/stream/disposal assertions selected by dependency |
+| SQLite regressions | Retained real-provider normal/error/cancellation/transaction/migration/relation/stream/disposal assertions selected by dependency |
+| PostgreSQL candidate AOT | Independently built actual package; external PackageReference order consumer publishes/runs Native AOT with real read/write assertions |
+| SQLite candidate AOT | Independently built actual package; external PackageReference order consumer publishes/runs Native AOT with real read/write assertions |
+| Packaged API and tutorials | Actual DLL/XML/README expose the new names and no old public attribute types; tutorial source compiles using the candidates |
+| Native reuse and closure | Managed model/DTO edits retain packaged and loaded native hashes; assets/dependencies match the selected provider |
+| Documentation and scans | Current README/guides/XML/reference/example/filename/link/anchor spellings agree; remaining historical/mapping/physical-name hits are classified |
+| Review and PR CI | Diff reviewed, observed current PR checks pass, failures from this batch resolved; stop awaiting maintainer review |
 
-## Unique database coverage in mixed tests
+Consumers run directly as Native AOT binaries. This task does not request JIT consumer execution, clean-image/CPU-emulation checks, new performance/platform acceptance, merge or public release. The existing native engine, C ABI, attribute defaults/targets, codec selection and source-generated JSON metadata remain unchanged.
 
-Preserve pre-admission commit cancellation with rollback/no durable row, actual failed transaction/rollback, same physical PostgreSQL session, early stream admission/release, and source/session/reference retirement. Preserve nullable/composite foreign-key checks, typed idempotent create/replay, ReadCommitted next-statement conflict lookup, pagination/recovery, optimistic changes and outbox atomicity. Keep real PostgreSQL conflict/lock and lost-COMMIT-ack durable-state oracles as direct database tests.
+## Retained database failure coverage
 
-Remove their NativeWeave HTTP/gRPC/MCP coupling. Internal direct business-method validation is sufficient; writing a replacement transport wrapper is outside scope. See [reference verification](reference-application.md).
+Preserve pre-admission commit cancellation with rollback/no durable row, failed-transaction rollback, same physical PostgreSQL session, early stream admission/release and source/session/reference retirement. Preserve nullable/composite foreign keys, typed idempotent create/replay, ReadCommitted next-statement conflict lookup, pagination/recovery, optimistic changes and outbox atomicity. Existing PostgreSQL conflict/lock and lost-COMMIT-ack durable-state oracles remain direct database tests selected through module dependencies.
+
+The naming change does not remove error-path coverage or introduce a server wrapper. Internal direct business-method consumers continue to exercise their database behavior.
 
 ## Evidence and failure semantics
 
-Each executed row records source/toolchain/platform, exact command, exit status, data assertions and relevant package/native/executable identities. Preserve failed attempts. An unknown transaction outcome is not a successful rollback; pending cleanup is not reclaimed resources. A non-executed provider/runtime row cannot be inferred from another row or historical CI.
+Every executed result records source/toolchain/platform, actual command/exit status, data assertions and relevant package/native/executable identities. Preserve failed attempts and real environment limitations. Unknown transaction outcome is not confirmed rollback; pending cleanup is not reclaimed memory. A failed or unexecuted provider lane cannot be inferred from another lane or old CI. An environment limitation does not justify weakening the repository's required checks.
 
-No 30-minute workload, performance optimization or superiority result is required or claimed. Linux x64 is the sole target. Current Design structure/link/history checks are distinct from actual product execution and independent review.
+Design structure/link/history checks are distinct from compiler, package, database, Native AOT execution and independent review. The current [Plan handoff](https://github.com/IzuSharp/Plan/blob/task/DB-Rename-01-linux/ledger/evidence/batches/DB-Rename-01/handoff-linux.md) and PRs bind actual outcomes to source identities. This task ends with passing PR checks for maintainer review; earlier merge/release conditions are historical.
 
 ## Historical checks
 
-Original 21-contract/API/English acceptance and mutation gates run unchanged at Design `c62cdb8aee833b6ab1a03e29a3f59f81a1b483f9` through `tools/verify_db_scope_history.py`. Current scope validation checks archived bytes and exact current requirements. Neither updates historical acceptance hashes to pass changed specifications.
+`python3 tools/verify_db_rename.py` checks the naming overlay and runs unchanged DB-API-01, C++ migration and DB-Scope-01 gates at their frozen inputs. `python3 tools/verify_db_scope_history.py` runs original 21-contract/API/English acceptance and mutations at Design `c62cdb8aee833b6ab1a03e29a3f59f81a1b483f9`. No historical acceptance hash is updated to accept a changed current document.
+
+The original stop/clean, Rust workspace, four JIT/AOT consumer cells and merged-main conditions belong to the [immutable DB-Scope-01 matrix](https://github.com/IzuSharp/NativeWeave-Design/blob/8298dc4128b745cf1809bad0c3cf02c45eb7f522/docs/verification/models-and-matrix.md). The frozen `docs/current-scope.json` still records that matrix and its original active-document hashes; it is not this task's current check plan.

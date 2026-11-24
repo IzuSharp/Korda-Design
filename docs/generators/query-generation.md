@@ -1,139 +1,94 @@
-# D17 — Static metadata and DTO generation, not a second SQL compiler
+# Static entity and DTO generation
 
-Contract: **C-QUERYGEN-001@0.4.0**; design candidate. The registry records exact-content independent review and acceptance; product implementation/release gates remain in Delivery. Existing task D17 and B09/B10/B12/B13 are retained. Source evidence and executed scope: [R25](../research/topics/R25/source-driven-seaquery.md), [recovered probe](../research/source-driven-evidence/README.md). The previous declaration-only LINQ plus generated per-application Rust Entity/dispatcher pipeline is superseded as the ordinary route.
-
-## Public API refinement 0.4.0
-
-The exact public declarations and complete native operation inventory are now
-[Database/ORM API 0.4.0](../api/database.md), its
-[coverage matrix](../api/database-coverage.json), and
-[Database.cs](../../experiments/public-api/NativeWeave.Api.Design/Database.cs).
-They replace earlier provisional signature spellings; the lifecycle, native-source
-findings and historical experiment identities below remain normative within that
-explicit scope. Native AOT fixture compilation is separate from product execution.
-Fresh exact-content review is required; prior accepted versions remain immutable.
-
+Current Korda source generation uses the ten database attributes in the [DB-Rename-01 contract](../database/db-attribute-names.md). Exact types live in `Korda.Data`; tutorial and business code omit the `Attribute` suffix. The product [generator guide](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/docs/guides/query-generator.md) and [compiled reference](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/src/Query.Generator/api-reference.md) own current declarations and complete examples. The rename preserves the generation and materialization requirements below.
 
 ## 1. Required application experience
 
-An application references NativeWeave's managed facade and a maintainer-precompiled Rust database NuGet. It defines ordinary C# entities and projections, uses typed Fluent APIs, restores/builds/runs locally, and publishes as Native AOT. Adding an entity using existing supported native codecs/operators must not invoke Rust compilation or wait for CI. This is a required product experience; the recovered explicit-RID Linux prototype demonstrates only part of it.
+An application references one Korda database provider package with its precompiled native asset. It defines ordinary C# entities and immutable DTOs, uses typed Fluent APIs and publishes Native AOT. Adding a model that uses existing codecs/operators must not require a native-engine rebuild or wait for CI. C++20/libpq/sqlite3 retain the existing SQL/query/database semantics.
 
-No IQueryable provider, runtime expression compilation, Reflection.Emit, dynamic proxy mapper, runtime generic construction or broad reflective setter path is required. Full C# predicate/LINQ semantics are not the query contract. C# business code remains ordinary compiled code; database semantics are those explicitly documented in D16 and performed by native SeaQuery/SQLx.
+No full IQueryable provider, runtime expression compilation, Reflection.Emit, dynamic proxy mapper, runtime generic construction or broad reflective setter path is required. Business code remains ordinary compiled C#. Handwritten static metadata remains supported through the same public API and native engine.
 
 ## 2. What is generated and what is not
 
-Generate typed table/column/projection descriptors, static constructor/reader code, explicit nullable/value codec tables, optional immutable changeset descriptors, AOT-visible closed generic registrations and compile diagnostics. Handwritten static equivalents use exactly the same native Engine, supported API and verification path. A generator is a productivity tool, not the only way to express runtime-native queries.
+Generate typed table/column/projection descriptors, static readers and direct constructors, explicit nullable/value codec policies, AOT-visible closed generic mappings and compile diagnostics. Generated and handwritten forms preserve the same metadata, codecs, key/concurrency flags, nullability, projection order and execution path.
 
-Do not generate C# SQL dialects, a query optimizer, hidden client evaluation or application-specific Rust Entity/ActiveModel code in the normal profile. Do not contact a database/network, launch Cargo, alter native libraries or execute user model property getters during generation. A separate explicit maintainer/custom profile may generate a specialized SeaORM native model package; it is not a transitive requirement for ordinary Fluent data access.
+Do not generate C# SQL dialects, a query optimizer, hidden client evaluation or application-specific native model code. Generation must not contact a database/network, invoke a native compiler, change native libraries or execute application model getters. Maintainer build integration is separate from consumer source generation.
 
 ## 3. Incremental pipeline and deterministic inputs
 
-Use syntax filtering followed by semantic symbols for explicitly opted-in model/projection declarations. Resolve property type/nullability, declared table/column names, keys, codecs, allowed constructor/member assignment and explicit relationship metadata. Diagnostics bind to source spans. Output names and ordering derive from stable fully qualified metadata identities, not dictionary iteration, timestamps or random GUIDs.
+Use syntax filtering followed by semantic symbols for explicitly opted-in model/projection declarations. Resolve property type/nullability, declared table/column names, keys, codecs and allowed constructor/member assignments. Resolve attributes through their actual semantic metadata names. Diagnostics bind to the offending source spans. Generated names and ordering derive from stable fully qualified metadata identities rather than dictionary iteration, timestamps or random GUIDs.
 
-Generate directly into the consumer compilation; do not expect to read another generator's generated syntax in the same pass. Shared declarations belong in an explicit schema input or reusable generator model, with a versioned schema and tests. Build integration owns any explicit multi-stage maintainer work. Analyzer/generator host compatibility is tested independently of application target framework version.
+Preserve stable syntax/semantic equality and incremental behavior when unrelated or relevant model inputs change. Generate directly into the consumer compilation; do not expect to read another generator's generated syntax in the same pass. Shared declarations belong in an explicit versioned schema input or reusable generator model with tests. Build integration owns any explicit multistage maintainer operation. Analyzer/generator host compatibility is tested independently of application target-framework compatibility.
 
-A minimal descriptor declaration (draft, not compiled product API):
 ```csharp
-[WeaveTable("students", DescriptorName = "Students")]
-public sealed partial record Student(
-    [property: WeaveKey, WeaveColumn("id")] long Id,
-    [property: WeaveColumn("name")] string Name,
-    [property: WeaveColumn("age")] int Age);
+using Korda.Data;
+
+[DbTable("students", DescriptorName = "Students")]
+public sealed record Student(
+    [property: DbKey, DbColumn("id")] long Id,
+    [property: DbColumn("name")] string Name,
+    [property: DbColumn("age")] int Age);
+
+[DbProjection(DescriptorName = "StudentRows")]
+public sealed record StudentRow(long Id, string Name);
 ```
 
-Generated shape (illustrative, not executed):
-```csharp
-public static class Students
-{
-    public static readonly Table<Student> Table = /* validated static descriptor */;
-    public static readonly Column<Student, long> Id = /* column and codec id */;
-    public static readonly Projection<Student> Row = /* static constructor mapping */;
-}
-```
-C# code and model metadata vary; the native binary does not. The exact attribute/API names are fixed by the 0.4.0 declaration fixture; generated output remains an implementation obligation. The recovered probe used handwritten static descriptors and DTO constructors, so it is evidence for that path, not for this generator's implementation.
+The CLR property spelling remains the default store name. `[DbColumn]` supplies an exact override without renaming the generated typed member. The lowercase names above are deliberate mappings, not an implicit casing convention. A parameterless `[DbTable]` uses the existing documented `Id` convention; the explicit-name constructor retains its existing defaults.
 
-The default store column name is the exact CLR property symbol name, preserving
-casing. `WeaveColumn` explicitly overrides it without renaming the generated
-typed member. The lowercase names above are therefore deliberate schema mappings,
-not an unspecified naming convention. Generated/handwritten parity must also
-include the same key/concurrency flags, codecs, nullability and projection order.
+`[DbConstructor]` selects a constructor, and `[DbParameter(nameof(Member))]` selects its member association. `[assembly: DbCodec(...)]` registers a shared conversion default; `[DbUseCodec(...)]` selects a policy at a member. Preserve nullable wrapping and the same codec policy for writes, generated readers and Fluent projection binding. Reverse scaffolding emits these same names and preserves exact catalog names through safe identifiers/literals and explicit aliases.
 
 ## 4. Static materialization and errors
 
-Projection descriptors contain ordered column/codec IDs, nullability and expected result shape. Rust validates and emits the bounded typed batch; C# checks the matching shape and invokes direct typed readers/constructors. Database conversions and provider semantics remain Rust-owned; converting an owned wire value to a CLR DTO is boundary materialization, not a second ORM engine.
+Projection descriptors carry ordered column/codec IDs, nullability and expected result shape. The native layer emits bounded typed batches; C# checks the complete expected shape and invokes direct typed readers/constructors. Validate count, order, aliases, codec/type and nullability before interpreting values. Missing or duplicate columns are errors; a missing nullable column must never be treated as SQL NULL. Static application typing cannot prove a malformed or schema-drifted native result is correct.
 
-A mapping failure or user constructor exception stops iteration, releases the batch in finally, closes/drains the cursor according to D15/D06 and preserves any transaction outcome. No reflection or stringification fallback. Non-null targets receiving SQL NULL, integer narrowing/precision loss, invalid UTF-8 and unknown codec IDs produce explicit failures. Ordinary DTO strings/bytes own a managed copy; zero-copy views are separate lifetime-scoped APIs and cannot escape by default.
+A mapping failure or user constructor exception stops iteration, releases the owned batch in `finally`, closes/drains the cursor through the existing asynchronous lifetime contract and preserves the transaction outcome. No reflection or stringification fallback is permitted. Non-null targets receiving SQL NULL, integer narrowing/precision loss, invalid UTF-8 and unknown codec IDs fail explicitly. Ordinary DTO strings/bytes own managed copies; separate lifetime-scoped zero-copy views cannot escape their owner by default.
 
-Runtime JSON mapping uses explicitly supplied static JsonTypeInfo where relevant. Closed generics must be AOT-visible; an application cannot invent an arbitrary result type from an untrusted runtime name. Boxing, descriptor startup allocation and generated code-size costs are measured rather than presumed zero.
+JSON continues using explicitly supplied source-generated `JsonTypeInfo` and `JsonSerializerContext`. Closed generic mappings must be AOT-visible; arbitrary result types cannot be created from untrusted runtime names. Preserve dynamic-code/trimming checks. Boxing, descriptor initialization allocation and generated code size require evidence before a zero-cost claim.
 
 ## 5. Fluent binding without method-body capture
 
-Calls to typed native-backed operators are ordinary C# calls. A convenience lambda over expression proxies is a normal builder delegate, not an arbitrary domain-object predicate interpreted later. No source generator rewrites every method invocation or assumes it can intercept any call. Unknown C# methods are simply not part of the query API. Feature-gated operations resolve against the selected native profile and are also validated natively at execution.
+Calls to typed native-backed operators are ordinary C# calls. A convenience lambda over expression proxies is a normal builder delegate, not an arbitrary domain predicate interpreted later. The generator does not rewrite every method invocation or intercept arbitrary calls. Unknown C# methods are outside the query contract. Capability-gated operations resolve against the selected profile and are also validated at native execution.
 
-Dynamic UI filtering uses validated table/field/operator metadata and parameters, retaining finite node/depth/byte limits. It does not require a serializable full C# expression tree or a universal Core query IR. B09 may define compact transport operations if batching wins; semantic evaluation stays in native SeaQuery.
+Dynamic filtering resolves only validated table/field/operator metadata and bound parameters, with finite node/depth/byte limits. It introduces no complete serializable C# expression tree, universal Core query IR or managed SQL evaluator. Mutable query ownership, native owner/generation validation and immutable frozen plans retain their existing rules.
 
 ## 6. Diagnostics and compatibility
 
-Do not silently reuse old diagnostic meanings. The prior declaration-only NWQ0001–NWQ0016 family remains associated with the superseded experimental profile. Proposed new static-metadata diagnostics:
+DB-Rename-01 changes the attribute names in matching, generated C# and diagnostic messages; it does not repurpose diagnostic IDs or silently change the negative cases.
 
 | ID | Error and remedy |
-|---|---|
-| NWQ0101 | Model member has no enabled native codec; select an explicit supported mapping/profile |
-| NWQ0102 | Nullable database column mapped to non-null target without an explicit policy |
-| NWQ0103 | Ambiguous constructor/member mapping; declare the intended static constructor |
-| NWQ0104 | Duplicate or inconsistent metadata/alias/key declaration |
-| NWQ0105 | Required capability absent from the selected package's compile-time profile; native runtime validation remains mandatory |
-| NWQ0106 | Unsupported generator input/dependency shape; use explicit shared input or handwritten static descriptors |
-| NWQ0107 | AOT mapping would require dynamic code or unbounded reflective discovery; supply static mapping |
+| --- | --- |
+| NWQ0101 | No static codec for a mapped member; use a supported scalar or exact accessible codec policy |
+| NWQ0102 | Nullable column mapped to a non-null constructor/key; declare a consistent static policy |
+| NWQ0103 | Ambiguous or inaccessible static construction; select an accessible constructor or writable/init properties |
+| NWQ0104 | Duplicate/inconsistent metadata, alias, key or mapping policy; supply unique exact metadata |
+| NWQ0105 | Required codec capability absent from the selected compile-time profile; choose a compatible profile |
+| NWQ0106 | Unsupported source input/dependency shape; use explicit shared input or handwritten descriptors |
+| NWQ0107 | Mapping would require dynamic code or runtime discovery; supply a closed static mapping |
 
-Cross-entity/type mismatch should primarily fail through ordinary C# typing, as the recovered negative fixture demonstrates. Dynamic runtime profile failures remain structured domain errors, not fake compile diagnostics. Version changes to metadata schema/native capabilities require explicit generator/package compatibility checks; a business model hash is not an ABI version.
+Cross-entity/value type errors should fail through ordinary C# typing. Runtime profile mismatch remains a structured domain error rather than a fictitious compile diagnostic. Unknown metadata schemas or required codecs fail early without reflection/provider fallback. Metadata-schema and capability changes require explicit generator/package compatibility checks. A business model hash is distinct from ABI, package and capability versions.
 
-## 7. Build/package and verification
+## 7. Descriptor and operation invariants
 
-See D10. The normal consumer command path is restore → C# compilation/generation → local run; publication adds Native AOT and supported native linkage, not application Cargo. Test on a machine without Rust, with no network after allowed restore, both RID-free local commands and explicit-RID publish. Rebuild the C# app after adding a second entity/projection/query while checking the native asset hash is unchanged.
+A table's canonical metadata includes schema-format version, logical identity, validated names, scalar codec/nullability, primary keys and ordered projection fields. The existing v1 table relations array stays reserved empty. An explicit relation has separate canonical metadata containing both table/model identities, ordered parent-key/child-key pairs and child nullability; registering a relation does not rewrite either table hash. Adding a supported entity registers another descriptor and does not change native assets.
 
-B10 owns incremental stability, deterministic output, compiler-version fixtures, diagnostic spans and negative unsupported types. B12 owns static DTO decoding and exception cleanup. B13 owns runtime Fluent binding and compile-time type rejection; B11 owns native query/binding behavior. A13/A16/B24 own package and platform matrices. They can start using versioned interface fixtures rather than waiting for full domains.
+| Phase | Required invariant |
+| --- | --- |
+| Generator input | Stable syntax/semantic equality; deterministic names/order; diagnostics point to source spans |
+| Build | Generated and handwritten descriptors/readers use the same API; no native compiler or database calls |
+| Query call | C# checks entity/value types; native entry checks owner, generation and profile |
+| Seal/submission | Snapshot mutable parameters and freeze the query; reused shapes receive independent execution values |
+| First result | Validate complete ordered shape; reject duplicates, missing columns and type mismatches before NULL handling |
+| DTO construction | Invoke the selected typed constructor; failures release batches and close/drain cursors |
+| Compatibility | Reject unknown metadata schema, codec and incompatible capability/profile without fallback |
 
-Required evidence: generated-source golden files, incremental cache behavior when unrelated/model files change, wrong entity/value/nullability/constructor negatives, handwritten-versus-generated parity, no dynamic-code/trimming suppression, real Windows/Linux AOT execution, constructor exception and cursor/buffer cleanup, native profile mismatch, schema drift, large field/batch budgets and complete query semantic differential tests. A generator unit test is not an AOT consumer test. No production generator execution is claimed in this research revision.
+## 8. Verification and evidence boundary
 
-## 8. Fixed descriptor and operation rules for Codex
+Retain generated-source goldens, deterministic/incremental checks for unrelated/model edits, compiler-host fixtures, diagnostic-span checks, and negative wrong entity/value/nullability/constructor/codec cases. Preserve generated-versus-handwritten parity, mixed-query alias rejection, Dispose/seal race checks, unknown dynamic field/operator rejection, missing/duplicate result-column tests, constructor-failure cleanup, schema/hash drift, native profile mismatch and bounded large-field/batch behavior. Existing semantic differential tests retain their source-bound oracles.
 
-A table descriptor's canonical content includes schema-format version, logical metadata
-ID, validated names, scalar codec and nullability, primary keys and ordered projection
-fields. Its v1 relations array is reserved empty. An explicit Relation is created
-after both immutable tables; its separate canonical descriptor includes both model
-hashes/table IDs and ordered parent-primary-key/child-foreign-key pairs and child
-nullability. It registers through the source-bound relation ABI in
-`docs/api/database.md` §9.2.1 without rewriting either table hash. Native capability/ABI versions are
-separate from that business metadata hash. A second supported C# entity registers a
-second descriptor; it does not manufacture a new Rust type, rewrite Cargo.lock or
-change native assets. Runtime dynamic filters resolve only declared descriptors.
+For this task, run dependency-selected Korda checks and the Linux x64 external PackageReference order consumers for the actual SQLite and PostgreSQL candidates. Compile generated entities, immutable DTOs and reverse-scaffolded entities; run real database reads/writes. Rebuild after a DTO/model change and verify the packaged and loaded native bytes remain identical. A generator unit test, successful compilation or AOT publication is not an executed consumer result. Product receipts and PR checks remain distinct from Design document checks.
 
-| Phase | Exact obligation | Owner |
-| --- | --- | --- |
-| Generator input | Stable syntax/semantic equality, no timestamps/order instability; errors point to source spans | B10 |
-| Build | Emit static descriptors/readers; generated and handwritten forms use same API; no Cargo or database call | B10/A13 |
-| Query call | Entity/value types checked by C#; native owner/generation/profile checked at entry | B13/B11 |
-| Seal/submission | Snapshot mutable parameters and freeze native query; reuse shape with independent execution values | B11/B13 |
-| First result | Match complete ordered shape and reject duplicates/missing/type mismatches before NULL interpretation | B06/B12 |
-| DTO creation | Direct typed constructor; exception releases owned batch and closes cursor through async contract | B12 |
-| Compatibility | Unknown metadata schema or required codec fails early, with no reflection/provider fallback | B09/B24 |
+The current Korda AGENTS controls check selection: consumer execution is Native AOT, with no JIT, clean-image, CPU-emulation or extra platform campaign unless separately requested. This preserves the invariants above without turning historical platform experiments into new task acceptance.
 
-New research found a concrete reason for the first-result rule: SeaORM dynamic
-nullable decoding can map a missing column to None. The native preflight is therefore
-mandatory even for generated DTOs. Application static typing cannot validate a
-malformed or schema-drifted native result.
+## Historical research
 
-Acceptance examples must include compile failures for wrong entity/value types,
-runtime mixed-query aliases, Dispose/seal races, unknown dynamic field/operator,
-missing/duplicate result columns, constructor failure, schema hash drift, and a
-new entity in a no-Rust consumer with unchanged native binary hash. These are final
-implementation instructions; their product execution is recorded in Delivery, not
-fabricated as already completed Documentation work.
-
-### Published research CI evidence
-
-The [database CI confirmation](../../verification/database-completion/ci-confirmation.json) binds source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80` and run `43388468172` to actual Windows/Linux metadata/SQLite results (5/5 on each) and Linux PostgreSQL 18.0 results (6/6). Archived inputs/logs were checked byte-for-byte; Windows CRLF inputs remain separately identified. This confirms the finite native research oracles and leaves the specified C# product, TLS, concurrency, long-load and independent design-review obligations distinct.
-
-
-The optional SeaORM profile can inspect actual provider shape through public `QueryResult::try_as_pg_row` / `try_as_sqlite_row`, then SQLx `Row::columns` / `Column::type_info`. These borrowed views remain inside the row owner lifetime; no private field or fork is needed. Validate provider type compatibility rather than assuming a declared nullable field proves the result column exists; SQLite NULL/dynamic affinity still follows the explicit codec/null policy. The missing-column negative control remains part of the research fixture.
+The accepted D17/C-QUERYGEN-001 research contract, original Rust/SeaORM implementation studies, provisional declarations, Windows/Linux research outputs and their exact hashes remain in the [immutable pre-scope snapshot](https://github.com/IzuSharp/NativeWeave-Design/blob/c62cdb8aee833b6ab1a03e29a3f59f81a1b483f9/docs/generators/query-generation.md). In particular, the original nullable-decoding research motivated the missing-column preflight that remains required above. Those experiments retain their identities and do not establish execution of this renamed candidate. Frozen acceptance gates still read the original bytes.

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "task": "DB-Rename-01",
+  "branch": "task/DB-Rename-01-linux",
+  "baseline": "fcc2b3599066a467ce3d8bf52e4753bdeea6cd86",
+  "namespace": "Korda.Data",
+  "mappings": {
+    "WeaveTableAttribute": "DbTableAttribute",
+    "WeaveColumnAttribute": "DbColumnAttribute",
+    "WeaveKeyAttribute": "DbKeyAttribute",
+    "WeaveVersionAttribute": "DbVersionAttribute",
+    "WeaveIgnoreAttribute": "DbIgnoreAttribute",
+    "WeaveProjectionAttribute": "DbProjectionAttribute",
+    "WeaveConstructorAttribute": "DbConstructorAttribute",
+    "WeaveParameterAttribute": "DbParameterAttribute",
+    "WeaveCodecAttribute": "DbCodecAttribute",
+    "WeaveUseCodecAttribute": "DbUseCodecAttribute"
+  },
+  "preserved": [
+    "namespace",
+    "constructor_parameters",
+    "defaults",
+    "attribute_targets",
+    "behavior",
+    "json_source_generation",
+    "native_abi",
+    "persisted_database_identifiers"
+  ],
+  "compatibility": "source_and_binary_break_recompile_consumers",
+  "aliases": false,
+  "merge_authorized": false,
+  "publication_authorized": false,
+  "product_execution_claimed": false
+}

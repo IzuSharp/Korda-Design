@@ -1,6 +1,6 @@
 # Fluent ORM experience contract — DB-API-01
 
-This is an additive design contract for the existing Korda PostgreSQL/SQLite product. Implementation is pending until supported by source-bound Plan evidence. [ADR-0007](../decisions/ADR-0007-fluent-orm-experience.md) records authority; [fluent-orm.json](fluent-orm.json) maps each behavior to owners and acceptance claims. Exact final public declarations and XML come from compiled Korda assemblies.
+This is the behavior contract for the existing Korda PostgreSQL/SQLite product. [DB-Rename-01](db-attribute-names.md) supplies the current attribute spellings and the explicitly breaking managed-name change; all behavior below is retained. The completed DB-API-01 implementation evidence remains bound to its original names and source. DB-Rename-01 execution is recorded separately in Plan. [ADR-0007](../decisions/ADR-0007-fluent-orm-experience.md) records authority; [fluent-orm.json](fluent-orm.json) maps each behavior to owners and acceptance claims. Exact final public declarations and XML come from compiled Korda assemblies.
 
 ## Business journey and reuse
 
@@ -10,9 +10,9 @@ The current query sample already demonstrates filters, joins, grouping, aggregat
 
 ## Model conventions and static projection
 
-An opt-in parameterless `WeaveTableAttribute()` uses the exact CLR type name as table name and infers the unique nonnullable `Id` member as key. An explicit string constructor keeps existing behavior unless `InferPrimaryKey = true` is selected. Explicit `WeaveColumn` metadata overrides naming and flags. C# identifier casing is not silently changed by convention. Missing/ambiguous/inaccessible members and unsupported model shapes receive generator diagnostics before runtime; no broad reflection fallback is allowed.
+An opt-in parameterless `DbTableAttribute()` uses the exact CLR type name as table name and infers the unique nonnullable `Id` member as key. An explicit string constructor keeps existing behavior unless `InferPrimaryKey = true` is selected. Explicit `DbColumn` metadata overrides naming and flags. C# identifier casing is not silently changed by convention. Missing/ambiguous/inaccessible members and unsupported model shapes receive generator diagnostics before runtime; no broad reflection fallback is allowed.
 
-`WeaveProjection` on an ordinary class or record emits a static `Projection<TDto> Row` for parameterized SQL and a typed `Bind<TEntity>(Query<TEntity>, SqlExpression<T1>, ...)` factory for Fluent expressions. Parameter names follow DTO member names so the caller can map repeated names and computed expressions explicitly. The generated projection includes exactly those expressions; it does not select the entity's entire row. `WeaveColumn` supplies exact result aliases. Duplicate aliases fail with a static diagnostic (NWQ0104). `WeaveConstructor` and `WeaveParameter(nameof(Member))` select the constructor and parameter/member association; existing NWQ0102/NWQ0103 ambiguity diagnostics remain meaningful. Nullability is part of the generated reader type and is validated for the selected constructor.
+`DbProjection` on an ordinary class or record emits a static `Projection<TDto> Row` for parameterized SQL and a typed `Bind<TEntity>(Query<TEntity>, SqlExpression<T1>, ...)` factory for Fluent expressions. Parameter names follow DTO member names so the caller can map repeated names and computed expressions explicitly. The generated projection includes exactly those expressions; it does not select the entity's entire row. `DbColumn` supplies exact result aliases. Duplicate aliases fail with a static diagnostic (NWQ0104). `DbConstructor` and `DbParameter(nameof(Member))` select the constructor and parameter/member association; existing NWQ0102/NWQ0103 ambiguity diagnostics remain meaningful. Nullability is part of the generated reader type and is validated for the selected constructor.
 
 Illustrative expected composition, with exact compiled output owned by the product:
 
@@ -32,7 +32,7 @@ This snippet is an intended call shape, not an executed sample. Final documentat
 
 ## Reusable value mapping
 
-`[assembly: WeaveCodec(typeof(OrderId), typeof(OrderCodecs), nameof(OrderCodecs.Id))]` supplies a compilation-wide codec default. The declared member must be an accessible static value of exactly `ValueCodec<T>`. `WeaveUseCodec` overrides a property's default. A nullable member wraps the configured nonnullable codec. Conflicting defaults and incompatible values fail compilation instead of silently choosing one.
+`[assembly: DbCodec(typeof(OrderId), typeof(OrderCodecs), nameof(OrderCodecs.Id))]` supplies a compilation-wide codec default. The declared member must be an accessible static value of exactly `ValueCodec<T>`. `DbUseCodec` overrides a property's default. A nullable member wraps the configured nonnullable codec. Conflicting defaults and incompatible values fail compilation instead of silently choosing one.
 
 `Codecs.Convert<T,TStore>(ValueCodec<TStore>, Func<T,TStore>, Func<TStore,T>)` adapts a business value such as `OrderId` while preserving the store codec identity, encoding bounds and database type. Storage codecs must be nonnullable; nullable wrappers apply after conversion. Decimal precision/scale and JSON policies are reusable codec values, not provider guesses. Projections validate an explicitly expected codec ID, configuration and nullability against the expression's codec. A DTO can therefore share the same policy across Fluent, raw SQL, writing and model-driven schema. Conversion delegates are application code; their exceptions follow ordinary pre-admission/materialization behavior and never cross an unmanaged callback boundary.
 

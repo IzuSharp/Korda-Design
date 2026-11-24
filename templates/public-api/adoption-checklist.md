@@ -8,4 +8,4 @@
 6. Define supported platform/RID/capability and version-upgrade matrices. Measure package dependency closure and costs.
 7. Independently review adoption and record exact inputs. Any subsequent standard upgrade is an explicit reviewed version change, not automatic inheritance.
 
-For NativeWeave product implementation these actions belong to A13, A22 and A24 with each domain's owning task; A16/B24 verify the final released composition. They are future requirements only in this Design/Plan phase.
+For current Korda implementation, use the module owner and current task recorded in Plan. The original A13/A22/A24 and A16/B24 assignments remain historical planning inputs. A template grants no merge or publication authorization.

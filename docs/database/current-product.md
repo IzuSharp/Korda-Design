@@ -1,46 +1,42 @@
-# Retained database product — DB-Scope-01
+# Current Korda database product
 
-Source inspection begins at product main `ea5fa528035d025bd7a28698ee7c71194432236c`. This map identifies existing code to retain, not a claim that the pruned candidate has passed. Actual source/test identities are recorded in Plan.
+The existing product is the PostgreSQL/SQLite Fluent ORM with C# application models, DTOs and static mappings over the C++20 database engine. libpq and sqlite3 perform provider execution. [DB-API-01 behavior](fluent-orm.md) remains in force; [DB-Rename-01](db-attribute-names.md) changes the ten public attributes to `Db` names while preserving behavior. Exact current commands and module selection come from [Korda AGENTS](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/AGENTS.md); actual source/test identities belong to Plan and the product PR.
 
 ## Public-to-native map
 
-| Public operation | C# implementation | Native execution |
+| Public operation | C# implementation | Existing native execution |
 | --- | --- | --- |
-| Provider factory / DataSourceBuilder | `src/Data.Postgres`, `src/Data.Sqlite`, `src/Data.NativeHost` | `native/database/host` with provider-specific SQLx composition |
-| OpenSessionAsync, pool/session limits | `src/Data.NativeHost` | Host admission/pool/session state and provider I/O |
-| BeginTransactionAsync, commit/rollback/savepoints | `src/Data.Transactions` plus Host | `native/database/transactions` and SQLx provider operations |
-| Administration.MigrateAsync | `src/Data.Migrations` | `native/database/migrations` and SQLx migration/schema operations |
-| Typed values and parameters | `src/Data.Abstractions`, `Data.Codecs`, `Query.Binding` | `native/database/codecs`, `binding`, ordered native parameter conversion |
-| From / Where / ordering / query operators | `src/Query.Fluent`, `Query.Native` | `native/database/query`, SeaQuery native query/dialect state |
-| Static models and DTO projections | `src/Query.Generator`, `Data.Materialization` | Existing metadata/projection ABI and Host registration |
-| Relations and CRUD | `src/Orm.Relations` | `native/database/relations`, SeaQuery and SQLx |
-| AsAsyncEnumerable and terminals | `src/Data.Streaming`, `Query.Fluent` | `native/database/streaming`, Host cursor and bounded result ownership |
-| Cancellation, errors, disposal | Required Core/Interop modules | Required `native/interop` and database retirement |
+| Provider factory / DataSourceBuilder | `src/Data.Postgres`, `src/Data.Sqlite`, `src/Data.NativeHost` | `host.cpp`, `host_abi.cpp`, `provider.cpp` with provider-specific composition |
+| OpenSessionAsync and pool/session limits | `src/Data.NativeHost` | Host admission, pool/session state and provider I/O |
+| BeginTransactionAsync, commit/rollback/savepoints | `src/Data.Transactions` plus Host | Host transaction state and provider operations |
+| Administration and migrations | `src/Data.Migrations` | `administration.cpp`, native schema and migration operations |
+| Typed values and parameters | `src/Data.Abstractions`, `src/Data.Codecs`, `src/Query.Binding` | `contracts.cpp`, `scalar.cpp`, ordered parameter conversion |
+| From / Where / ordering / query operators | `src/Query.Fluent`, `src/Query.Native` | `query.cpp`, native query/dialect state |
+| Static models and immutable DTO projections | `src/Query.Generator`, `src/Data.Materialization` | Existing metadata/projection ABI and Host registration |
+| Relations and CRUD | `src/Orm.Relations` | `mutations.cpp`, query composition and provider execution |
+| AsAsyncEnumerable and terminals | `src/Data.Streaming`, `src/Query.Fluent` | Host cursors, provider fetches and bounded result ownership |
+| Cancellation, errors and disposal | Required Core/Interop modules | `interop.cpp` and native database retirement |
 
-The Database assembly includes the existing query, ORM, migration and materialization sources rather than adding new facade layers. Database Host is a required execution component. Its name is not a reason to delete it. Both `libnw_database_sqlite.so` and `libnw_database_postgresql.so` remain maintainer-precompiled provider assets.
+Native filenames in the table are under `native/cpp/src`; their corresponding headers are under `native/cpp/include/nw`. The product [native build guide](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/docs/guides/cpp-native.md) records toolchain and implementation details. The Database assembly composes the existing query, ORM, migration and materialization sources. Database Host remains required execution infrastructure, not an HTTP server. Independent provider packages include `libnw_database_sqlite.so` or `libnw_database_postgresql.so` with their required managed closure.
 
-The database model generator is `Query.Generator`. Exact database native prototypes come from `tests/Query.Binding/generate.py` and `native/database/binding/signatures-v1.json`. The initial scope inventory incorrectly included `Generators.Model`; the [source dependency audit](https://github.com/IzuSharp/Plan/blob/d74f6bcc8b0e6c4b04105449e8436335bf34bd47/ledger/evidence/batches/DB-Scope-01/dependency-audit.json) found that the generic Generators.Model/CSharp/Rust/Metadata and Analyzers products serve their own proof fixtures, not database projects or packages. Retire those orphan products and retain actual database generation, diagnostics and binding checks.
+The database model generator remains `Query.Generator`. Exact retained native prototypes come from `tests/Query.Binding/generate.py` and `native/database/binding/signatures-v1.json`. The rename changes neither those ABI signatures nor native execution ownership. JSON continues using existing source-generated metadata.
 
 ## Preserve behavior, including failure paths
 
-Maintain existing immutable option snapshots, lazy source/pool creation, explicit connection/session acquisition and per-source resource budgets. Build negotiates a module and starts database-owned runtime state; it does not perform connection or migration I/O. Core itself starts no default global Rust runtime.
+Preserve immutable option snapshots, lazy source/pool creation, explicit connection/session acquisition and per-source budgets. Build negotiates the module and starts database-owned runtime state; it does not perform connection or migration I/O. Core introduces no default global native runtime.
 
-Maintain transaction outcome versus cleanup distinctions, failed-transaction rollback, savepoints, pre-admission cancellation and unknown COMMIT outcomes. Unknown does not permit automatic replay. Protocol-clean reuse is independent of local quiescence. Administrative/migration work must preserve lock/connection cleanup and errors; SQLite and PostgreSQL differ and are tested separately.
+Keep transaction outcome separate from cleanup: failed-transaction rollback, savepoints, pre-admission cancellation and unknown COMMIT outcomes retain their contracts. Unknown never permits automatic replay. Protocol-clean reuse is independent of local quiescence. Administrative/migration operations preserve provider-specific locks, connection cleanup and errors.
 
-Maintain parameter binding order, scalar/NULL/UTF-8 and numeric semantics, real SeaQuery SQL rendering, capability checks and explicit unsupported-operation errors. No unsupported SQLite clause may disappear silently. Existing expert SQL remains explicit and parameterized; Fluent failures never fall back to managed execution.
+Maintain ordered parameter binding, scalar/NULL/UTF-8/numeric semantics, native dialect rendering and explicit capability errors. An unsupported SQLite clause must not disappear silently. Expert SQL remains explicit and parameterized, without fallback to managed execution. Preserve typed fields, immutable metadata, complete result shape, static DTO materialization and handwritten/generated parity. Ordinary C# entity/DTO edits reuse native bytes.
 
-Maintain typed fields, source-owned immutable metadata, exact result shape, static DTO materialization and handwritten/generated metadata routes. Ordinary C# entity/DTO changes reuse native bytes. A query builder's lifecycle and single-writer admission remain distinct from immutable shareable descriptors.
-
-Maintain primary-key CRUD, explicit relations, tenant/composite keys, optional foreign keys, changesets, upsert and version/affected-row semantics. Do not introduce transparent lazy loading, new tracking or additional ORM features.
-
-Maintain stream budgets, early-break/disposal, canceled operations, callback retirement and source/session close. Releasing an owner follows actual native obligations; a timeout is not permission to force-free. Errors retain structured provider diagnostics and cleanup failures without secret connection or parameter logging.
+Retain primary-key CRUD, explicit relations, tenant/composite keys, optional foreign keys, changesets, upsert and version/affected-row semantics. The rename adds no tracking, lazy loading or graph persistence. Preserve stream budgets, early-break/disposal, canceled operations, callback retirement and source/session close. A timeout is not permission to force-free an owner. Keep structured provider errors and cleanup failures without logging secrets.
 
 ## Transport-independent business operations
 
-A C# application owns its business query methods and calls these database APIs directly. The same method can be invoked by a console, ASP.NET Core HTTP endpoint or standard C# gRPC method. The database library has no dependency on those application transports and introduces no NativeWeave server wrapper.
+A C# application owns its business query methods. Console, ASP.NET Core HTTP and ordinary C# gRPC entry points may call the same method with cancellation; database packages introduce no transport wrapper. Internal `Reference.TaskService` and `Verification.EndToEnd` paths preserve their direct database idempotency/replay, conflict lookup, pagination/recovery, optimistic CRUD/outbox, nullable/composite relation, same-session, early-cursor and lost-COMMIT-ack oracles. Their continued database assertions are not new server product scope.
 
-The mixed `Reference.TaskService` and `Verification.EndToEnd` validation paths are retained only as internal direct database verification executables. Preserve their unique idempotent-create/replay, conflict lookup, pagination, recovery, optimistic CRUD/outbox, nullable/composite relation, same-session, early-cursor and lost-COMMIT-ack oracles. Remove own-server/protocol coupling and unrelated attachment/compression behavior.
+## Current validation and historical boundaries
 
-## Required validation
+Follow the [current matrix](../verification/models-and-matrix.md): dependency-selected managed/native/API checks, two separately built candidate packages, and real SQLite/PostgreSQL reads/writes through external PackageReference Native AOT order consumers. Inspect package contents and loaded native paths/hashes; preserve failure attempts and review evidence. No JIT, clean-image, CPU-emulation or additional platform/performance campaign is requested. Stop at passing PR checks for maintainer review, with no merge or public publication.
 
-Run retained Rust and C# workspace checks and real database/ORM regressions. Pack the [database candidates](../api/nuget-and-consumption.md), then execute external PostgreSQL JIT, PostgreSQL AOT, SQLite JIT and SQLite AOT consumers with typed Fluent and DTO assertions. Inspect dependency graphs, publish files and actual native mappings. Preserve failure attempts and independence of review. This batch measures correctness and scope closure, not performance superiority.
+The earlier Rust/SeaQuery/SQLx source map, pruning commands and four JIT/AOT cells remain available at the [immutable DB-Scope-01 snapshot](https://github.com/IzuSharp/NativeWeave-Design/blob/8298dc4128b745cf1809bad0c3cf02c45eb7f522/docs/database/current-product.md). They retain their original meaning and are not the current implementation map. Frozen `docs/current-scope.json`, C++ migration records and completed DB-API-01 evidence are not rewritten by this task.
