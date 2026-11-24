@@ -1,24 +1,30 @@
-# Linux x64 and Native AOT — DB-Scope-01
+# Linux x64 and Native AOT — current Korda
 
-The only current validation target is **Linux x64**. Toolchain pins are read from the fresh product's `global.json` and `rust-toolchain.toml`; at the inspected baseline these are .NET SDK 11.0.100 and Rust 1.100.0. These are repository pins, not a new release survey. Existing Windows/research evidence retains its original identity and does not establish current candidate support.
+Linux x64 is the validation target for DB-Rename-01. Read actual toolchain pins from Korda's `global.json` and `native/dependencies.lock.json`, and use the product [native build guide](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/docs/guides/cpp-native.md). The maintained engine is C++20/libpq/sqlite3. Prior Windows and Rust research evidence keeps its original identity and does not certify this candidate.
 
 ## Required execution matrix
 
-| Provider | JIT | Native AOT |
-| --- | --- | --- |
-| PostgreSQL | Actual external PackageReference query/DTO execution | Actual publish and native executable query/DTO execution |
-| SQLite | Actual external PackageReference query/DTO execution | Actual publish and native executable query/DTO execution |
+| Actual provider candidate | Required consumer observation |
+| --- | --- |
+| `Korda.Database.PostgreSql` | External PackageReference, Native AOT publish and direct binary execution against a real PostgreSQL database |
+| `Korda.Database.Sqlite` | External PackageReference, Native AOT publish and direct binary execution against a real SQLite database |
 
-Every row uses the pruned candidate packages, precompiled native assets, real data and a consumer outside the source checkout. Record exact package/native/executable hashes, toolchain/platform, commands, exit statuses and independent data assertions. Source builds and historical probes do not replace external consumer rows.
+Each provider has its own package/consumer runner. Execute the existing order workflow with generated models, immutable DTOs, read/write assertions and compiled reverse-scaffolded entities. After the managed DTO edit, recompile/run and verify native asset hashes remain identical. Record exact source/package/native/executable identities, actual platform/toolchain, commands and exit results. Compilation alone is not an executed database result.
+
+[Korda AGENTS](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/AGENTS.md) governs dependency-selected checks and direct AOT consumer execution. Skip JIT consumers for this task. Clean-image and CPU-emulation checks, extra platform certification and performance campaigns require a separate request; none is implied by this rename.
 
 ## Runtime and build prerequisites
 
-Native AOT execution needs no installed .NET runtime. Publishing still needs the .NET SDK and appropriate native linker/system prerequisites. The application consumer needs no Rust toolchain; maintainers compile Rust before packaging. Separate those claims and distinguish a command trap from an actually pristine no-Rust container.
+Native AOT execution requires no installed .NET runtime. Publishing requires the .NET SDK and normal native linker/system prerequisites. Consumers reuse the bundled native assets and do not rebuild the database engine when an entity or DTO changes. Maintainers use the checksum-pinned native toolchain before packaging. An observed command trap is distinct from proof on a clean machine; do not claim a clean-image result without that execution.
 
-The package's declared Linux ABI/CPU/dependency profile must match the built assets. Keep existing native dependency, exported-symbol, architecture and reproducibility checks. No implicit platform/architecture fallback, host-specific CPU tuning or new platform certification is introduced.
+The declared Linux ABI/CPU/dependency profile must match actual built assets. Preserve dependency, export, architecture and reproducibility checks selected by the affected modules. No implicit architecture fallback, host-specific CPU tuning or new platform support is introduced.
 
 ## Closure and lifetime
 
-Inspect resolved NuGet dependencies, output manifests, final publish files and loaded libraries. The selected database assets are `libnw_database_sqlite.so` and/or `libnw_database_postgresql.so`; NativeWeave Server/protocol/proof/demo assets must be absent. Do not remove required OS libraries merely because a package has no managed dependency on them.
+Inspect resolved NuGet dependencies, manifests, final publish output and actual loaded libraries. The selected native asset is `libnw_database_sqlite.so` or `libnw_database_postgresql.so`; each provider must retain its own independent dependency closure. Preserve required OS libraries. Consumer models use the current `Db` attributes in `Korda.Data`.
 
-Both JIT and AOT preserve type/NULL/parameter semantics, cancellation/error handling, stream/transaction lifetime and actual retirement. AOT compilation alone cannot prove behavior, and bounded close alone cannot prove reclamation. See [the verification matrix](../verification/models-and-matrix.md).
+Type/NULL/parameter semantics, cancellation/errors, stream/transaction lifetime and actual retirement remain unchanged. AOT compilation alone proves neither behavior nor resource reclamation. See the [current verification matrix](../verification/models-and-matrix.md).
+
+## Historical scope
+
+The original Rust toolchain mandate and four JIT/AOT consumer cells are preserved in the [DB-Scope-01 platform snapshot](https://github.com/IzuSharp/NativeWeave-Design/blob/8298dc4128b745cf1809bad0c3cf02c45eb7f522/docs/platforms/support-and-aot.md) and frozen `docs/current-scope.json`. They document that accepted batch. DB-API-01's retained behavior and current Korda instructions govern this task, with the DB-Rename-01 name/compatibility change layered explicitly on top. Historical acceptance is not transferred to changed candidate bytes.

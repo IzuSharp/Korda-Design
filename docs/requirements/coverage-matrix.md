@@ -1,3 +1,11 @@
+# Historical DB-Scope-01 source and acceptance map
+
+The retained/removed source inventory, Rust paths, package closure and four consumer cells below describe DB-Scope-01. They are not the current implementation map or task matrix. The accepted original is preserved at its [immutable snapshot](https://github.com/IzuSharp/NativeWeave-Design/blob/8298dc4128b745cf1809bad0c3cf02c45eb7f522/docs/requirements/coverage-matrix.md); the current-path spelling below does not rebind its acceptance hash.
+
+Use the [current Korda product map](../database/current-product.md), [DB-Rename-01 naming contract](../database/db-attribute-names.md) and [current verification matrix](../verification/models-and-matrix.md) for the existing C++20/libpq/sqlite3 product and two Native AOT provider lanes. Product check selection follows Korda AGENTS. DB-Rename-01 stops for maintainer review without merge or public publication.
+
+## Historical scope inventory
+
 # DB-Scope-01 coverage and preservation matrix
 
 This current scope map records inspected implementation ownership and required regressions; it does not mark tests passed. Actual execution is in the [Plan acceptance record](https://github.com/IzuSharp/Plan/blob/task/DB-Scope-01-linux/ledger/evidence/batches/DB-Scope-01/acceptance.json).
@@ -12,7 +20,7 @@ This current scope map records inspected implementation ownership and required r
 | Static model and DTO | `src/Query.Generator`, `src/Data.Materialization` | Existing metadata/query host operations | Static mapping, model/DTO edits, database generator diagnostics and AOT |
 | Relations and CRUD | `src/Orm.Relations` | `native/database/relations` | Nullable/composite relations, tenant keys, version checks and affected rows |
 | Result streams | `src/Data.Streaming` | `native/database/streaming` and Host | Bounded batches, early stop, cancellation and retirement |
-| Interop | `src/NativeWeave.Core`, required `Interop.*`, database signature generator `tests/Query.Binding/generate.py` | Required `native/interop` crates and `native/database/binding/signatures-v1.json` | ABI, database signature generation, ownership, async/callback/error/buffer regression |
+| Interop | `src/Korda.Core`, required `Interop.*`, database signature generator `tests/Query.Binding/generate.py` | Required `native/interop` crates and `native/database/binding/signatures-v1.json` | ABI, database signature generation, ownership, async/callback/error/buffer regression |
 | NuGet/AOT | Retained packaging/build/compatibility tools | Precompiled provider libraries | Four external PackageReference executions and dependency/load closure |
 
 ## Explicit exclusions

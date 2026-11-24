@@ -1,3 +1,13 @@
+# Current task — DB-Rename-01
+
+Update Korda's ten database attributes to the `Db` names in the [naming contract](docs/database/db-attribute-names.md) and [exact mapping](docs/database/db-attribute-names.json). The [public API standard](docs/standards/csharp-public-api-and-documentation.md#3-public-surface-and-package-boundaries) defines domain names independent of implementation language. Preserve attribute namespaces, signatures, defaults, targets and behavior; keep C++20/libpq/sqlite3 execution and the existing JSON source-generation metadata.
+
+Use `task/DB-Rename-01-linux` and a task-marked worktree. Current documentation and examples use the new names; frozen acceptance inputs, actual repository URLs, historical evidence and persisted database identifiers retain their identities. Run `python3 tools/verify_db_rename.py`, which checks this overlay and the original completed Design gates at the frozen baseline. Korda owns compiled/API/package/real-database Native AOT checks. Design checks do not establish product execution.
+
+Push the reviewed changes and open the companion PR. Stop after its checks pass, awaiting maintainer review. **This task does not authorize merging or public publication.** Earlier merge/release instructions below apply only to their completed historical tasks.
+
+## Earlier task authority (historical)
+
 # Current task — DB-API-01
 
 Korda's owner authorizes C# Fluent ORM experience enhancements on Linux x64. Read [ADR-0007](docs/decisions/ADR-0007-fluent-orm-experience.md), the [behavior contract](docs/database/fluent-orm.md), the [mapping overlay](docs/database/fluent-orm.json) and the [published Plan-first checkpoint](https://github.com/IzuSharp/Plan/blob/21e98f7591b4cf1f7fd5b7d5e791ab0be4271515/ledger/evidence/batches/DB-API-01/plan.md). Korda AGENTS.md governs current module registration, direct Native AOT checks and automatic release selection. Work uses `task/DB-API-01-linux` and `.worktree/DB-API-01-linux/`.

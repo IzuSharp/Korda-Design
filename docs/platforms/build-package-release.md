@@ -1,3 +1,11 @@
+# Historical DB-Scope-01 build and release instructions
+
+The source-pruning, Rust build, four JIT/AOT consumer cells and merge/main-CI instructions below describe the completed DB-Scope-01 batch. They do not govern current Korda builds or authorize actions for DB-Rename-01. The accepted original remains in its [immutable snapshot](https://github.com/IzuSharp/NativeWeave-Design/blob/8298dc4128b745cf1809bad0c3cf02c45eb7f522/docs/platforms/build-package-release.md).
+
+For current work use [Korda package consumption](../api/nuget-and-consumption.md), the [current verification matrix](../verification/models-and-matrix.md), and [Korda AGENTS](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/AGENTS.md). DB-Rename-01 builds the two provider candidates, runs direct Native AOT consumers and stops after passing PR checks for maintainer review. It does not authorize merging or public release.
+
+## Historical task text
+
 # Database build, packaging and release boundary — DB-Scope-01
 
 The current default build/test/package product is the PostgreSQL/SQLite database closure. [The package graph](../api/nuget-and-consumption.md) and [scope manifest](../current-scope.json) replace the older multi-engine release design for this batch.
