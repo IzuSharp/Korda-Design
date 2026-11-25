@@ -180,7 +180,7 @@ Native command parameters first enter a private registry. Only successful final
 compilation atomically merges identities into the source registry, so a malformed
 or rejected command cannot reserve a source parameter ID.
 
-**Implemented follow-up, comparative effect pending:** an exclusively admitted
+**Implemented follow-up; measured allocation regression remains:** an exclusively admitted
 command with one root, no dependencies and exactly one tape reference per
 uncaptured origin uses a direct serializer to avoid generic temporary traversal
 and indexing collections. Sealing also requires an empty origin-publication gate
@@ -198,9 +198,14 @@ private/shared command-byte parity, captured-owner lifetime and quota recovery;
 they do not measure the final comparison. This implementation follows the
 [published first SQLite observation](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/query-optimization/phase-sqlite-r0-034b40ea/README.md)
 and preceding selection. The [implementation checkpoint](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/query-optimization/serializer-f0078da7/README.md)
-binds current source, local correctness and ordinary CI. The earlier dynamic
-allocation regression is not declared resolved; fresh frozen-input phase and
-mixed-load results must establish any benefit.
+binds source, local correctness and ordinary CI; the [final comparison record](https://github.com/IzuSharp/Plan/blob/bfe4aa3f074789dfac046412eff37fe6ba58b0f7/ledger/evidence/batches/DB-Perf-01/query-optimization/final-f0078da7/README.md)
+owns measured outcomes. Across 18 phase processes, ordinary Fluent allocation
+remains approximately 25.31% above recovered on both providers. Lower allocation
+relative to the earliest baseline is a cumulative observation, not isolated proof
+of this slice. Short-load memory/GC and Dapper.AOT gaps remain. All four final local 1800-second cells are validated, as is the unchanged 16-app/926-file post-run freeze. Candidate allocation is 4.7813×/5.2268× Dapper.AOT on SQLite/PostgreSQL, throughput is 3.5762%/12.4863%, and p99 is 44.8×/8.6244×. The final full archive remains local-only after upload rejection; public Plan summaries do not claim to expose all final histograms or traces. Record these gaps and stop without merging, as instructed by the owner.
+Static entity/DTO metadata is generated. Arbitrary build-time Fluent SQL and
+connection-level physical statement reuse remain unimplemented; neither follows
+from the complete-command contract.
 
 ## Parameters, physical statements and contention
 

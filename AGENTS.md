@@ -1,5 +1,9 @@
 # Korda-Design working rules
 
+## Current stop — final local evidence recorded
+
+The owner instructed completing tests, recording results in the existing PRs and stopping without merging. All four local 1800-second cells and the 16-app/926-file input rehash are complete. Keep the remaining performance gaps and local-only final archive status explicit. No additional benchmark, optimization, merge or release is selected; the continuation below describes the frozen candidate and is not an instruction to restart work.
+
 ## Current task — DB-Perf-01 query optimization
 
 The owner has resumed DB-Perf-01 on Linux x64 after the cancellation recorded in

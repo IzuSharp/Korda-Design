@@ -2,7 +2,7 @@
 
 The owner has resumed Linux x64 query optimization in [Korda #37](https://github.com/IzuSharp/Korda/pull/37).
 The C# Fluent API and C++20/libpq/sqlite3 execution remain. The current stage is
-an implementation candidate with local correctness checks. C# composes dynamic
+an implemented candidate with completed phase, short-load, resource and all four local 1800-second observations. C# composes dynamic
 Fluent queries into one bounded NWQC command; C++ validates and compiles the
 existing operation inventory. `.Prepare()` compiles immutable SQL and parameter
 validation metadata before repeated execution. Result batches, cancellation and
@@ -12,10 +12,11 @@ fixed-query template generation remain gaps, not delivered features.
 The selected private single-root serializer is now implemented with a 4096-byte
 stack limit and generic fallback. Dependency, origin capture/sharing and sealing
 gate guards preserve the existing protocol and ownership boundary. Local
-correctness and the current ordinary CI have passed; its allocation/performance
-effect remains pending. The [latest Plan checkpoint](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/query-optimization/serializer-f0078da7/README.md)
-retains both unexplained earlier failures, the exact new frozen inputs and ongoing
-local phase diagnostics. No final 30-minute comparison is accepted by this state.
+correctness and ordinary CI have passed. The [final comparison record](https://github.com/IzuSharp/Plan/blob/bfe4aa3f074789dfac046412eff37fe6ba58b0f7/ledger/evidence/batches/DB-Perf-01/query-optimization/final-f0078da7/README.md)
+binds actual phase, short mixed-load and resource observations. Ordinary Fluent
+still allocates about 25.31% more than recovered, despite lower cumulative
+allocation than the earliest baseline. Dapper.AOT and retained-memory gaps remain;
+these observations do not isolate the last serializer's causal effect. All four cells are validated and the 16-app/926-file post-run rehash is unchanged. Candidate throughput is 3.5762% of Dapper.AOT on SQLite and 12.4863% on PostgreSQL; performance parity is not claimed. The final full archive remains local-only after upload rejection; Plan publishes selected summaries and verification receipts. Earlier failures remain unexplained. The owner instructed recording results and stopping with PRs only, without merging.
 
 Read the [current decision and implementation order](docs/database/query-semantics.md),
 [Fluent contract](docs/database/fluent-orm.md), [generation boundary](docs/generators/query-generation.md)
