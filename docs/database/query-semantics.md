@@ -1,7 +1,7 @@
 # Current execution-path target — DB-Exec-02
 
-Status: **candidate B implemented; clean package verification and controlled local
-performance acceptance are in progress**. The owner resumed the complete database execution-path refactor on
+Status: **candidate B measured; cursor pull-channel replacement is in progress
+and has no final performance acceptance**. The owner resumed the complete database execution-path refactor on
 2026-11-26 (Asia/Shanghai), continuing [Korda #37](https://github.com/IzuSharp/Korda/pull/37),
 [Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and
 [Plan #34](https://github.com/IzuSharp/Plan/pull/34). The immediate product input is
@@ -31,7 +31,8 @@ follow a compatible responsibility and lifetime boundary.
 | SQLite command opening | Prepare one statement, inspect its metadata and bind that same statement | No step at open; error order, borrowed-input lifetime, finalization on failure |
 | Native execution parameters | Retain immutable ordered shape metadata; create one independently owned, once-validated typed argument set for each accepted execution | Snapshot values before retention; no mutable caller buffers or borrowed span across await |
 | Native result production | Write converted values and offsets directly into one bounded owned batch arena | Complete shape and extent validation; field/row/byte limits; failure-atomic transfer |
-| Managed batch and row access | Retain the existing borrowed native batch owner; bind a validated layout once, then invoke typed access and DTO construction | No reader escapes its lease; missing/duplicate/type/NULL/UTF-8/precision errors remain explicit |
+| Native fetch scheduling | One cursor pull channel; first request opens and fetches, subsequent requests fetch directly | Complete open/shape validation precedes first Execute/step; each accepted request has one detached ready notification; final close joins every native tail |
+| Managed batch and row access | One reusable channel controller and stable scoped native batch owner; bind a validated layout once and directly construct DTOs | No reader escapes its generation/lease; missing/duplicate/type/NULL/UTF-8/precision errors remain explicit |
 | Prepared Fluent | Reuse compiled SQL, parameter ordinals/codecs and projection; repeated execution changes independently captured values | Source/profile/generation checks; independently disposable plan; concurrent executions use independent owners |
 | Dynamic Fluent | Complete typed composition before submission; compile one validated representation directly if the command gate proves equivalence | Immediate recoverable builder checks, native capabilities, clones/CTEs, literal budgets and nonsealing ToSql |
 | Retirement | Keep the actual provider, callback, batch and connection obligations accounted until they finish | Cancellation or public completion alone cannot free owners or return an unsafe connection |
@@ -142,10 +143,11 @@ cold preparation and per-execution snapshots separately.
 
 ### Results: direct arena construction and one layout decision
 
-The current candidate already borrows native batch memory through
-HostStreamTransport and its retained SafeHandle/row lease. There is no proposed
-removal of a whole-batch native-to-managed copy that this starting path does not
-perform. Keep that lifetime mechanism where it remains suitable.
+Candidate B already borrows native batch memory through HostStreamTransport and
+its retained SafeHandle/row lease. There is no proposed removal of a whole-batch
+native-to-managed copy that this starting path does not perform. The next target
+keeps scoped native borrowing but replaces the per-batch wrapper and generic
+operation lifetime with the cursor channel described below.
 
 Rewrite native per-cell owning byte vectors, row staging and repeated batch
 parsing into a checked writer for the final bounded batch arena. Validate the
@@ -189,7 +191,94 @@ it creates no operation or buffer and executes no SQL or protocol send. It avoid
 an empty fetch without suppressing the original errors. Transaction disposal
 waiting for an existing cursor does not forbid that reader from finishing.
 Measure wakeup, dispatch, retirement and mapping separately before attributing
-read-complete latency to a timer or mapper.
+read-complete latency to a timer or mapper. This paragraph records B's measured
+implementation. Its unpublished bit-27 extension is replaced by the channel
+contract below; it is not an additional compatibility obligation on the new path.
+
+### Cursor pull channel: remove the per-batch operation lifetime
+
+The paired C1/R4/R1ms experiments retained B's native images and varied bounded
+queued retirement retries and the database coordinator interval. Mixed throughput
+improved, but repeated 1000-row completion samples still varied materially. The
+[raw decision evidence](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/execution-refactor/retirement-experiments/README.md)
+does not establish that every slow sample is a timer wait. It justifies testing a
+different lifetime boundary instead of accepting a shorter polling interval as
+the complete refactor. None of those experiments establishes a 0 B framework path.
+
+NpgsqlDataReader and Microsoft.Data.SqliteDataReader own a reader across its row
+loop. Dapper.AOT tokenizes that reader once and constructs each DTO directly. The
+selected adaptation is one private C++ pull channel per typed cursor, retaining
+the same driver, protocol, shape and result obligations. Public C# Fluent does
+not expose HostStreamBatch or the internal IStreamBatch interfaces. In particular,
+public QueryCursor<TEntity> is a pagination value, not a raw result-buffer API.
+Do not retain an unused raw fallback to preserve a public API that does not exist.
+
+The target first MoveNext creates a lazy channel from the admitted Session, plan
+or complete SQL, and independently captured parameter/options state. Creation
+validates and captures its inputs without executing SQL. The first accepted
+request uses the shared existing execution/open helpers, validates the complete
+column shape, then performs a second logical Source/token/Session/close/read
+admission before the first bounded fetch. This fuses private managed scheduling;
+it does not send Execute before metadata validation or change the standalone
+open-without-Execute ABI. PostgreSQL still needs its preparation/description and
+first Execute response groups. SQLite still prepares/inspects/binds before step.
+
+Each request carries a generation, row/byte bounds and a ready-only callback
+record. There is at most one unconsumed request/result. Native rejection creates
+no callback obligation; uncertain admission must quarantine its roots. Before
+publishing readiness, the worker must finish every provider access and destroy
+the CursorReadAdmission and Session/fetch guards. Under the channel mutex it
+stores the complete owned Buffer or structured error and moves out and clears
+that generation's callback record. Each accepted generation notifies exactly
+once. After notification, independent native worker/callback tickets may remain,
+but their tails cannot access the consumed cookie or mutate any later generation.
+
+The synchronous take checks the exact generation and transfers the Buffer,
+borrowed view and observed EOF once. A failed take retains structured SQLSTATE,
+provider and cleanup errors for the error take. Read-admission checking at known
+EOF remains explicit. A lightweight stop call provides cancellation/Dispose
+control without constructing another operation. Final close may use one existing
+generic operation per cursor and must join all channel worker/callback tickets and
+the cursor's drain/discard obligations. SafeHandle release remains nonblocking;
+abandoning a managed cursor does not erase its native cleanup ledger.
+
+The managed controller is reusable, but its GCHandle root, coordinator reservation
+and cancellation registration exist only during an accepted request. An idle
+cursor must have no permanent strong self-root. Before managed publication,
+request setup has returned, actual controls and managed callback accesses are
+zero, cancellation registration has drained, and the batch/error is safely taken.
+The native detached one-shot notification contract then proves that this request's
+cookie will never be used again. This new private readiness boundary does not
+redefine generic AsyncSnapshot.NativeQuiet or publish RetiredValueTask early.
+Per-cursor coordinator scheduling bits survive request reset, so an old queued
+execution cannot clear a later generation's scheduling obligation.
+
+Use a private ValueTask transport and one stable scoped batch owner. A generation
+is readable only through a synchronous Span lease with full codec, ordinal,
+projection and extent checks. Release invalidates new reads immediately; a reader
+that already holds its lease keeps the physical native buffer until its final
+access. The next batch cannot attach while that pointer is still retained. Do not
+reopen a closed SafeHandle, rebind a MemoryManager, or expose borrowed Memory.
+Public MoveNext keeps its existing pooled async behavior; the internal fetch
+ValueTask does not escape and is consumed before the controller is reset.
+
+Replace the unpublished `db.result.batch.v1` bit 27 and its two exports with
+`db.cursor.pull.v1`; preserve the frozen 42 declarations, the bit-26 complete
+query command and original take-buffer API. Update both independent package
+capability/export inventories together. Delete superseded HostStreamBatch,
+NativeHost.TakeBatch, Source.StartRetiredValueTask and raw streaming interfaces
+after their real production callers move to the scoped channel. Keep general
+Interop async operations for their remaining Task users and conformance tests.
+
+A deterministic test must hold the independent native callback-return/worker tail
+after readiness. Taking the result and requesting the next generation must work,
+while final channel close remains pending until that tail exits. Also prove
+rejected-request compensation, generation mismatch, cancellation and abandonment,
+held-reader release, mapper failure with cleanup attachment, source poison and
+transaction-disposal behavior. Public package consumers must establish that the
+formal entry uses the channel and that the deleted path has no callers. This is a
+design target in implementation; its source, tests, allocation, FFI and latency
+measurements require their own candidate receipts.
 
 ### Complete-command design gate
 
