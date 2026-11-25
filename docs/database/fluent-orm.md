@@ -2,6 +2,42 @@
 
 This is the behavior contract for the existing Korda PostgreSQL/SQLite product. [DB-Rename-01](db-attribute-names.md) supplies the current attribute spellings and the explicitly breaking managed-name change; all behavior below is retained. The completed DB-API-01 implementation evidence remains bound to its original names and source. DB-Rename-01 execution is recorded separately in Plan. [ADR-0007](../decisions/ADR-0007-fluent-orm-experience.md) records authority; [fluent-orm.json](fluent-orm.json) maps each behavior to owners and acceptance claims. Exact final public declarations and XML come from compiled Korda assemblies.
 
+## Query optimization contract — resumed DB-Perf-01
+
+The [current query decision](query-semantics.md) defines the proposed change from
+per-node native composition to a complete command, while preserving the business
+behavior below. Source-inspected status is explicit: #37 currently still performs
+individual native composition calls; `.Prepare()` freezes a logical native plan
+whose SQL is first compiled at execution, and the provider still prepares physical
+statements per command. Those are separate costs to measure and optimize.
+
+Fixed shapes should reuse parameter order/codecs, projection and compiled query
+structure, with changing values captured independently at each execution. The
+existing `.Prepare()` remains the public entry. Optional generation of static
+command templates and direct binders requires an independently defined supported
+subset; existing entity/DTO generation does not already provide that feature.
+Handwritten descriptors and ordinary Fluent remain supported without a generator.
+
+For dynamic queries, C# records all selected conditions, operators and projection
+before sending one bounded query command to C++. C++ validates, renders its dialect
+and executes through the existing Host. No C# SQL compiler, provider replacement or
+client evaluation is introduced. One command means a complete logical query;
+results still arrive in bounded cursor batches. Command coverage and any remaining
+per-node paths must be stated explicitly until implementation is complete.
+
+Preserve immediate public validation, owner/source checks, recoverable mutation
+failure and the nonsealing behavior of `ToSql()`. Prepare/execute preserve existing
+parameter snapshot and lazy error ordering. Existing transaction, cancellation,
+streaming and disposal guarantees remain. A connection-local statement cache is
+separate from logical plan reuse and may retain only bounded, reusable physical
+state after protocol cleanup. Never replay a mutation after an unknown outcome.
+
+Correctness and API/package acceptance continue through existing module-selected
+checks and independent PostgreSQL/SQLite Native AOT package jobs. All performance
+work runs locally on Linux, using the [measurement rules](../performance/methodology.md)
+and [current validation matrix](../verification/models-and-matrix.md). Plan records
+actual results; this contract does not mark the proposed query path as implemented.
+
 ## Business journey and reuse
 
 An application lists a page of orders with customer names and totals, optionally filters customer/status/date, and then loads the page's order lines in one bounded batch. It looks up one order by key, writes an explicitly selected subset of fields, detects an obsolete row version, inserts an order and returns its key, and commits an awaited transaction callback with an explicit failure outcome. The same immutable DTO can consume a Fluent projection or parameterized SQL. A model change yields a reviewable migration; an existing table can yield compilable attributed C# source.

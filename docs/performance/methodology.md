@@ -1,3 +1,78 @@
+# Current query measurement scope — DB-Perf-01
+
+The owner resumed query optimization while preserving C++ execution and the C#
+Fluent API. The [query decision](../database/query-semantics.md) and this section
+supersede the historical Rust/server comparison scope below for the current task.
+Dapper.AOT is the external performance comparator. Historical results retain their
+own source/package/environment identities and are never reassigned to a new build.
+
+## Local Linux execution and comparable routes
+
+All performance measurements run locally on Linux x64. Use the existing local
+benchmark tools after inspecting their inputs; do not add or dispatch benchmark
+CI. Normal PR validation retains Korda's current Python module routing and existing
+independent PostgreSQL/SQLite package runners. It runs real Native AOT consumers
+directly on those runners. Benchmark paths retain ownership registration without
+a benchmark execution action or automatic PR/push trigger.
+
+Before optimizing, compare ordinary Fluent, warmed `.Prepare()` and a complete
+parameterized SQL command through the same C++ Host. Use the same generated DTO,
+SQL text, ordered parameter types/values, full result, dataset, indexes, transaction
+and connection conditions. Validate those identities before timing. Direct libpq
+or sqlite3 is a separate diagnostic and cannot replace the same-Host route. Observe
+SQL execution counts separately from protocol messages or measured network trips.
+
+Measure construction/binding, submission to first row, remaining read and
+release/actual retirement separately, and retain end-to-end totals. Charge work to
+exactly one phase and document timestamp boundaries. First invocation, warmed
+steady state and high concurrency are separate cells; preparation/setup is not
+silently removed from the cold cost. Include dynamic filter combinations and
+changing prepared parameters. Add Dapper.AOT with equivalent SQL, parameters,
+result consumption and connection conditions for the final external comparison.
+
+Record actual OS/kernel/CPU/available affinity and quotas, SDK/compiler, native
+libraries, database/driver versions, package/executable hashes and database settings.
+Build matched baseline/candidate consumers before measuring and stop competing
+builds. Interleave independent short processes on the same host and record load/noise
+and unavailable counters. No hosted-runner image build number is required. Do not
+set GitHub environment variables to make a local host pass a hosted-only admission
+check. If this environment cannot support an asserted comparison, keep the result
+diagnostic and state the limitation instead of claiming formal performance.
+
+## Final measurements and reporting
+
+The final candidate and Dapper.AOT each run one uninterrupted 1,800-second mixed
+segment for PostgreSQL and one for SQLite: four required segments for this resumed
+task. Run comparable routes on the same local environment without overlapping
+load; preparation, warmup and drain are additional. The earlier eight-cell campaign
+remains historical evidence and is not a requirement to rerun eight new long tests.
+Only a successfully completed matching segment earns its actual effective time.
+
+Report before/after allocation, process-wide Gen0/1/2 collections, CPU, steady/peak/
+retained memory, throughput and p99, together with the final gap to Dapper.AOT.
+Allocation uses raw cumulative whole-process counters before division; async worker
+costs cannot be dropped. Required DTOs, lists, strings and JSON stay in total result
+cost. A separately constructed object graph cannot be subtracted as an exact
+framework allocation trace. Narrow zero-byte rows do not prove whole-query zero.
+
+Keep planned, issued, completed, failed, rejected and canceled operations visible.
+Separate offered rate from successful throughput; record queue delay and timeouts
+rather than selecting only successful service times. Preserve transaction outcome,
+complete result oracles and eventual owner drain. One provider or one source version
+cannot supply another's missing correctness or performance result.
+
+Plan owns raw result references, comparison conditions, retained/rejected changes,
+remaining gaps and stopping reasons. A lower allocation total alone does not prove
+lower CPU or p99. Stop optional optimization when measured residual costs and the
+tradeoffs are recorded; do not erase a regression or broaden the campaign merely
+to search for a favorable number.
+
+## Historical D13 research methodology
+
+The text below preserves the original research domain, routes and evidence. Its
+Rust/server/platform mandates do not expand the resumed database-only task. General
+measurement principles apply where consistent with the current scope above.
+
 # D13 — Performance, memory and developer-cost methodology
 
 Contract: C-PERF-001@0.4.0, research/design specification. Author: `/root`.

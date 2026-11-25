@@ -1,8 +1,39 @@
 # Korda-Design working rules
 
+## Current task — DB-Perf-01 query optimization
+
+The owner has resumed DB-Perf-01 on Linux x64 after the cancellation recorded in
+the historical maintenance section below. Preserve the existing C# Fluent API,
+`Db*` attributes, independently installable PostgreSQL and SQLite packages, and
+C++20/libpq/sqlite3 execution. This authorization does not introduce a managed
+provider migration. Read the [current query decision](docs/database/query-semantics.md),
+[Fluent behavior](docs/database/fluent-orm.md), [generation boundary](docs/generators/query-generation.md)
+and [current phase](CURRENT-PHASE.md) before implementation.
+
+Use a task-marked worktree and branch. Continue implementation in
+[Korda #37](https://github.com/IzuSharp/Korda/pull/37); Plan owns gaps, priorities,
+actual measurements and the durable [handoff](https://github.com/IzuSharp/Plan/blob/main/ledger/evidence/batches/DB-Perf-01/handoff-linux.md).
+Publish the Plan checkpoint and Design decision before the corresponding product
+implementation. This document specifies intended behavior, not completed execution.
+Keep historical contracts, evidence, frozen tools and acceptance hashes unchanged.
+
+Korda's current `main` AGENTS and Python module planner govern normal checks.
+PostgreSQL and SQLite keep their existing independent package runners and execute
+Native AOT consumers directly on Linux. Performance probes and the two-database
+30-minute comparisons run locally on Linux when requested, never as PR/push,
+manual, or scheduled benchmark CI. Do not add a benchmark job, runner environment,
+JIT consumer, clean-image run or CPU-emulation check to this task. Keep benchmark
+source ownership registered without an automatic benchmark execution action.
+
+Run the existing documentation gates `python3 tools/verify_db_rename.py` and
+`python3 tools/verify_db_scope_history.py`. These validate naming, links and
+historical integrity; they cannot accept a new command protocol, a generated query
+path, a database result or a performance claim. Product checks and actual local
+measurements must establish those claims in Plan.
+
 The canonical design repository is [IzuSharp/Korda-Design](https://github.com/IzuSharp/Korda-Design). It supports the [Korda product](https://github.com/IzuSharp/Korda) and the [Plan repository](https://github.com/IzuSharp/Plan). Read [the repository identity policy](docs/repository-identity.md) before changing an old repository-name reference.
 
-## Current repository maintenance
+## Previous repository maintenance (historical)
 
 The owner has renamed `IzuSharp/NativeWeave-Design` to `IzuSharp/Korda-Design` and authorized the related README, documentation and repository-reference corrections, a PR and its normal merge. This is repository identity maintenance. DB-Perf-01 is cancelled; no performance or product implementation work is resumed by this maintenance task.
 

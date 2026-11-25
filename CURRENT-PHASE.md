@@ -1,3 +1,34 @@
+# Current phase — DB-Perf-01 query optimization
+
+The owner has resumed Linux x64 query optimization in [Korda #37](https://github.com/IzuSharp/Korda/pull/37).
+The C# Fluent API and C++20/libpq/sqlite3 execution remain. Fixed query shapes
+should do stable work ahead of repeated execution; dynamic Fluent queries should
+be composed completely in C# and submitted as one bounded query command to C++.
+Result batches, cancellation and ownership remain streaming contracts.
+
+Read the [current decision and implementation order](docs/database/query-semantics.md),
+[Fluent contract](docs/database/fluent-orm.md), [generation boundary](docs/generators/query-generation.md)
+and [measurement rules](docs/performance/methodology.md). They distinguish existing
+behavior from intended implementation. The [Plan batch](https://github.com/IzuSharp/Plan/blob/main/ledger/evidence/batches/DB-Perf-01/plan.md)
+and [handoff](https://github.com/IzuSharp/Plan/blob/main/ledger/evidence/batches/DB-Perf-01/handoff-linux.md)
+own current PR identities, unresolved gaps and observed test results. Publish the
+Plan and Design checkpoints before implementing their selected scheme in #37.
+
+Normal validation retains Korda's committed-diff/module-dependency selection and
+existing independent PostgreSQL/SQLite package jobs. Consumers execute directly
+as Linux Native AOT binaries. All performance measurements, including the final
+candidate and Dapper.AOT 30-minute segments for both databases, run locally on
+Linux. There is no benchmark CI or extra benchmark package job in this scope.
+Record actual environment versions and measure matched routes on the same local
+host; do not require a hosted-runner image build number.
+
+The cancellation and rename-only authority below remain historical. This resumed
+task supersedes that stop state, without accepting any historical incomplete
+measurement or changing the identity of old results. Existing documentation gates
+and their frozen inputs remain unchanged. Design does not claim product delivery.
+
+## Previous phase record — repository identity maintenance
+
 # Current phase — Korda-Design repository identity
 
 The design repository is now [IzuSharp/Korda-Design](https://github.com/IzuSharp/Korda-Design), alongside the [Korda product](https://github.com/IzuSharp/Korda) and [Plan](https://github.com/IzuSharp/Plan). This maintenance change updates repository identity, current navigation and live repository references. It does not change database behavior, source/package names or accepted historical evidence. DB-Perf-01 remains cancelled.

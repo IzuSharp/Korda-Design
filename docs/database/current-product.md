@@ -1,6 +1,12 @@
 # Current Korda database product
 
-The existing product is the PostgreSQL/SQLite Fluent ORM with C# application models, DTOs and static mappings over the C++20 database engine. libpq and sqlite3 perform provider execution. [DB-API-01 behavior](fluent-orm.md) remains in force; [DB-Rename-01](db-attribute-names.md) changes the ten public attributes to `Db` names while preserving behavior. Exact current commands and module selection come from [Korda AGENTS](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/AGENTS.md); actual source/test identities belong to Plan and the product PR.
+The existing product is the PostgreSQL/SQLite Fluent ORM with C# application models, DTOs and static mappings over the C++20 database engine. libpq and sqlite3 perform provider execution. [DB-API-01 behavior](fluent-orm.md) remains in force; [DB-Rename-01](db-attribute-names.md) changes the ten public attributes to `Db` names while preserving behavior. Exact current commands and module selection come from [Korda AGENTS](https://github.com/IzuSharp/Korda/blob/main/AGENTS.md); actual source/test identities belong to Plan and the product PR.
+
+The resumed [DB-Perf-01 query decision](query-semantics.md) proposes complete-query
+submission and greater fixed-shape reuse while preserving this execution stack.
+Its source-status table distinguishes current per-node composition, logical
+`.Prepare()` reuse and unimplemented physical statement caching. Product delivery
+requires code and actual tests; a Design change does not supply those results.
 
 ## Public-to-native map
 
@@ -37,6 +43,11 @@ A C# application owns its business query methods. Console, ASP.NET Core HTTP and
 
 ## Current validation and historical boundaries
 
-Follow the [current matrix](../verification/models-and-matrix.md): dependency-selected managed/native/API checks, two separately built candidate packages, and real SQLite/PostgreSQL reads/writes through external PackageReference Native AOT order consumers. Inspect package contents and loaded native paths/hashes; preserve failure attempts and review evidence. No JIT, clean-image, CPU-emulation or additional platform/performance campaign is requested. Stop at passing PR checks for maintainer review, with no merge or public publication.
+Follow the [current matrix](../verification/models-and-matrix.md): dependency-selected managed/native/API checks, two separately built candidate packages, and real SQLite/PostgreSQL reads/writes through external PackageReference Native AOT order consumers. Inspect package contents and loaded native paths/hashes; preserve failure attempts and review evidence. The current task adds local Linux performance comparisons and final 30-minute
+candidate/Dapper.AOT segments for both providers. It adds no benchmark CI, JIT
+consumer, clean-image, CPU-emulation or additional platform acceptance. Normal CI
+retains the existing independent provider package runners; main publication remains
+the repository's package-input decision. Plan records observed checks and delivery
+states without predicting a future merge or release.
 
 The earlier Rust/SeaQuery/SQLx source map, pruning commands and four JIT/AOT cells remain available at the [immutable DB-Scope-01 snapshot](https://github.com/IzuSharp/Korda-Design/blob/8298dc4128b745cf1809bad0c3cf02c45eb7f522/docs/database/current-product.md). They retain their original meaning and are not the current implementation map. Frozen `docs/current-scope.json`, C++ migration records and completed DB-API-01 evidence are not rewritten by this task.

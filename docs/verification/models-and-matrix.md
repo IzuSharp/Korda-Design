@@ -1,3 +1,31 @@
+# Current query optimization validation — DB-Perf-01
+
+The [query decision](../database/query-semantics.md), retained [Fluent contract](../database/fluent-orm.md)
+and [Korda main AGENTS](https://github.com/IzuSharp/Korda/blob/main/AGENTS.md) govern
+this resumed Linux x64 task. Tests below are requirements, not claims of completion.
+The earlier naming matrix remains historical after this section.
+
+| Area | Required observation |
+| --- | --- |
+| CI routing | Inspect the committed-diff plan; affected product checks run once, unrelated checks skip, and existing PostgreSQL/SQLite packages validate independently and in parallel |
+| API and ownership | Existing Fluent signatures, `Db*` attributes, source/owner identity, errors, cancellation, concurrency and disposal behavior remain compatible |
+| Complete command | Equivalent SQL/parameter order/results for every converted operator; malformed/version/limit/capability inputs reject before dispatch without partial publication |
+| Fixed shape and parameters | `.Prepare()` reuses stable metadata; changed values snapshot independently; missing/extra/foreign parameters and lazy validation precedence retain behavior |
+| Provider statements | Any new physical cache proves hits, bounded eviction, schema invalidation, transaction/session isolation, cancel reset/discard and close cleanup |
+| Correctness | Both real providers cover dynamic filters, changing parameters, transaction/rollback/unknown outcomes, canceled operations, streaming and early disposal |
+| Package consumers | Each actual provider package is independently consumed by an external Native AOT application directly on Linux; ordinary DTO edits preserve native payloads |
+| Local comparison | Identical SQL/parameters/results/connections across Fluent, warm Prepare and same-Host SQL; construction/first row/read/release measured separately |
+| Local long segments | Final candidate and Dapper.AOT each complete one 30-minute mixed segment per provider; actual source/environment-bound metrics and remaining gaps are recorded in Plan |
+
+Performance runs are local Linux work, never benchmark CI. Do not add a performance
+workflow, provider-aggregate benchmark job, JIT consumer, clean-image or emulation
+run. Existing module ownership and package actions remain the normal CI entry.
+Documentation gates continue unchanged and cannot accept database/performance
+execution. [Plan's handoff](https://github.com/IzuSharp/Plan/blob/main/ledger/evidence/batches/DB-Perf-01/handoff-linux.md)
+records the actual three PRs, tested source, evidence and unfinished work.
+
+## Historical DB-Rename-01 matrix
+
 # DB-Rename-01 verification and acceptance matrix
 
 Plan and the product PR record actual execution. This document states requirements without premarking tests as passed. The [current naming contract](../database/db-attribute-names.md), retained [DB-API-01 behavior](../database/fluent-orm.md) and [Korda AGENTS](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/AGENTS.md) govern scope and dependency-selected checks. Frozen DB-Scope-01 JSON and its execution matrix remain historical inputs.

@@ -10,6 +10,13 @@ No full IQueryable provider, runtime expression compilation, Reflection.Emit, dy
 
 ## 2. What is generated and what is not
 
+The resumed [query decision](../database/query-semantics.md) distinguishes existing
+generation from proposed fixed-query templates. Current product generation covers
+model/projection declarations; it does not capture arbitrary Fluent method bodies
+or precompile their SQL. Fixed-shape query generation is an optional later step,
+with explicit syntax, diagnostics and handwritten parity required before support
+can be claimed.
+
 Generate typed table/column/projection descriptors, static readers and direct constructors, explicit nullable/value codec policies, AOT-visible closed generic mappings and compile diagnostics. Generated and handwritten forms preserve the same metadata, codecs, key/concurrency flags, nullability, projection order and execution path.
 
 Do not generate C# SQL dialects, a query optimizer, hidden client evaluation or application-specific native model code. Generation must not contact a database/network, invoke a native compiler, change native libraries or execute application model getters. Maintainer build integration is separate from consumer source generation.
@@ -47,9 +54,29 @@ JSON continues using explicitly supplied source-generated `JsonTypeInfo` and `Js
 
 ## 5. Fluent binding without method-body capture
 
-Calls to typed native-backed operators are ordinary C# calls. A convenience lambda over expression proxies is a normal builder delegate, not an arbitrary domain predicate interpreted later. The generator does not rewrite every method invocation or intercept arbitrary calls. Unknown C# methods are outside the query contract. Capability-gated operations resolve against the selected profile and are also validated at native execution.
+Fluent operators are ordinary C# calls. A convenience lambda over expression
+proxies is a normal builder delegate, not an arbitrary domain predicate interpreted
+later. The source-inspected implementation forwards nodes to C++; the proposed
+DB-Perf-01 path records the complete bounded command in C# before a single native
+submission. The generator does not currently rewrite every method invocation or
+intercept arbitrary calls. Unknown application methods are outside static query
+generation. Capability-gated operations resolve against the selected profile and
+are validated again by C++ before provider dispatch.
 
-Dynamic filtering resolves only validated table/field/operator metadata and bound parameters, with finite node/depth/byte limits. It introduces no complete serializable C# expression tree, universal Core query IR or managed SQL evaluator. Mutable query ownership, native owner/generation validation and immutable frozen plans retain their existing rules.
+Dynamic filtering resolves validated table/field/operator metadata and bound
+parameters within finite node/depth/byte limits. The complete command represents
+only supported Fluent operations, not a universal Core query IR or managed SQL
+evaluator. Mutable ownership, native owner/generation validation and immutable
+frozen plans retain their existing rules.
+
+A future fixed-query template may precompute shape, parameter slot order and
+projection mapping only when those inputs are statically known. Actual parameter
+values, source generation, provider capabilities, session/transaction and cancellation
+remain runtime inputs. Such generation must not execute user getters, invoke a
+native compiler, depend on a live database or silently evaluate unsupported syntax.
+Dynamic condition branches remain a supported ordinary composition path. Emitted
+templates, runtime `.Prepare()` and physical connection statement caches must be
+reported as separate layers; none proves the other two exist.
 
 ## 6. Diagnostics and compatibility
 
