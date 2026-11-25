@@ -9,6 +9,14 @@ validation metadata before repeated execution. Result batches, cancellation and
 ownership remain streaming contracts. Physical statement reuse and optional
 fixed-query template generation remain gaps, not delivered features.
 
+The selected private single-root serializer is now implemented with a 4096-byte
+stack limit and generic fallback. Dependency, origin capture/sharing and sealing
+gate guards preserve the existing protocol and ownership boundary. Local
+correctness and the current ordinary CI have passed; its allocation/performance
+effect remains pending. The [latest Plan checkpoint](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/query-optimization/serializer-f0078da7/README.md)
+retains both unexplained earlier failures, the exact new frozen inputs and ongoing
+local phase diagnostics. No final 30-minute comparison is accepted by this state.
+
 Read the [current decision and implementation order](docs/database/query-semantics.md),
 [Fluent contract](docs/database/fluent-orm.md), [generation boundary](docs/generators/query-generation.md)
 and [measurement rules](docs/performance/methodology.md). Continue

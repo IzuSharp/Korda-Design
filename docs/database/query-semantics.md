@@ -180,15 +180,27 @@ Native command parameters first enter a private registry. Only successful final
 compilation atomically merges identities into the source registry, so a malformed
 or rejected command cannot reserve a source parameter ID.
 
-**Selected follow-up, pending implementation and measurement:** an exclusive
+**Implemented follow-up, comparative effect pending:** an exclusively admitted
 command with one root, no dependencies and exactly one tape reference per
-uncaptured origin may use a direct serializer to avoid generic temporary traversal
-and indexing collections. The NWQC frame, dense scalar origin ordinals, typed root
-model sidecar, bounds, source checks and lifetime/error behavior remain unchanged.
-`CreateCte`, shared or captured origins, snapshots and imports retain the generic
-path. This is an implementation detail within the existing complete-command
-contract, selected after the [first SQLite phase observation](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/query-optimization/phase-sqlite-r0-034b40ea/README.md);
-it does not claim an implemented optimization or measured benefit.
+uncaptured origin uses a direct serializer to avoid generic temporary traversal
+and indexing collections. Sealing also requires an empty origin-publication gate
+set. The complete encoded frame and its single typed root-model dependency borrow
+bounded stack storage only during the synchronous native call; no span survives
+that call. A complete frame above 4096 bytes falls back to the existing generic
+encoder after the same budget checks. `CreateCte`, shared or captured origins,
+snapshots and imports retain the generic path. A captured origin remains generic
+even after its reference count returns to one or its public owner is disposed.
+
+The NWQC frame, dense scalar origin ordinals, typed sidecar, limits, source checks
+and lifetime/error behavior are unchanged by this slice. Native code and callback
+timing are unchanged. Local differential cases cover 4096/4097-byte boundaries,
+private/shared command-byte parity, captured-owner lifetime and quota recovery;
+they do not measure the final comparison. This implementation follows the
+[published first SQLite observation](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/query-optimization/phase-sqlite-r0-034b40ea/README.md)
+and preceding selection. The [implementation checkpoint](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/query-optimization/serializer-f0078da7/README.md)
+binds current source, local correctness and ordinary CI. The earlier dynamic
+allocation regression is not declared resolved; fresh frozen-input phase and
+mixed-load results must establish any benefit.
 
 ## Parameters, physical statements and contention
 
