@@ -1,4 +1,18 @@
-# Current task — DB-Rename-01
+# Korda-Design working rules
+
+The canonical design repository is [IzuSharp/Korda-Design](https://github.com/IzuSharp/Korda-Design). It supports the [Korda product](https://github.com/IzuSharp/Korda) and the [Plan repository](https://github.com/IzuSharp/Plan). Read [the repository identity policy](docs/repository-identity.md) before changing an old repository-name reference.
+
+## Current repository maintenance
+
+The owner has renamed `IzuSharp/NativeWeave-Design` to `IzuSharp/Korda-Design` and authorized the related README, documentation and repository-reference corrections, a PR and its normal merge. This is repository identity maintenance. DB-Perf-01 is cancelled; no performance or product implementation work is resumed by this maintenance task.
+
+Use current canonical URLs for maintained navigation and live repository lookups. Preserve frozen source records, evidence keys, local replay aliases, historical product identifiers and their hashes. Existing workflow branch filters, permissions and historical inputs remain unchanged. Run `python3 tools/verify_db_rename.py` and `python3 tools/verify_db_scope_history.py` with full Git history.
+
+## Earlier task authority (historical)
+
+The sections below preserve earlier task instructions. Their task-specific branches, stop conditions and implementation authority apply to those recorded batches. Current database behavior and naming remain in the [API index](docs/api/README.md), [Fluent ORM contract](docs/database/fluent-orm.md) and [attribute naming contract](docs/database/db-attribute-names.md).
+
+# Completed Design task — DB-Rename-01
 
 Update Korda's ten database attributes to the `Db` names in the [naming contract](docs/database/db-attribute-names.md) and [exact mapping](docs/database/db-attribute-names.json). The [public API standard](docs/standards/csharp-public-api-and-documentation.md#3-public-surface-and-package-boundaries) defines domain names independent of implementation language. Preserve attribute namespaces, signatures, defaults, targets and behavior; keep C++20/libpq/sqlite3 execution and the existing JSON source-generation metadata.
 

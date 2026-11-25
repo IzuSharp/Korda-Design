@@ -1,4 +1,16 @@
-# Current task — DB-Rename-01
+# Current phase — Korda-Design repository identity
+
+The design repository is now [IzuSharp/Korda-Design](https://github.com/IzuSharp/Korda-Design), alongside the [Korda product](https://github.com/IzuSharp/Korda) and [Plan](https://github.com/IzuSharp/Plan). This maintenance change updates repository identity, current navigation and live repository references. It does not change database behavior, source/package names or accepted historical evidence. DB-Perf-01 remains cancelled.
+
+The DB-Rename-01 Design specification was merged at `d23fc89fb7436911b3f5a39995c7edb710a7be0a`. Use the [current API index](docs/api/README.md), [Fluent ORM contract](docs/database/fluent-orm.md) and [attribute naming contract](docs/database/db-attribute-names.md) for current database guidance. The product repository and Plan retain responsibility for product execution and acceptance.
+
+Read [the repository identity policy](docs/repository-identity.md) for the boundary between canonical URLs and preserved historical names. The current documentation gates remain `python3 tools/verify_db_rename.py` and `python3 tools/verify_db_scope_history.py`.
+
+## Earlier task authority (historical)
+
+The following sections retain the original phase narratives and their task-specific authorization. They are historical context for the current design and do not restart completed or cancelled work.
+
+# Completed Design task — DB-Rename-01
 
 Update Korda's ten database attributes to the `Db` names in the [naming contract](docs/database/db-attribute-names.md) and [exact mapping](docs/database/db-attribute-names.json). The [public API standard](docs/standards/csharp-public-api-and-documentation.md#3-public-surface-and-package-boundaries) defines domain names independent of implementation language. Preserve attribute namespaces, signatures, defaults, targets and behavior; keep C++20/libpq/sqlite3 execution and the existing JSON source-generation metadata.
 
