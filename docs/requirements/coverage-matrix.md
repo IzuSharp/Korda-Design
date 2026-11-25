@@ -1,6 +1,6 @@
 # Historical DB-Scope-01 source and acceptance map
 
-The retained/removed source inventory, Rust paths, package closure and four consumer cells below describe DB-Scope-01. They are not the current implementation map or task matrix. The accepted original is preserved at its [immutable snapshot](https://github.com/IzuSharp/NativeWeave-Design/blob/8298dc4128b745cf1809bad0c3cf02c45eb7f522/docs/requirements/coverage-matrix.md); the current-path spelling below does not rebind its acceptance hash.
+The retained/removed source inventory, Rust paths, package closure and four consumer cells below describe DB-Scope-01. They are not the current implementation map or task matrix. The accepted original is preserved at its [immutable snapshot](https://github.com/IzuSharp/Korda-Design/blob/8298dc4128b745cf1809bad0c3cf02c45eb7f522/docs/requirements/coverage-matrix.md); the current-path spelling below does not rebind its acceptance hash.
 
 Use the [current Korda product map](../database/current-product.md), [DB-Rename-01 naming contract](../database/db-attribute-names.md) and [current verification matrix](../verification/models-and-matrix.md) for the existing C++20/libpq/sqlite3 product and two Native AOT provider lanes. Product check selection follows Korda AGENTS. DB-Rename-01 stops for maintainer review without merge or public publication.
 

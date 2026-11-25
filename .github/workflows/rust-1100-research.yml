@@ -39,7 +39,9 @@ jobs:
               try:b=get(url);save(name,b);return json.loads(b)
               except Exception as e:manifest['errors'].append({'url':url,'error':str(e)});return None
           def archive(repo,sha,dest,keep=lambda p:True):
-              url=f'https://codeload.github.com/{repo}/tar.gz/{sha}';raw=get(url);files=[]
+              # Keep historical manifest keys and local paths; use the canonical remote.
+              remote_repo='IzuSharp/Korda-Design' if repo=='IzuSharp/NativeWeave-Design' else repo
+              url=f'https://codeload.github.com/{remote_repo}/tar.gz/{sha}';raw=get(url);files=[]
               with tarfile.open(fileobj=io.BytesIO(raw),mode='r:gz') as t:
                   for m in t.getmembers():
                       if not m.isfile() or m.size>3000000:continue
@@ -66,7 +68,8 @@ jobs:
           for name in ['sea-query','sea-query-sqlx','sea-orm','sqlx','tokio','hyper','hyper-util','tower','axum','actix-web','actix-server','pingora']:
               capture('https://crates.io/api/v1/crates/'+name,'registry/'+name+'.json')
           for repo,pr in [('NativeWeave-Design',5),('Plan',2)]:
-              base='https://api.github.com/repos/IzuSharp/'+repo
+              remote_repo='Korda-Design' if repo=='NativeWeave-Design' else repo
+              base='https://api.github.com/repos/IzuSharp/'+remote_repo
               for endpoint in ['rulesets?includes_parents=true','rules/branches/main','branches/main/protection',f'pulls/{pr}/reviews',f'pulls/{pr}/comments']:
                   capture(base+'/'+endpoint,'github/'+repo+'/'+endpoint.replace('/','_').replace('?','_')+'.json')
           save('manifest.json',(json.dumps(manifest,indent=2)+'\n').encode())

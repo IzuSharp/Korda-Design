@@ -9,7 +9,7 @@ permissions:
   contents: read
 jobs:
   reconcile:
-    if: github.repository == 'IzuSharp/NativeWeave-Design' && github.ref == 'refs/heads/research/logical-admission-r07'
+    if: github.repository == 'IzuSharp/Korda-Design' && github.ref == 'refs/heads/research/logical-admission-r07'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:

@@ -11,7 +11,7 @@ permissions:
   contents: read
 jobs:
   migrate:
-    if: github.repository == 'IzuSharp/NativeWeave-Design' && github.ref == 'refs/heads/research/pr1-asset-migration'
+    if: github.repository == 'IzuSharp/Korda-Design' && github.ref == 'refs/heads/research/pr1-asset-migration'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:

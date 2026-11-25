@@ -10,7 +10,7 @@ permissions:
   actions: read
 jobs:
   preserve-and-integrate:
-    if: github.repository == 'IzuSharp/NativeWeave-Design' && github.ref == 'refs/heads/research/source-driven-integration-2026-11-12'
+    if: github.repository == 'IzuSharp/Korda-Design' && github.ref == 'refs/heads/research/source-driven-integration-2026-11-12'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
