@@ -8,7 +8,7 @@ Korda is a strongly typed C# Fluent ORM for PostgreSQL and SQLite, with ordinary
 
 | Read | Purpose |
 | --- | --- |
-| [Current phase](CURRENT-PHASE.md) and [working rules](AGENTS.md) | Current query optimization scope and earlier task authority |
+| [Current phase](CURRENT-PHASE.md) and [working rules](AGENTS.md) | DB-Exec-02 complete execution-path scope and earlier task authority |
 | [Current API index](docs/api/README.md) and [compiled reference index](docs/api/reference.md) | Current Korda database surface and source-backed declarations |
 | [Database product](docs/database/current-product.md) and [Fluent ORM contract](docs/database/fluent-orm.md) | Retained database behavior and implementation boundaries |
 | [Query semantics and optimization](docs/database/query-semantics.md) | Current C++ decision, fixed and dynamic query paths, and implementation priorities |
@@ -18,7 +18,7 @@ Korda is a strongly typed C# Fluent ORM for PostgreSQL and SQLite, with ordinary
 | [Verification matrix](docs/verification/models-and-matrix.md) | Design gates and the separate product execution requirements |
 | [Repository identity](docs/repository-identity.md) | Canonical URLs and intentionally preserved historical names |
 
-The DB-Rename-01 Design specification is merged. Its naming overlay builds on the DB-API-01 Fluent ORM contract and [ADR-0006's C++ migration decision](docs/decisions/ADR-0006-database-cpp-native.md). Product results remain recorded in Plan. The owner has resumed DB-Perf-01 query optimization in [Korda #37](https://github.com/IzuSharp/Korda/pull/37), [Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and [Plan #34](https://github.com/IzuSharp/Plan/pull/34). The current stage is an implementation candidate with local correctness evidence, preserving C++ execution and the Fluent API. Physical statement caching and generated fixed-query templates remain gaps; final local Linux performance, merge and release are not claimed. The preceding repository-identity maintenance did not itself resume the task.
+The DB-Rename-01 Design specification is merged. Its naming overlay builds on the DB-API-01 Fluent ORM contract and [ADR-0006's C++ migration decision](docs/decisions/ADR-0006-database-cpp-native.md). Product results remain recorded in Plan. The owner has resumed the complete execution-path refactor as DB-Exec-02 in [Korda #37](https://github.com/IzuSharp/Korda/pull/37), [Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and [Plan #34](https://github.com/IzuSharp/Plan/pull/34). The [current target](docs/database/query-semantics.md#current-execution-path-target-db-exec-02) is proposed, with fresh implementation and acceptance pending; it preserves C++ execution, public Fluent behavior, Native AOT and both independent provider packages. The preceding candidate and its completed local observations retain their historical source identities. All new performance runs remain local, and normal reviewed delivery follows full correctness and measurement verification.
 
 ## Local documentation checks
 

@@ -2,7 +2,20 @@
 
 The existing product is the PostgreSQL/SQLite Fluent ORM with C# application models, DTOs and static mappings over the C++20 database engine. libpq and sqlite3 perform provider execution. [DB-API-01 behavior](fluent-orm.md) remains in force; [DB-Rename-01](db-attribute-names.md) changes the ten public attributes to `Db` names while preserving behavior. Exact current commands and module selection come from [Korda AGENTS](https://github.com/IzuSharp/Korda/blob/main/AGENTS.md); actual source/test identities belong to Plan and the product PR.
 
-The resumed [DB-Perf-01 query decision](query-semantics.md) describes the
+The current [DB-Exec-02 target](query-semantics.md#current-execution-path-target-db-exec-02)
+rebuilds the complete driver-to-Fluent execution path while retaining this product
+surface. It is proposed, with implementation and fresh acceptance pending.
+Selected targets are ordered typed native arguments without a second NWDB
+encode/parse, fresh PostgreSQL Parse/Describe in one pipeline group, one SQLite
+statement for description/binding, direct native batch writing and one validated
+managed row layout. Existing native-batch borrowing is reused. Opening remains
+nonexecuting; PostgreSQL cross-execution statement/column caching is not selected.
+The command representation has an explicit direct-compilation-versus-replay
+decision gate before completion. Plan owns actual deletion and package evidence.
+
+### Starting implementation retained for comparison
+
+The preceding [DB-Perf-01 query decision](query-semantics.md) describes the
 implementation candidate in [Korda #37](https://github.com/IzuSharp/Korda/pull/37)
 and [Design #20](https://github.com/IzuSharp/Korda-Design/pull/20). It adds complete
 NWQC composition, eager runtime `.Prepare()` compilation, bounded shared scalar
@@ -13,6 +26,12 @@ owns the candidate's local correctness evidence and outstanding performance work
 this checkpoint does not claim merge, release or final performance acceptance.
 
 ## Public-to-native map
+
+This table identifies the f0078da7 production entry points being reconstructed.
+The target does not claim those paths have already switched. Record the actual
+replacement and removed callers after external provider consumers exercise it.
+In particular, NWQC replay, repeated parameter encoding and native cell staging
+are review targets; the existing borrowed batch owner is retained.
 
 | Public operation | C# implementation | Existing native execution |
 | --- | --- | --- |

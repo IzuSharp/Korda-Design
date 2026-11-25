@@ -2,7 +2,37 @@
 
 This is the behavior contract for the existing Korda PostgreSQL/SQLite product. [DB-Rename-01](db-attribute-names.md) supplies the current attribute spellings and the explicitly breaking managed-name change; all behavior below is retained. The completed DB-API-01 implementation evidence remains bound to its original names and source. DB-Rename-01 execution is recorded separately in Plan. [ADR-0007](../decisions/ADR-0007-fluent-orm-experience.md) records authority; [fluent-orm.json](fluent-orm.json) maps each behavior to owners and acceptance claims. Exact final public declarations and XML come from compiled Korda assemblies.
 
-## Query optimization contract — resumed DB-Perf-01
+## Execution-path refactor contract — DB-Exec-02
+
+The [current target](query-semantics.md#current-execution-path-target-db-exec-02)
+reconstructs the complete implementation path while preserving this public
+business contract. It is a design candidate, not an implemented or accepted
+feature claim. Ordinary Fluent, `.Prepare()`, handwritten descriptors and
+generated models/DTOs continue to use precompiled C++ provider packages.
+
+Prepared shapes retain stable SQL/parameter/projection metadata; each execution
+captures independent values and checks them against that layout. The target
+resolves parameter ordinals once and passes validated typed arguments directly
+to provider binding, removing redundant native frame encoding and parsing.
+Dynamic command representation must pass the explicit direct-compiler versus
+NWQC replay gate; the prior tape is not a public behavior requirement.
+
+Keep validation and recoverable builder-error timing, source/profile checks,
+clone/CTE/literal ownership and nonsealing `ToSql()`. PostgreSQL uses fresh
+Parse/Describe in one preparation group; its cross-execution physical cache is
+not selected because external DDL changes cached-result error semantics.
+SQLite reuses one statement within the command, with no step at cursor open.
+Public opening/execution side effects, transaction failure, cancellation,
+backpressure and safe connection return remain observable acceptance conditions.
+
+The existing borrowed native batch remains owned through reading. Direct native
+batch construction and one-time managed layout matching may replace staging and
+repeated cell checks only while preserving shape, codec, NULL, bounds and mapper
+failure cleanup. Model/DTO-only edits must still rebuild locally without changing
+native bytes. Actual package-consumer evidence, deletion inventory and matched
+local performance belong to Plan; this contract grants no zero-allocation claim.
+
+## Historical query optimization contract — resumed DB-Perf-01
 
 The [current query decision](query-semantics.md) describes the implementation
 candidate in [Korda #37](https://github.com/IzuSharp/Korda/pull/37), reviewed through

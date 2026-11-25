@@ -1,3 +1,274 @@
+# Current execution-path target — DB-Exec-02
+
+Status: **candidate B implemented; clean package verification and controlled local
+performance acceptance are in progress**. The owner resumed the complete database execution-path refactor on
+2026-11-26 (Asia/Shanghai), continuing [Korda #37](https://github.com/IzuSharp/Korda/pull/37),
+[Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and
+[Plan #34](https://github.com/IzuSharp/Plan/pull/34). The immediate product input is
+[f0078da720e07031bc56464995af6791c41aaae8](https://github.com/IzuSharp/Korda/commit/f0078da720e07031bc56464995af6791c41aaae8).
+The local candidate a27ff31 is publicly tree-identical to [c2df05ff01e90a92aa70884827735d7dfa1dbc3d](https://github.com/IzuSharp/Korda/commit/c2df05ff01e90a92aa70884827735d7dfa1dbc3d); its native
+producer source dc82792 is publicly tree-identical to [1f93c5addeae962fee692f5d2a533c596efaa16c](https://github.com/IzuSharp/Korda/commit/1f93c5addeae962fee692f5d2a533c596efaa16c).
+The intervening commits only fix a reference-consumer setup call and remove an
+unused managed encoder wrapper; they do not change native producer inputs.
+The [execution plan](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/execution-refactor/README.md)
+owns exact before/candidate inputs, source review, measurements, deletion inventory
+and completion gates. The earlier NWQC decision and final measurements below
+remain historical; they do not constrain this task to keeping its Host internals.
+
+Preserve developer Fluent usage, public validation/error/ownership behavior,
+Native AOT, C++ execution and independent PostgreSQL/SQLite packages. Host layout,
+command and parameter formats, ABI call granularity, batch production and managed
+reading may change. The target is the lowest measured latency, CPU and memory for
+the same SQL, typed parameters and complete business result. Source reuse must
+follow a compatible responsibility and lifetime boundary.
+
+## Target from driver to Fluent
+
+| Boundary | Selected target | Existing guarantees |
+| --- | --- | --- |
+| Database driver | Reuse libpq 18.0 and sqlite3 3.51.3; keep provider conversion fallible | Real provider errors, connection identity, transaction state and explicit type-loss refusals |
+| PostgreSQL command opening | Fresh unnamed Parse and Describe in one pipeline group and one Sync; validate the complete description | No Execute at open; fresh metadata, failure priority and protocol-safe cleanup |
+| SQLite command opening | Prepare one statement, inspect its metadata and bind that same statement | No step at open; error order, borrowed-input lifetime, finalization on failure |
+| Native execution parameters | Retain immutable ordered shape metadata; create one independently owned, once-validated typed argument set for each accepted execution | Snapshot values before retention; no mutable caller buffers or borrowed span across await |
+| Native result production | Write converted values and offsets directly into one bounded owned batch arena | Complete shape and extent validation; field/row/byte limits; failure-atomic transfer |
+| Managed batch and row access | Retain the existing borrowed native batch owner; bind a validated layout once, then invoke typed access and DTO construction | No reader escapes its lease; missing/duplicate/type/NULL/UTF-8/precision errors remain explicit |
+| Prepared Fluent | Reuse compiled SQL, parameter ordinals/codecs and projection; repeated execution changes independently captured values | Source/profile/generation checks; independently disposable plan; concurrent executions use independent owners |
+| Dynamic Fluent | Complete typed composition before submission; compile one validated representation directly if the command gate proves equivalence | Immediate recoverable builder checks, native capabilities, clones/CTEs, literal budgets and nonsealing ToSql |
+| Retirement | Keep the actual provider, callback, batch and connection obligations accounted until they finish | Cancellation or public completion alone cannot free owners or return an unsafe connection |
+
+Read the chain in reverse for a consumer call: Fluent selects the complete shape;
+Binding snapshots and submits it or a prepared plan; Host admits one execution
+with ordered typed values; libpq/sqlite3 supplies bounded results; the batch lease
+retains native storage while the generated reader constructs the DTO. A complete
+command is distinct from registration, fetch, cancel and disposal operations.
+Changing their granularity requires the same observable lifecycle.
+
+### PostgreSQL: one preparation group, fresh metadata
+
+At PostgreSQL 18.0
+[postgres.c](https://github.com/postgres/postgres/blob/3d6a828938a5fa0444275d3d2f67b64ec3199eb7/src/backend/tcop/postgres.c),
+`exec_parse_message`, `exec_bind_message`, `exec_execute_message` and
+`exec_describe_statement_message` separate parsing/description from execution.
+The matching
+[libpq fe-exec.c](https://github.com/postgres/postgres/blob/3d6a828938a5fa0444275d3d2f67b64ec3199eb7/src/interfaces/libpq/fe-exec.c)
+allows prepare and describe to be queued in pipeline mode before the group's
+Sync. The ordinary send helpers add their own Sync outside pipeline mode.
+
+The selected opening path uses fresh unnamed Parse + Describe + one Sync.
+It must consume every result and the pipeline synchronization boundary before
+leaving pipeline mode. A null `PQgetResult` between commands is not proof the
+whole group is drained. Parse/description errors, aborted dependent commands,
+transport errors, cancellation and cleanup retain their own classification.
+Only the first permitted fetch dispatches Bind/Execute; receiving a cursor must
+not advance a volatile function, write-returning statement or row iterator
+earlier than the current public behavior.
+
+Cross-execution physical statement and column-description caching is **not selected**.
+`exec_describe_statement_message` calls `CachedPlanGetTargetList`; in
+[plancache.c](https://github.com/postgres/postgres/blob/3d6a828938a5fa0444275d3d2f67b64ec3199eb7/src/backend/utils/cache/plancache.c),
+`RevalidateCachedQuery` can reject a changed fixed result type with 0A000.
+Describing a cached statement again therefore does not restore fresh-Parse
+behavior after external DDL, and an error can change an enclosing transaction's
+state. A SQL-only key, cached RowDescription or automatic replay is not an
+acceptable substitute. Keep fresh unnamed parsing for this candidate.
+
+Npgsql 11.0.0
+[NpgsqlCommand](https://github.com/npgsql/npgsql/blob/4d174200ed48e3e3ab16419dbf84dd655da59de6/src/Npgsql/NpgsqlCommand.cs)
+and [NpgsqlDataReader](https://github.com/npgsql/npgsql/blob/4d174200ed48e3e3ab16419dbf84dd655da59de6/src/Npgsql/NpgsqlDataReader.cs)
+are the send/wait/read references. Its
+[statement manager](https://github.com/npgsql/npgsql/blob/4d174200ed48e3e3ab16419dbf84dd655da59de6/src/Npgsql/PreparedStatementManager.cs)
+owns statements on a physical connector. Reuse the scheduling principles without
+claiming that Npgsql's physical caching, cancellation or ExecuteReader timing is
+already Korda's contract.
+
+Candidate B removes the separate successful-prepare confirmation: the grouped
+prepare has already consumed its pipeline synchronization boundary and exited
+pipeline mode. It also removes a stream-close Sync after a **proven natural EOF**.
+The proof belongs to this execution on this physical connection: its non-pipeline
+Execute results have been consumed through terminal `PQgetResult == nullptr`,
+and the connection is healthy, nonblocking, outside pipeline mode and in a known
+transaction state. Close rechecks these conditions before reusing that proof.
+A full batch without observed EOF has no such proof. Early stop, metadata-only
+close, errors/unread results, transaction completion, pool check-in and next
+acquisition retain their appropriate confirmation or rejection behavior.
+
+The changed tests inject failures at the terminal reply and reuse boundaries,
+including truncated ReadyForQuery and a backend killed after observed EOF.
+`postgres_sync_tests.cpp` retains original SQLSTATE priority, Unknown commit
+outcomes, cleanup snapshots and charged connection lifetime. Successful libpq
+send-call counters are not FFI counts, protocol-message counts, socket polls or
+measured RTTs. Plan records source-derived message groups and observed counters
+separately from latency.
+
+### SQLite: one statement within an execution
+
+The references are Microsoft.Data.Sqlite 11.0.0
+[SqliteCommand](https://github.com/dotnet/efcore/blob/9e685c7a52d1a344d133a3d370e458db97417b3f/src/Microsoft.Data.Sqlite.Core/SqliteCommand.cs),
+[SqliteDataReader](https://github.com/dotnet/efcore/blob/9e685c7a52d1a344d133a3d370e458db97417b3f/src/Microsoft.Data.Sqlite.Core/SqliteDataReader.cs),
+[SqliteDataRecord](https://github.com/dotnet/efcore/blob/9e685c7a52d1a344d133a3d370e458db97417b3f/src/Microsoft.Data.Sqlite.Core/SqliteDataRecord.cs)
+and SQLite 3.51.3
+[prepare.c](https://github.com/sqlite/sqlite/blob/a5333afb9ad1aa473f8963b92caeaa955f47dc74/src/prepare.c) /
+[vdbeapi.c](https://github.com/sqlite/sqlite/blob/a5333afb9ad1aa473f8963b92caeaa955f47dc74/src/vdbeapi.c).
+
+Prepare once for the same command, inspect columns on that statement, then bind
+the admitted typed arguments and retain it for fetch. Eliminate a separate
+description statement followed by another prepare for execution. Preserve the
+current precedence of SQL preparation errors, shape refusals and parameter
+conversion/physical-width errors. Opening a cursor must not call sqlite3_step;
+Microsoft.Data.Sqlite's ExecuteReader/NextResult stepping cannot be copied
+unchanged into that boundary.
+
+Cross-execution reset/clear-bindings reuse is not part of the initial selected
+path. SQLite's automatic schema reprepare does not establish Korda's metadata,
+error-timing and owner equivalence. Any later cache needs a bounded connection
+owner, verified reset outcome, cleared bindings, schema invalidation, active
+reader exclusion and exact finalization/close behavior. Until demonstrated,
+finalize the statement on completion or failure.
+
+### Parameters: remove a round trip through NWDB
+
+A prepared shape knows parameter identity, order, codec/nullability and provider
+profile. Resolve stable identity-to-ordinal metadata once. Each execution still
+captures and checks its supplied values, retaining existing missing/extra/foreign
+parameter errors and conversion order. Structural validation once does not
+remove fallible provider-specific encoding or boundary safety checks.
+
+The selected native path passes its validated typed argument owner directly to
+provider binding. Delete the second `NativePlan::render` NWDB serialization and
+the following Host parse/decode on this production route. Do not reduce copies
+by retaining mutable application arrays, aliasing two concurrent executions or
+moving a borrowed pointer across await. Reuse stable prepared layout; measure
+cold preparation and per-execution snapshots separately.
+
+### Results: direct arena construction and one layout decision
+
+The current candidate already borrows native batch memory through
+HostStreamTransport and its retained SafeHandle/row lease. There is no proposed
+removal of a whole-batch native-to-managed copy that this starting path does not
+perform. Keep that lifetime mechanism where it remains suitable.
+
+Rewrite native per-cell owning byte vectors, row staging and repeated batch
+parsing into a checked writer for the final bounded batch arena. Validate the
+complete provider column shape before interpreting values. Conversion writes
+directly into reserved arena extents; invalid UTF-8, narrowing, numeric precision,
+NULL, large-field and aggregate-budget errors remain explicit. Publish a batch
+only after its complete frame is valid; failure must leave no transferable
+partial result or uncharged owner.
+
+On the managed side, match the accepted layout once per result and validate each
+new batch's frame/extents once. Typed readers then use those established slots
+within the active lease, without repeating schema matching and codec lookup for
+every cell. Data-dependent validation and lifetime checks stay where required.
+A user constructor or mapper failure releases the batch and joins the existing
+cursor cleanup while preserving any transaction outcome.
+
+Dapper.AOT 1.1.0
+[CommandT.Query.cs](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/src/Dapper.AOT/CommandT.Query.cs)
+tokenizes the reader layout before its per-row typed Read loop. The upstream
+[Query generated fixture](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/test/Dapper.AOT.Test/Interceptors/Query.output.cs)
+and [CacheCommand generated fixture](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/test/Dapper.AOT.Test/Interceptors/CacheCommand.output.cs)
+show typed parameter construction/value updates and row tokens. The actual
+pinned reference consumers have also been generated and inspected. The two-column
+same-SQL `DapperQueryPhases` consumer uses two generated command-factory instances,
+two ordinal Int64 parameter updates and `RowFactory0`: Tokenize matches Id/Note
+once, then Read uses typed accessors/IsDBNull and directly constructs `PhaseRow`.
+The mixed workload is a separate nine-column Order reader with decimal/JSON
+handlers; its generated `RowFactory3` must not be substituted as evidence for the
+two-column comparison. Plan retains actual generated bytes and hashes for both.
+Business DTO/list/string/JSON allocations remain business output.
+
+An EOF marker may eliminate an empty fetch only if completion is already known.
+Do not step an extra row merely to set the marker, suppress a late provider error,
+release a live batch or turn a cancellation request into a fabricated terminal
+result. Candidate B transfers owner, borrowed bytes and observed EOF in the
+additive `db.result.batch.v1` result record; the frozen ABI and NWDB reserved bits
+stay unchanged. Once the final batch is fully consumed and released, a synchronous
+`nw_db_cursor_check_read_admission_v1` preserves source poison, Session closure
+and active-reader admission checks before returning false. This is one FFI call;
+it creates no operation or buffer and executes no SQL or protocol send. It avoids
+an empty fetch without suppressing the original errors. Transaction disposal
+waiting for an existing cursor does not forbid that reader from finishing.
+Measure wakeup, dispatch, retirement and mapping separately before attributing
+read-complete latency to a timer or mapper.
+
+### Complete-command design gate
+
+The prior NWQC command is an input implementation, not a mandatory architecture.
+Compare a directly validated flat expression/query representation with encoding
+an operation tape and replaying it into another native builder. Account for
+construction, serialization, parse, node ownership, compilation and repeated
+execution separately. The goal is one authoritative compiled representation
+after the boundary, with no reconstruction that protects no remaining contract.
+
+Candidate B retains NWQC as the single bounded cross-language command encoding
+but removes its redundant replay adaptation. Native compilation consumes original
+operand spans once, with a local-slot view; `command_clause`/`command_fields`,
+rewritten copies and a second control-frame schema parse are deleted. Fresh,
+unpublished command arenas use in-place `Impl::Edit`, replacing a whole QueryData
+copy per clause. A failed private edit discards the poisoned arena and its shadow
+parameter registry. Existing per-node ABI callers keep copy-on-success behavior;
+private mode is reset before completed roots/clones escape. Immutable imported
+block snapshots still protect query ownership. This is a retained encoded graph,
+not a claim of zero parsing, zero construction or zero native allocation. The
+three-lane public phase measurement must report its remaining construction cost.
+
+The replacement preserves all 22 clause semantics, ordered
+parameters, clone/snapshot/CTE ownership and scalar-origin/literal budgets,
+unsupported-provider refusals, malformed-frame rejection, error precedence,
+recoverable mutation and ToSql's diagnostic/nonsealing behavior. The compiler
+must preserve authoritative C++ dialect/relational semantics and native owner
+validation. No unmanaged pointer is accepted from command bytes.
+
+The gate must either switch the public entry to a direct compiler path and delete
+the replaced replay/wrappers, or document a concrete contract and measured reason
+for each retained stage. Merely reducing allocations inside the current serializer
+does not complete this gate. Preserve frozen public/C ABI compatibility through
+explicitly scoped adapters where required; do not keep an unobserved fallback
+that causes consumers to continue using the old path.
+
+[SqlSugar's fixed query helper](https://github.com/DotNetNext/SqlSugar/blob/06789315fcea02f17901506b0cbf670a25192083/Src/Asp.NetCore2/SqlSugar/Abstract/QueryableProvider/QueryableHelper.cs)
+is the complete-SQL/parameter construction reference, not a proposal for a
+reflection mapper. [.NET 11 DbCommand](https://github.com/dotnet/runtime/blob/deae2e32bf0e018e09d64597b7c59b62b73bb3ce/src/libraries/System.Data.Common/src/System/Data/Common/DbCommand.cs)
+delegates execution to providers; its base asynchronous wrappers do not prove
+Npgsql or SQLite asynchronous I/O behavior.
+
+## Verification and completion boundary
+
+First prove one primary-key result and 100 DTOs through the public package entry,
+then 1000-row batching, complex Fluent queries, transactions and streams.
+Preserve actual open-time side effects, slow-consumer/backpressure, early stop,
+cancellation, failed transaction and connection return. Existing native fault
+oracles and managed lifetime tests are mapped in
+[ported-tests.md](https://github.com/IzuSharp/Korda/blob/f0078da720e07031bc56464995af6791c41aaae8/native/cpp/tests/ported-tests.md);
+historical experiments and inspected tests are not this candidate's execution.
+
+Use the same local Linux host and matching before/candidate/reference inputs.
+Record ABI-call counts, business SQL executions and actual required protocol
+waits independently. Reuse the three same-Host routes and Dapper.AOT plus the
+corresponding driver. After short calibration, run four serial uninterrupted
+1800-second candidate/reference cells across the two databases. Offered-load and
+closed-loop metrics must remain distinct; retain failures and actual rejection
+counts. Full process allocations/GC and native costs cannot be replaced by a
+zero in-row diagnostic. The warm framework path targets 0 B additional managed
+allocation with separately observed operation, refill and concurrency coverage.
+Public Task/one-shot lifetime costs are explicit residuals
+when they remain, not evidence for whole-query zero allocation.
+
+CI retains its existing dependency-selected build/correctness checks and
+independent provider packages; all benchmarks, profiling and pressure run locally.
+No new performance workflow or hidden benchmark action is selected. Complete
+refactoring requires the full layer/deletion review, external package correctness,
+reproducible measured evidence, normal reviewed delivery and an explicit stopping
+basis. The source review and this target alone accept none of those outcomes.
+
+---
+
+## Historical candidate decision — DB-Perf-01 at f0078da7
+
+The following describes the preceding candidate and its original stopping
+instruction. It is preserved for comparison; DB-Exec-02 above governs the newly
+authorized execution-path refactor.
+
 # Current C++ query decision — DB-Perf-01
 
 Status: implementation candidate and local correctness checkpoint for the resumed

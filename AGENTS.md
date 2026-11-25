@@ -1,6 +1,32 @@
 # Korda-Design working rules
 
-## Current stop — final local evidence recorded
+## Current task — DB-Exec-02 complete execution-path refactor
+
+The owner resumed the complete database execution-path refactor on 2026-11-26
+(Asia/Shanghai), continuing Korda #37, this Design #20 and Plan #34. Preserve C#
+Fluent public behavior, Native AOT, C++ execution and two independent provider
+packages. Internal Host structure, command/parameter formats, ABI granularity,
+batch construction and mapping may be rewritten or deleted. Read the
+[current target](docs/database/query-semantics.md),
+[current phase](CURRENT-PHASE.md) and
+[Plan execution gates](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/execution-refactor/README.md).
+Use task-marked DB-Exec-02 worktrees while continuing the existing open branches.
+
+Plan and the selected Design target precede product edits. The target remains a
+candidate until actual public-package correctness and local measurements exist.
+The complete-command representation must pass its explicit direct-compilation
+versus tape-replay gate; a serializer-only optimization is not task completion.
+Keep prior candidate decisions, research, failure records and frozen gate inputs
+under their original identities. The new user authority supersedes the old stop
+below and permits normal reviewed merges after full verification.
+
+Korda's existing Python diff/dependency planner and independent provider package
+jobs govern CI. Benchmarks, profiling, calibration and all four final 1800-second
+cells run locally on Linux. Do not add a performance workflow, job, manual button,
+scheduled run or hidden benchmark invocation. Continue existing documentation
+gates; they do not grant product or performance acceptance.
+
+## Previous stop — final local evidence recorded
 
 The owner instructed completing tests, recording results in the existing PRs and stopping without merging. All four local 1800-second cells and the 16-app/926-file input rehash are complete. Keep the remaining performance gaps and local-only final archive status explicit. No additional benchmark, optimization, merge or release is selected; the continuation below describes the frozen candidate and is not an instruction to restart work.
 

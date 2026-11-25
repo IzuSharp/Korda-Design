@@ -1,3 +1,35 @@
+# Current phase — DB-Exec-02 complete database execution path
+
+The owner has resumed complete Linux x64 path reconstruction in the existing
+[Korda #37](https://github.com/IzuSharp/Korda/pull/37),
+[Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and
+[Plan #34](https://github.com/IzuSharp/Plan/pull/34).
+The [selected target](docs/database/query-semantics.md) preserves public Fluent
+behavior, Native AOT, C++ execution and independent provider packages while
+allowing internal Host, command/parameter, batch and reader replacement.
+Its status is proposed; source review is not implementation or acceptance.
+
+The selected provider targets are fresh PostgreSQL Parse+Describe in one pipeline
+group/Sync with no Execute at open, and one SQLite statement for description and
+binding with no step at open. Cross-execution PG statement/column caching is not
+selected because external DDL can change error and transaction semantics.
+Parameters should enter execution as one validated typed owner; results should
+be written directly to bounded native batches and read through one validated
+layout. The current native-batch borrow already exists and is reused.
+
+The command representation must independently justify direct compilation versus
+NWQC replay, including removal of superseded stages. Full-path public consumers,
+fault/lifetime behavior, same-host before measurements, four sequential local
+1800-second candidate/Dapper.AOT cells and normal reviewed delivery remain
+required. The [Plan gates and recovery](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/execution-refactor/README.md)
+own current evidence. Keep existing CI/module routing, with no benchmark CI.
+
+The previous candidate and its stop record below remain historical. The new
+authorization permits normal merges once the requested end-to-end work is
+verified; it does not turn old results into new-candidate credit.
+
+## Previous candidate phase — DB-Perf-01 query optimization
+
 # Current phase — DB-Perf-01 query optimization
 
 The owner has resumed Linux x64 query optimization in [Korda #37](https://github.com/IzuSharp/Korda/pull/37).

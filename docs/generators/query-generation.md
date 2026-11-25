@@ -10,6 +10,19 @@ No full IQueryable provider, runtime expression compilation, Reflection.Emit, dy
 
 ## 2. What is generated and what is not
 
+The current [DB-Exec-02 target](../database/query-semantics.md#current-execution-path-target-db-exec-02)
+selects one validated result layout and direct typed row access, using the actual
+Dapper.AOT benchmark-generated command factory/reader as the comparison input.
+Candidate B implements that path; actual pinned reference factories/readers and
+public Native AOT consumers are bound in the execution evidence. Final package
+gates and controlled performance acceptance remain pending. Stable parameter
+ordinals and value writing are separate from arbitrary Fluent-method capture.
+This refactor does not announce a new public fixed-query generator API.
+
+The following generation inventory describes the f0078da7 starting implementation
+and retained behavior; replace its internal execution stages only with source-
+and test-bound evidence.
+
 The resumed [query decision](../database/query-semantics.md) distinguishes the NWQC
 implementation candidate from future fixed-query templates. Current generation
 covers model/projection declarations; it does not capture arbitrary Fluent method bodies
@@ -56,7 +69,7 @@ JSON continues using explicitly supplied source-generated `JsonTypeInfo` and `Js
 
 Fluent operators are ordinary C# calls. A convenience lambda over expression
 proxies is a normal builder delegate, not an arbitrary domain predicate interpreted
-later. The DB-Perf-01 candidate records a complete bounded NWQC command in C# before
+later. The preceding DB-Perf-01 candidate records a complete bounded NWQC command in C# before
 one native compile/render/CTE submission; C++ remains the SQL compiler and execution
 owner. `.Prepare()` performs runtime SQL and parameter-layout compilation, not
 build-time compilation of arbitrary method bodies. The generator does not rewrite
@@ -96,6 +109,14 @@ DB-Rename-01 changes the attribute names in matching, generated C# and diagnosti
 Cross-entity/value type errors should fail through ordinary C# typing. Runtime profile mismatch remains a structured domain error rather than a fictitious compile diagnostic. Unknown metadata schemas or required codecs fail early without reflection/provider fallback. Metadata-schema and capability changes require explicit generator/package compatibility checks. A business model hash is distinct from ABI, package and capability versions.
 
 ## 7. Descriptor and operation invariants
+
+DB-Exec-02 may replace the internal command replay, parameter frames and repeated
+row checks described below. The target keeps native owner/profile validation,
+per-execution value snapshots and complete shape/extent validation while
+generating or binding direct typed access. The existing batch borrow already
+retains native memory; ordinary DTO strings/bytes still own their resulting
+managed data. Do not claim whole-query zero from generated row access or treat
+an upstream generated fixture as the actual emitted consumer.
 
 A table's canonical metadata includes schema-format version, logical identity, validated names, scalar codec/nullability, primary keys and ordered projection fields. The existing v1 table relations array stays reserved empty. An explicit relation has separate canonical metadata containing both table/model identities, ordered parent-key/child-key pairs and child nullability; registering a relation does not rewrite either table hash. Adding a supported entity registers another descriptor and does not change native assets.
 
