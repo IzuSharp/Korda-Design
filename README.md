@@ -1,37 +1,27 @@
 # Korda-Design
 
-Design specifications, public API guidance and preserved research for [Korda](https://github.com/IzuSharp/Korda). The canonical repository is [IzuSharp/Korda-Design](https://github.com/IzuSharp/Korda-Design), renamed from `IzuSharp/NativeWeave-Design`.
+Design specifications and preserved research for [Korda](https://github.com/IzuSharp/Korda), with execution evidence in [Plan](https://github.com/IzuSharp/Plan). Korda provides independently installable strongly typed C# Native AOT libraries. This batch covers PostgreSQL and SQLite only.
 
-Korda is a strongly typed C# Fluent ORM for PostgreSQL and SQLite, with ordinary PackageReference consumption and Native AOT support. Its current native implementation uses C++20, libpq and sqlite3. This repository records design and compatibility obligations; the [product repository](https://github.com/IzuSharp/Korda) and [Plan](https://github.com/IzuSharp/Plan) own implementation, execution evidence and acceptance.
+DB-DotNet-01 selects Npgsql and Microsoft.Data.Sqlite execution while retaining the existing C# Fluent ORM, package identities and behavior. Migration and validation precede optimization. Dapper.AOT is the sole external performance comparison. This is an authorized design; product compatibility, performance and publication remain pending until actual evidence exists.
 
-## Start here
-
-| Read | Purpose |
+| Start here | Purpose |
 | --- | --- |
-| [Current phase](CURRENT-PHASE.md) and [working rules](AGENTS.md) | Repository maintenance scope and earlier task authority |
-| [Current API index](docs/api/README.md) and [compiled reference index](docs/api/reference.md) | Current Korda database surface and source-backed declarations |
-| [Database product](docs/database/current-product.md) and [Fluent ORM contract](docs/database/fluent-orm.md) | Retained database behavior and implementation boundaries |
-| [Database attribute names](docs/database/db-attribute-names.md) | The ten `Db` attribute names and their compatibility boundary |
-| [Getting started](docs/api/getting-started.md), [guides](docs/api/guides.md) and [NuGet consumption](docs/api/nuget-and-consumption.md) | Models, examples and independent provider packages |
-| [C# public API standard](docs/standards/csharp-public-api-and-documentation.md) | Naming, documentation and compatibility requirements |
-| [Verification matrix](docs/verification/models-and-matrix.md) | Design gates and the separate product execution requirements |
-| [Repository identity](docs/repository-identity.md) | Canonical URLs and intentionally preserved historical names |
+| [Current phase](CURRENT-PHASE.md) and [working rules](AGENTS.md) | New task authority and preserved historical boundaries |
+| [ADR-0008](docs/decisions/ADR-0008-database-dotnet-execution.md) | .NET execution decision |
+| [Migration contract](docs/database/dotnet-migration.md) and [overlay](docs/database/dotnet-migration.json) | Implementation/compatibility/measurement obligations |
+| [Database product](docs/database/current-product.md) and [Fluent contract](docs/database/fluent-orm.md) | Retained application behavior and new execution map |
+| [API index](docs/api/README.md) and [Db attribute names](docs/database/db-attribute-names.md) | Public declarations and mapping conventions |
+| [Getting started](docs/api/getting-started.md) and [NuGet consumption](docs/api/nuget-and-consumption.md) | Ordinary C# models and independent packages |
+| [Verification matrix](docs/verification/models-and-matrix.md) | Required observed product and delivery gates |
+| [API standard](docs/standards/csharp-public-api-and-documentation.md) | Compatibility, ownership, documentation and allocation obligations |
+| [Repository identity](docs/repository-identity.md) | Canonical URLs and preserved historical names |
 
-The DB-Rename-01 Design specification is merged. Its naming overlay builds on the DB-API-01 Fluent ORM contract and [ADR-0006's C++ migration decision](docs/decisions/ADR-0006-database-cpp-native.md). Product results remain recorded in Plan. Repository identity maintenance does not resume the cancelled DB-Perf-01 task.
+## Documentation verification
 
-## Local documentation checks
-
-```bash
-git clone https://github.com/IzuSharp/Korda-Design.git
-cd Korda-Design
-python3 tools/verify_db_rename.py
+```sh
+python3 tools/verify_db_dotnet.py
+python3 tools/verify_db_dotnet.py --verify-frozen-history
 python3 tools/verify_db_scope_history.py
 ```
 
-Use a clone with full Git history. The first command checks current attribute guidance, local links and the unchanged completed Design gates at their frozen commits. The second replays the original API, English translation, 21-contract acceptance and mutation checks at their original inputs. These are also the current main and pull-request CI gates. Documentation checks do not establish database or Native AOT execution.
-
-## Historical records
-
-The [pre-scope history entry](docs/history/pre-db-scope-01/README.md) preserves the original API and Server specifications. Accepted contract registries, review manifests, research snapshots, experiments and raw verification outputs retain their recorded names, commits and hashes. The frozen `docs/current-scope.json` describes DB-Scope-01 and its original document hashes; current behavior is described by the later contracts linked above.
-
-Historical `NativeWeave` product names, `NativeWeave-Design:` evidence keys and legacy replay directories remain where their exact identity matters. Current navigation uses Korda-Design. See the [repository identity policy](docs/repository-identity.md) before changing a remaining old-name reference.
+Use full Git history. The current overlay is checked independently; the unchanged previous naming/Fluent/C++/scope gates run at their frozen sources. Historical research contracts, `docs/current-scope.json`, previous migration/naming/Fluent JSON, graphs, reviews and raw evidence retain their bytes. DB-Perf-01 stays cancelled; its results are not transferred into DB-DotNet-01. No documentation gate establishes actual database execution or completes a long segment.

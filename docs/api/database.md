@@ -4,7 +4,7 @@
 
 ## Sources, sessions and transactions
 
-`DataSourceBuilder` selects `UseSqlite` or `UsePostgreSql`, snapshots finite options, negotiates the precompiled module and builds an independently owned source. Provider convenience factories use the same implementation. Build starts the database's engine-local runtime and creates a lazy pool; it does not perform connection or migration I/O. `OpenSessionAsync` acquires actual database access. Dispose source/session owners with their documented asynchronous lifetime.
+`DataSourceBuilder` selects `UseSqlite` or `UsePostgreSql`, snapshots finite options and builds an independently owned driver-backed source. Provider convenience factories use the same implementation. Build creates lazy driver/pool state; it does not perform connection or migration I/O. `OpenSessionAsync` acquires actual database access. Dispose source/session owners with their documented asynchronous lifetime.
 
 Transactions preserve their explicit commit/rollback/savepoint behavior. Public completion, confirmed durable outcome and cleanup disposition remain distinct. A failed or canceled commit can retain an unknown outcome; never turn it into an automatic replay or a confirmed rollback. The physical connection is not reusable until its protocol/transaction state is clean.
 
@@ -12,9 +12,9 @@ Transactions preserve their explicit commit/rollback/savepoint behavior. Public 
 
 The current generator uses `[DbTable]`, `[DbColumn]`, `[DbKey]`, `[DbVersion]`, `[DbIgnore]`, `[DbProjection]`, `[DbConstructor]`, `[DbParameter]`, `[DbCodec]` and `[DbUseCodec]` in `Korda.Data`. See the [naming contract](../database/db-attribute-names.md) and [Fluent ORM behavior](../database/fluent-orm.md).
 
-`session.From(Table<TEntity>)` creates a typed Fluent query backed by the existing native query state. Existing filters, ordering, joins, aggregates, pagination, projections and terminals retain their source-defined capabilities. Arguments are typed and snapshotted as specified; values are parameters, not SQL text interpolation. SQLite-incompatible operations fail explicitly before dispatch.
+`session.From(Table<TEntity>)` creates a typed Fluent query backed by typed managed query state and provider SQL rendering. Existing filters, ordering, joins, aggregates, pagination, projections and terminals retain their source-defined capabilities. Arguments are typed and snapshotted as specified; values are parameters, not SQL text interpolation. SQLite-incompatible operations fail explicitly before dispatch.
 
-Static `Table<TEntity>`, typed columns/codecs and `Projection<T>` or the existing query generator provide AOT-friendly metadata and DTO construction. Ordinary model/DTO edits rebuild managed code and reuse the packaged native engine. Exact result count/shape/aliases/codecs/nullability are checked; missing columns are not silently NULL. SQL three-valued logic remains SQL behavior; no complete LINQ provider or hidden managed/client evaluation is added.
+Static `Table<TEntity>`, typed columns/codecs and `Projection<T>` or the existing query generator provide AOT-friendly metadata and DTO construction. Ordinary model/DTO edits rebuild only C# and reuse the standard driver dependencies. Exact result count/shape/aliases/codecs/nullability are checked; missing columns are not silently NULL. SQL three-valued logic remains SQL behavior; no complete LINQ provider or hidden managed/client evaluation is added.
 
 ## Relations, changes and administration
 
@@ -24,6 +24,6 @@ Retain `InsertAsync`, `FindAsync`, explicit changesets, concurrency/version chec
 
 ## Streaming and errors
 
-`AsAsyncEnumerable` retains bounded cursor/result storage and explicit early-break/disposal. A terminal that buffers results still obeys its row/byte budgets. Cancellation requests do not free memory still used by native operations. `CloseAsync` can report pending cleanup; `DisposeAsync` follows actual retirement.
+`AsAsyncEnumerable` retains bounded cursor/result storage and explicit early-break/disposal. A terminal that buffers results still obeys its row/byte budgets. Cancellation requests do not release a reader/connection while active driver work can still use it. `CloseAsync` can report pending cleanup; `DisposeAsync` follows actual retirement.
 
 Preserve argument/disposal/cancellation exceptions, structured provider diagnostics, unsupported-capability errors and unknown transaction outcomes. Do not log secret connection strings or parameter values by default. Database consumers acquire no Korda Server/protocol runtime.

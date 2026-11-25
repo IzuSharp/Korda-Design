@@ -1,10 +1,10 @@
 # C# Public API Design and Documentation Standard
 
-Version: 1.2.0 for DB-Rename-01. Status: current engineering obligations; historical 1.0.0 acceptance remains at the frozen pre-scope commit. This revision requires current scope review and does not inherit that acceptance. Applies to every Korda package, optional Engine, generator, adapter and future repository that explicitly adopts this standard. This document specifies engineering obligations; it does not announce a product release.
+Version: 1.3.0 for DB-DotNet-01. Status: current engineering obligations; historical 1.0.0 acceptance remains at the frozen pre-scope commit. This revision requires current scope review and does not inherit that acceptance. Applies to every Korda package, optional Engine, generator, adapter and future repository that explicitly adopts this standard. This document specifies engineering obligations; it does not announce a product release.
 
 ## 1. Authority and adoption
 
-The application language is C#. Public APIs must be convenient, discoverable, strongly typed, explicit about resource ownership, and implementable with Native AOT. Native engines own their established domain algorithms, state and execution. An attractive C# API is not justification for rebuilding a managed SQL engine, network server or global native runtime.
+The application language is C#. Public APIs must be convenient, discoverable, strongly typed, explicit about resource ownership, and implementable with Native AOT. Implementation boundaries follow the current domain decision. DB-DotNet-01 uses .NET database drivers with managed typed query composition and generated mapping; it adds no SQL database engine, network server or global foreign runtime.
 
 Read the current requirements, accepted contract versions, [API specification index](../api/README.md), exact declarations, coverage rows and owning Delivery task before changing an API. Plan retains the historical 34 Research, 32 Documentation, 21 contracts and 48 Delivery records. Its current execution overlay owns each separately authorized change; original accepted hashes are not rewritten to accept current changes.
 
@@ -16,7 +16,7 @@ For each API change, record the date, current official stable .NET SDK/runtime/C
 
 Compare relevant feature families rather than counting unrelated BCL methods. Reference BCL/TAP, ADO.NET, EF Core, SqlSugar, Dapper, LINQ, ASP.NET Core and Extensions according to the domain. Record a full source SHA, file, symbols, read ranges, retrieval date and coverage limits; distinguish a source file read from upstream tests run. Reuse earlier verified Rust source and experiment evidence when its exact version still applies. Do not redo a successful experiment merely to make its timestamp newer.
 
-Each coverage row must identify reference APIs and versions, Korda symbols, native Engine, managed/native operations, design support classification, AOT behavior, memory/call cost, restrictions and the current owning task. `full`, `equivalent`, `limited`, `planned` and `unsupported` describe design coverage. A separate implementation/evidence field determines whether a product can claim the feature. An upstream capability alone never implies Korda exposes it.
+Each coverage row must identify reference APIs and versions, Korda symbols, selected engine or driver, managed/dependency operations, design support classification, AOT behavior, memory/call cost, restrictions and the current owning task. `full`, `equivalent`, `limited`, `planned` and `unsupported` describe design coverage. A separate implementation/evidence field determines whether a product can claim the feature. An upstream capability alone never implies Korda exposes it.
 
 ## 3. Public surface and package boundaries
 
@@ -76,13 +76,13 @@ Expose .NET `ILogger`, `ActivitySource`, `Meter` and stable diagnostic identifie
 
 ## 8. Exact implementation mapping
 
-For every native-facing feature, specify the complete path:
+For every feature, specify the complete execution path and real ownership/cost boundary. The current database path is:
 
-`C# public member -> managed admission/adapter -> versioned C ABI operation -> Rust adapter -> pinned Engine operation`.
+`C# public member -> managed typed query/admission/parameter binding -> Npgsql or Microsoft.Data.Sqlite operation -> generated reader mapping`.
 
-The mapping includes parameter representation, encoding, optional values, status/out values, capability bits, borrowed/owned storage, operation IDs, callback completion, state transitions, cancellation, cleanup, and release order. A method name alone is not an implementation contract. Rust private layout never becomes the ABI. Existing ABI bootstrap/status/handle/lease definitions remain authoritative; a new domain operation extends the declared operation inventory without silently changing the base wire contract.
+Describe parameter type/order/NULL policy, capability rejection, result shape, ownership, cancellation, cleanup and connection return. The former C ABI and wire transport are removed from the database product; historical contracts retain those original paths without imposing them on this batch. Other future native engines document their actual versioned ABI only if they genuinely use one.
 
-A managed façade may validate arguments, encode values, generate descriptors, materialize DTOs and run business handlers. The existing C++20 database layer owns query AST/dialect decisions and database connection/pool/transaction execution through libpq and sqlite3. Applications choose their HTTP/gRPC servers; Korda adds no transport wrapper. Record the actual boundary cost: FFI calls, managed/native allocations, bytes copied/pinned/retained, callbacks, queueing, runtime instances, and asymptotic work. An allocation ledger is a design estimate until measured.
+Measure managed/dependency allocation, copying, retained bytes, queueing and asymptotic work. The general steady-state goal for any library is **0 B extra library-owned managed allocation per operation on common paths**. Required lists, DTOs, strings and other business results remain result allocation even when allocated by the library. Report end-to-end total, attributable library overhead, business results and unresolved driver/runtime/tool bytes separately, keeping raw integer counters and whole-process Gen 0/1/2. A named 0 B claim needs measured counts and attribution; no GC collection, rounded means, or 0 B/row alone proves it. Resources and retention must remain bounded.
 
 ## 9. API documentation is part of implementation
 
@@ -98,7 +98,7 @@ Version source crates, native ABI, managed packages/API and domain semantics ind
 
 Use a versioned public API baseline and .NET package/assembly compatibility validation against the last supported release. A baseline update requires review; it must not automatically accept removals. Obsolete APIs include a diagnostic ID, explanation, migration path and planned removal release. Experimental APIs live in explicitly marked packages/namespaces and do not quietly enter the stable surface.
 
-Current DB-Scope-01 acceptance preserves every applicable implemented-database gate, including: declaration and consumer compilation; actual required-platform Native AOT execution; generated metadata/model/DTO scenarios; XML/reference/symbol coverage; exact API compatibility; native capability/ABI mapping; resource/cancellation/error tests; package dependency inspection; minimal and advanced consumer paths; and independent review of usability as well as correctness. Tasks with no public API record a justified not-applicable decision and still check any native ABI/internal boundary they own. Evidence is scoped to the owning task; A16/B24 own pristine no-Rust consumption and final release composition.
+Current DB-DotNet-01 acceptance preserves every applicable implemented-database gate, including: declaration and consumer compilation; actual required-platform Native AOT execution; generated metadata/model/DTO scenarios; XML/reference/symbol coverage; exact API compatibility; driver capability/execution mapping; resource/cancellation/error tests; package dependency inspection; minimal and advanced consumer paths; and independent review of usability as well as correctness. Tasks with no public API record a justified not-applicable decision and still check any native ABI/internal boundary they own. Evidence is scoped to the owning task; A16/B24 own pristine no-Rust consumption and final release composition.
 
 Reviewers must not accept their own changed design. Record finding IDs, severity, affected inputs, actual fixes and a final exact-content recheck. Preserve prior acceptance snapshots, even when new versions supersede them. A passing linter cannot replace source/semantic review. Do not relax a failing gate to make a new API pass; first determine whether it is a historical gate that must run at its original immutable input or a current invariant that must be fixed.
 

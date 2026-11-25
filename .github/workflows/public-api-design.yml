@@ -1,7 +1,7 @@
 name: Verify current database API design
 on:
   push:
-    branches: [main, task/DB-Rename-01-linux]
+    branches: [main, task/DB-Rename-01-linux, DB-DotNet-01]
   pull_request:
     branches: [main]
 permissions:
@@ -22,5 +22,5 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
           persist-credentials: false
-      - name: Validate current attribute names and unchanged historical contracts
-        run: python3 tools/verify_db_rename.py
+      - name: Validate .NET migration and unchanged historical contracts
+        run: python3 tools/verify_db_dotnet.py --verify-frozen-history

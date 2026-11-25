@@ -1,37 +1,29 @@
-# DB-Rename-01 verification and acceptance matrix
+# DB-DotNet-01 verification and acceptance matrix
 
-Plan and the product PR record actual execution. This document states requirements without premarking tests as passed. The [current naming contract](../database/db-attribute-names.md), retained [DB-API-01 behavior](../database/fluent-orm.md) and [Korda AGENTS](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/AGENTS.md) govern scope and dependency-selected checks. Frozen DB-Scope-01 JSON and its execution matrix remain historical inputs.
+The [.NET contract](../database/dotnet-migration.md), retained [Fluent behavior](../database/fluent-orm.md), [Db names](../database/db-attribute-names.md) and product AGENTS govern this batch. All execution states are recorded in Plan; no row below is preaccepted.
 
-| Gate | Required observation |
+| Gate | Required observed evidence |
 | --- | --- |
-| Current names | Ten `Db*Attribute` declarations in the preserved namespace; matching generator, diagnostics, generated C# and reverse scaffolding |
-| Generator and mapping | Entities, immutable DTOs and reverse-scaffolded entities compile; ambiguity and other retained negatives produce expected diagnostics |
-| Module-selected checks | Committed-diff routing includes affected consumers; required managed/native, formatter/analyzer, API/XML/reference, compatibility and lock checks pass |
-| PostgreSQL regressions | Retained real-provider normal/error/cancellation/transaction/migration/relation/stream/disposal assertions selected by dependency |
-| SQLite regressions | Retained real-provider normal/error/cancellation/transaction/migration/relation/stream/disposal assertions selected by dependency |
-| PostgreSQL candidate AOT | Independently built actual package; external PackageReference order consumer publishes/runs Native AOT with real read/write assertions |
-| SQLite candidate AOT | Independently built actual package; external PackageReference order consumer publishes/runs Native AOT with real read/write assertions |
-| Packaged API and tutorials | Actual DLL/XML/README expose the new names and no old public attribute types; tutorial source compiles using the candidates |
-| Native reuse and closure | Managed model/DTO edits retain packaged and loaded native hashes; assets/dependencies match the selected provider |
-| Documentation and scans | Current README/guides/XML/reference/example/filename/link/anchor spellings agree; remaining historical/mapping/physical-name hits are classified |
-| Review and PR CI | Diff reviewed, observed current PR checks pass, failures from this batch resolved; stop awaiting maintainer review |
+| Published compatibility inputs | Both actual nupkgs, APIs/XML/assets and unchanged external business C# source are hashed |
+| Native removal | All owned database C++/ABI/P/Invoke/Host/wire/build/test assets removed after per-test behavior mapping |
+| SQL and values | Both-provider parameter order/types, complete row/shape, JSON/decimal/NULL, joins/relations/CRUD and capability errors |
+| Generated mappings | All `Db*` attributes and entities/DTOs/scaffolding compile with retained diagnostics and static JSON |
+| Data continuity | Old PostgreSQL schema and SQLite file continue reads/writes/migration history with original checksums/identities |
+| Cancellation and streams | Real execution-start cancellation, SQLite execute/read/busy behavior, early break and connection/lock cleanup |
+| Transactions | Rollback, savepoints, failed-transaction cleanup and lost-COMMIT-ack durable-state oracle; Unknown is preserved |
+| Concurrency and bounds | Same-session rejection, source/pool bounds, concurrent read/write, saturation/recovery and safe reuse |
+| Impact/API checks | Registered replacement modules; committed diff selects affected consumers; actual packed DLL/XML API comparison |
+| PostgreSQL candidate AOT | Own runner, actual package, external PackageReference and real database execution |
+| SQLite candidate AOT | Own runner, actual package, standard engine dependency and external real file execution |
+| Internal .NET baseline | First compatible packages/dependencies/binaries frozen before optimizing |
+| Business comparison | At least 24 cases per route/database, identical outputs/settings and active Dapper.AOT-generated call sites |
+| Short optimization | Repeated interleaved baseline/candidate measurements, bounded resources, correct results and honest allocation attribution |
+| Four long segments | Final candidates, same dedicated admitted resources, 4 × 1,800 continuous effective seconds, raw ledgers/metrics |
+| Review/normal merges | Non-author technical review, resolved findings, successful actual required PR/main checks |
+| Preview/public NuGet | Both automatic previews observed; downloaded real versions independently publish/run Native AOT consumers |
 
-Consumers run directly as Native AOT binaries. This task does not request JIT consumer execution, clean-image/CPU-emulation checks, new performance/platform acceptance, merge or public release. The existing native engine, C ABI, attribute defaults/targets, codec selection and source-generated JSON metadata remain unchanged.
+Whole-process allocation and Gen 0/1/2 are required. Lists, DTOs and strings needed by the business count as business-result allocation; attributable Korda overhead and unresolved driver/runtime/tool bytes remain separate. Zero claims require raw counts and attribution for one named path. PostgreSQL server resources are separate; SQLite is in-process. Fixed-rate latency includes queueing.
 
-## Retained database failure coverage
+## History integrity
 
-Preserve pre-admission commit cancellation with rollback/no durable row, failed-transaction rollback, same physical PostgreSQL session, early stream admission/release and source/session/reference retirement. Preserve nullable/composite foreign keys, typed idempotent create/replay, ReadCommitted next-statement conflict lookup, pagination/recovery, optimistic changes and outbox atomicity. Existing PostgreSQL conflict/lock and lost-COMMIT-ack durable-state oracles remain direct database tests selected through module dependencies.
-
-The naming change does not remove error-path coverage or introduce a server wrapper. Internal direct business-method consumers continue to exercise their database behavior.
-
-## Evidence and failure semantics
-
-Every executed result records source/toolchain/platform, actual command/exit status, data assertions and relevant package/native/executable identities. Preserve failed attempts and real environment limitations. Unknown transaction outcome is not confirmed rollback; pending cleanup is not reclaimed memory. A failed or unexecuted provider lane cannot be inferred from another lane or old CI. An environment limitation does not justify weakening the repository's required checks.
-
-Design structure/link/history checks are distinct from compiler, package, database, Native AOT execution and independent review. The current [Plan handoff](https://github.com/IzuSharp/Plan/blob/task/DB-Rename-01-linux/ledger/evidence/batches/DB-Rename-01/handoff-linux.md) and PRs bind actual outcomes to source identities. This task ends with passing PR checks for maintainer review; earlier merge/release conditions are historical.
-
-## Historical checks
-
-`python3 tools/verify_db_rename.py` checks the naming overlay and runs unchanged DB-API-01, C++ migration and DB-Scope-01 gates at their frozen inputs. `python3 tools/verify_db_scope_history.py` runs original 21-contract/API/English acceptance and mutations at Design `c62cdb8aee833b6ab1a03e29a3f59f81a1b483f9`. No historical acceptance hash is updated to accept a changed current document.
-
-The original stop/clean, Rust workspace, four JIT/AOT consumer cells and merged-main conditions belong to the [immutable DB-Scope-01 matrix](https://github.com/IzuSharp/Korda-Design/blob/8298dc4128b745cf1809bad0c3cf02c45eb7f522/docs/verification/models-and-matrix.md). The frozen `docs/current-scope.json` still records that matrix and its original active-document hashes; it is not this task's current check plan.
+Run `python3 tools/verify_db_dotnet.py`. It checks this overlay, links, negative controls and preservation of prior inputs, then can replay the unchanged naming gate at frozen Design `dcf4cee8ed4d02a606733aec11bbb36a411d05a9` with `--verify-frozen-history`. Existing API/English/contract history gates retain their old commits. Previous verifiers and accepted JSON/hashes are not edited to admit new implementation semantics. Documentation checks do not accept product execution or a performance cell.

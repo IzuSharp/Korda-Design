@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "task": "DB-DotNet-01",
+  "branch": "DB-DotNet-01",
+  "status": "authorized_design_pending_product_acceptance",
+  "baseline": {
+    "Korda": "e063f2eb6e2e857e3f19f96bf263cae372651a27",
+    "Korda-Design": "dcf4cee8ed4d02a606733aec11bbb36a411d05a9",
+    "Plan": "c73943c72b77cca0398e4034cb82663db0d20bd0"
+  },
+  "plan_first": {
+    "repository": "IzuSharp/Plan",
+    "commit": "0ad57adddd2ace06621ef8d263a7e444a8f25bcd",
+    "path": "ledger/evidence/batches/DB-DotNet-01/plan.md"
+  },
+  "packages": [
+    "Korda.Database.PostgreSql",
+    "Korda.Database.Sqlite"
+  ],
+  "platforms": [
+    "linux-x64"
+  ],
+  "consumer_modes": [
+    "native-aot"
+  ],
+  "execution": {
+    "postgresql": "Npgsql",
+    "sqlite": "Microsoft.Data.Sqlite",
+    "query_and_parameters": ".NET",
+    "result_mapping": "C# source generation",
+    "dapper_product_dependency": false,
+    "sqlite_engine": "standard driver-supported NuGet dependency"
+  },
+  "retained": [
+    "C# public signatures and package identities",
+    "Db attributes",
+    "Fluent behavior and capability rejection",
+    "entities and immutable DTOs",
+    "relations and CRUD",
+    "streaming and result bounds",
+    "cancellation and resource ownership",
+    "transaction outcomes and cleanup",
+    "persisted schema/files/migration history",
+    "C#-only entity and DTO rebuilds"
+  ],
+  "removed": [
+    "Korda-owned database C++",
+    "Korda database C ABI and P/Invoke",
+    "native Host and cross-language transport",
+    "database-exclusive native build/test/CI/assets"
+  ],
+  "sequence": [
+    "published compatibility baseline",
+    "managed migration and both-provider compatibility",
+    "freeze first compatible .NET internal baseline",
+    "measure and optimize",
+    "freeze final candidates",
+    "four dedicated continuous 30-minute segments",
+    "independent review and normal delivery",
+    "actual public NuGet AOT consumption"
+  ],
+  "external_performance_comparator": "Dapper.AOT",
+  "long_segments": 4,
+  "seconds_per_segment": 1800,
+  "steady_state_extra_managed_bytes_target": 0,
+  "business_results_counted": true,
+  "unattributed_bytes_reported": true,
+  "product_execution_claimed": false,
+  "merge_authorized": true,
+  "publication_authorized": true,
+  "clean_image_requested": false,
+  "cpu_emulation_requested": false,
+  "contract_document": "docs/database/dotnet-migration.md",
+  "decision": "docs/decisions/ADR-0008-database-dotnet-execution.md"
+}

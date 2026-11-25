@@ -4,15 +4,15 @@ Current guides cover existing product behavior. Exact declarations and XML remai
 
 | Topic | Guide and invariant |
 | --- | --- |
-| Installation | [NuGet](nuget-and-consumption.md): select a provider, use precompiled assets, no consumer native-engine compiler |
+| Installation | [NuGet](nuget-and-consumption.md): select a provider and its standard driver dependencies; no Korda native-engine build |
 | First application | [Getting started](getting-started.md): ordinary C# source/session and typed query |
 | Data source and pool | [Database product](../database/current-product.md): explicit owner, finite admission and clean reuse |
 | Transactions | [Database behavior](database.md): outcome and cleanup are separate; unknown COMMIT does not authorize replay |
 | Migrations | Existing administrative API preserves dedicated lifetime, checksum/ledger behavior and both providers |
 | Attribute upgrade | [Current names and compatibility](../database/db-attribute-names.md) |
-| Fluent and DTOs | Existing native query state, parameters, static metadata and exact result shape; no full LINQ or reflection fallback |
+| Fluent and DTOs | Typed managed query state, parameters, static metadata and exact result shape; no full LINQ or reflection fallback |
 | Relations and CRUD | Existing explicit relation/key/version semantics, nullable/composite keys and concurrency outcomes |
-| Async and streaming | [Required interop](interop.md): bounded results, early disposal, cancellation and actual retirement |
+| Async and streaming | [Driver lifetime](interop.md): bounded results, early disposal, cancellation and actual retirement |
 | Native AOT | [Platforms](../platforms/support-and-aot.md): actual Linux x64 publish and execution for both databases |
 | Errors and resources | Preserve structured provider errors, original/cleanup failures, ownership and use-after-close behavior |
 | Verification | [Acceptance matrix](../verification/models-and-matrix.md): regressions, two external provider AOT lanes and package/load closure |
@@ -24,6 +24,6 @@ Standard HTTP and gRPC entry points call the same ordinary C# business query met
 
 ## Scope of troubleshooting
 
-Diagnose unsupported provider capability, incompatible native identity, model/DTO shape, canceled/unknown transaction outcome, and pending resource retirement through the existing typed errors/reference contracts. Do not conceal failures with managed providers, SQL interpolation, client evaluation, ignored unsupported clauses or forced release.
+Diagnose unsupported provider capability, incompatible dependency or model identity, model/DTO shape, canceled/unknown transaction outcome, and pending resource retirement through the existing typed errors/reference contracts. Do not conceal failures with SQL interpolation, client evaluation, ignored unsupported clauses or premature connection return.
 
-DB-Rename-01 changes names and documentation while preserving existing ORM behavior. Performance and additional platform work are outside this task. Original research studies remain available in [history](../history/pre-db-scope-01/README.md); their finite results are not current acceptance.
+DB-DotNet-01 preserves the existing C# behavior while migrating execution, then measures Dapper.AOT comparisons on Linux x64. Other platforms are not accepted by this batch. Original research studies remain available in [history](../history/pre-db-scope-01/README.md); their finite results are not current acceptance.

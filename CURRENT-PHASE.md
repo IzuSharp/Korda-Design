@@ -1,3 +1,15 @@
+# Current task — DB-DotNet-01
+
+The current owner authorizes a behavior-compatible PostgreSQL/SQLite migration to Npgsql and Microsoft.Data.Sqlite, then measured optimization against Dapper.AOT. Read [ADR-0008](docs/decisions/ADR-0008-database-dotnet-execution.md), [the migration contract](docs/database/dotnet-migration.md), [the overlay](docs/database/dotnet-migration.json) and the [Plan-first checkpoint](https://github.com/IzuSharp/Plan/blob/0ad57adddd2ace06621ef8d263a7e444a8f25bcd/ledger/evidence/batches/DB-DotNet-01/plan.md). Use branch/worktrees marked `DB-DotNet-01`. The selected design is not a completed implementation or release.
+
+Preserve package identities, all C# public behavior, `Db*` mappings and existing schema/file/migration history. Remove owned database C++/ABI/P/Invoke/Host/wire/build infrastructure only after retaining its business assertions. Migrate and validate before freezing the first compatible .NET baseline; then optimize measured hotspots. Dapper.AOT is the sole external comparator. Four dedicated sequential 30-minute effective mixed-load cells require actual evidence.
+
+Current user authorization includes implementation, tests, independent review, PRs, normal merges, automatic preview and public NuGet Linux AOT consumption. Product AGENTS governs affected modules and independent package runners. Preserve prior accepted contracts, evidence and verifier bytes; historical tasks below do not override this new authorization. Run `python3 tools/verify_db_dotnet.py` and `python3 tools/verify_db_dotnet.py --verify-frozen-history`. The latter runs the unchanged naming gate at frozen main `dcf4cee8ed4d02a606733aec11bbb36a411d05a9`; existing historical API/English gates retain their original pins. Document gates never accept product execution.
+
+## Historical task and maintenance instructions
+
+The original instructions below retain their provenance and apply to their recorded batches. Repository identity remains canonical Korda-Design; frozen aliases/hashes are preserved.
+
 # Current phase — Korda-Design repository identity
 
 The design repository is now [IzuSharp/Korda-Design](https://github.com/IzuSharp/Korda-Design), alongside the [Korda product](https://github.com/IzuSharp/Korda) and [Plan](https://github.com/IzuSharp/Plan). This maintenance change updates repository identity, current navigation and live repository references. It does not change database behavior, source/package names or accepted historical evidence. DB-Perf-01 remains cancelled.

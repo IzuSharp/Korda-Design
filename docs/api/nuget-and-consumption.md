@@ -1,22 +1,20 @@
 # Korda database packages and consumption
 
-Install one independently usable top-level provider: `Korda.Database.Sqlite` or `Korda.Database.PostgreSql`. Each package bundles the required managed assemblies, source generator, build integration and its provider-specific precompiled native library. Internal components remain independently buildable and testable; they are not extra packages the application must install.
+Install one independently usable top-level package: `Korda.Database.PostgreSql` or `Korda.Database.Sqlite`. DB-DotNet-01 preserves these IDs and C# public entry points while replacing the execution implementation. Use the exact candidate or published version recorded in Plan; .NET migration is not accepted merely by this document.
 
-## Names and native assets
-
-| Provider package | Provider namespace | Native asset |
+| Provider package | Provider namespace | Selected dependency |
 | --- | --- | --- |
-| `Korda.Database.Sqlite` | `Korda.Database.Sqlite` | `libnw_database_sqlite.so` |
-| `Korda.Database.PostgreSql` | `Korda.Database.PostgreSql` | `libnw_database_postgresql.so` |
+| `Korda.Database.PostgreSql` | `Korda.Database.PostgreSql` | Npgsql |
+| `Korda.Database.Sqlite` | `Korda.Database.Sqlite` | Microsoft.Data.Sqlite and its standard SQLite engine dependencies |
 
-Common public namespaces include `Korda.Data`, `Korda.Database` and `Korda.Query`. All ten database attributes use the `Db` prefix in `Korda.Data`; the [upgrade mapping](../database/db-attribute-names.md) is an explicit source/binary break. Update source and rebuild it with a matching candidate package rather than mixing old declarations with a new generator.
+Common public namespaces remain `Korda.Data`, `Korda.Database` and `Korda.Query`; ten database attributes keep their `Db` names. Bundle internal Korda managed components and generator/build integration so consumers do not install them as extra top-level products. Publish normal driver dependency metadata in the nupkg; the other database provider must not become a dependency. Remove Korda's old database-native libraries, ABI manifests and engine-build targets from current package assets.
 
-Use the exact version/feed recorded in the candidate manifest. The public preview can retain the preceding attribute names until maintainer publication. This task builds and consumes candidate packages and stops after passing PR checks for review. It does not publish to NuGet.
+## Ordinary C# and Native AOT consumption
 
-## Generator inclusion without hidden runtime work
+Use normal PackageReference outside the source checkout, without repository imports or ProjectReference. The generator supplies static entity/DTO metadata and mapping; JSON keeps explicit source-generated metadata. A consumer entity or DTO edit only rebuilds C#. Native AOT requires the standard .NET native linker/toolchain prerequisites, but no Korda foreign-language engine build.
 
-Consumers use ordinary PackageReference outside the source checkout, with no repository imports or ProjectReference. Entity/DTO additions compile as C# and reuse the packaged native bytes. JSON continues using the existing source-generated metadata. The normal Native AOT compiler/linker prerequisites remain necessary; a consumer does not build Korda's native execution engine.
+For every affected package independently, inspect the actual archive ID, version, README, description, DLL/XML APIs, analyzer/generator, build assets and resolved dependency closure. Publish `-c Release -r linux-x64 -p:PublishAot=true`, execute the binary against the real database, and capture loaded dependencies and engine version. Validate old schema/file/migration-history continuity and the frozen same-source consumer. Published-package acceptance repeats this from the actual automatically released NuGet archives.
 
-Maintainers build the existing C++20/libpq/sqlite3 implementation and pack the selected modules. Each provider candidate is checked independently: package ID/version/README, actual DLL/XML public API, resolved dependency closure, native assets and executed Linux x64 AOT read/write behavior. SQLite must not load PostgreSQL's native asset or vice versa. The [product packaging guide](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/docs/guides/packaging-domain.md) owns the current producer details.
+Npgsql's incompatible dynamic features are not an implicit AOT fallback. SQLite native dependencies must resolve from the driver's supported standard NuGet deployment. Check that stale Korda database-native binaries are absent, rather than continuing the old native-image hash expectation. Plan records exact package/executable/dependency identities, PR/main CI and release URLs.
 
-Applications may use ordinary DI, ASP.NET Core or standard C# gRPC to call their own business methods. Database packages add no transport wrapper. Historical twelve-package distributions remain source-bound history, not current installation instructions.
+Applications may use ordinary DI and their own hosting. Database packages install no Korda server/protocol engine. Historical twelve-package distributions and old C++ assets retain historical identity only.

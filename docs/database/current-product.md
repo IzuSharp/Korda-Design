@@ -1,42 +1,22 @@
-# Current Korda database product
+# Current Korda database design — DB-DotNet-01
 
-The existing product is the PostgreSQL/SQLite Fluent ORM with C# application models, DTOs and static mappings over the C++20 database engine. libpq and sqlite3 perform provider execution. [DB-API-01 behavior](fluent-orm.md) remains in force; [DB-Rename-01](db-attribute-names.md) changes the ten public attributes to `Db` names while preserving behavior. Exact current commands and module selection come from [Korda AGENTS](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/AGENTS.md); actual source/test identities belong to Plan and the product PR.
+Korda's selected database design is a strongly typed C# Fluent ORM over Npgsql for PostgreSQL and Microsoft.Data.Sqlite for SQLite. [ADR-0008](../decisions/ADR-0008-database-dotnet-execution.md) changes the execution architecture while [the Fluent contract](fluent-orm.md) and [Db naming contract](db-attribute-names.md) retain application behavior. Migration implementation and compatibility are pending until [Plan](https://github.com/IzuSharp/Plan/tree/DB-DotNet-01/ledger/evidence/batches/DB-DotNet-01) records actual results; this design does not announce released .NET-backed packages.
 
-## Public-to-native map
+## Execution map
 
-| Public operation | C# implementation | Existing native execution |
-| --- | --- | --- |
-| Provider factory / DataSourceBuilder | `src/Data.Postgres`, `src/Data.Sqlite`, `src/Data.NativeHost` | `host.cpp`, `host_abi.cpp`, `provider.cpp` with provider-specific composition |
-| OpenSessionAsync and pool/session limits | `src/Data.NativeHost` | Host admission, pool/session state and provider I/O |
-| BeginTransactionAsync, commit/rollback/savepoints | `src/Data.Transactions` plus Host | Host transaction state and provider operations |
-| Administration and migrations | `src/Data.Migrations` | `administration.cpp`, native schema and migration operations |
-| Typed values and parameters | `src/Data.Abstractions`, `src/Data.Codecs`, `src/Query.Binding` | `contracts.cpp`, `scalar.cpp`, ordered parameter conversion |
-| From / Where / ordering / query operators | `src/Query.Fluent`, `src/Query.Native` | `query.cpp`, native query/dialect state |
-| Static models and immutable DTO projections | `src/Query.Generator`, `src/Data.Materialization` | Existing metadata/projection ABI and Host registration |
-| Relations and CRUD | `src/Orm.Relations` | `mutations.cpp`, query composition and provider execution |
-| AsAsyncEnumerable and terminals | `src/Data.Streaming`, `src/Query.Fluent` | Host cursors, provider fetches and bounded result ownership |
-| Cancellation, errors and disposal | Required Core/Interop modules | `interop.cpp` and native database retirement |
+| Public area | Selected implementation |
+| --- | --- |
+| DataSourceBuilder/provider factories | Existing C# facade/options, lazy driver-backed data source |
+| OpenSessionAsync | Driver connection plus bounded source admission and one-command session rules |
+| Fluent/parameters | Typed C# query construction, provider SQL and ordered driver parameters |
+| Models/DTOs | Existing `Db*` metadata and generated typed reader mapping |
+| Relations/CRUD | Existing composite keys, nullable relations, changesets/version checks and bounded batch semantics in .NET |
+| Transactions | Driver transactions/savepoints with retained explicit outcome and cleanup |
+| Migrations/drafts/scaffolding | Managed provider SQL/catalog operations and unchanged persisted history/checksums |
+| Streams/errors/disposal | Bounded reader ownership, real cancellation, truthful failures and safe connection return |
 
-Native filenames in the table are under `native/cpp/src`; their corresponding headers are under `native/cpp/include/nw`. The product [native build guide](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/docs/guides/cpp-native.md) records toolchain and implementation details. The Database assembly composes the existing query, ORM, migration and materialization sources. Database Host remains required execution infrastructure, not an HTTP server. Independent provider packages include `libnw_database_sqlite.so` or `libnw_database_postgresql.so` with their required managed closure.
+The [migration contract](dotnet-migration.md) defines detailed compatibility, source removal, lifecycle and acceptance. Korda-owned database C++, C ABI/P/Invoke, native Host, wire transport and exclusive build/test assets are removed by this migration after business assertions are ported. SQLite's standard driver-supplied native engine is a normal NuGet dependency.
 
-The database model generator remains `Query.Generator`. Exact retained native prototypes come from `tests/Query.Binding/generate.py` and `native/database/binding/signatures-v1.json`. The rename changes neither those ABI signatures nor native execution ownership. JSON continues using existing source-generated metadata.
+Preserve public package identities `Korda.Database.PostgreSql` and `Korda.Database.Sqlite`, all existing C# entry points and independently usable consumption. Entity/DTO changes require only a C# rebuild. Dapper is benchmark-only. The first compatible .NET version is frozen before optimization; the sole external performance comparison is Dapper.AOT.
 
-## Preserve behavior, including failure paths
-
-Preserve immutable option snapshots, lazy source/pool creation, explicit connection/session acquisition and per-source budgets. Build negotiates the module and starts database-owned runtime state; it does not perform connection or migration I/O. Core introduces no default global native runtime.
-
-Keep transaction outcome separate from cleanup: failed-transaction rollback, savepoints, pre-admission cancellation and unknown COMMIT outcomes retain their contracts. Unknown never permits automatic replay. Protocol-clean reuse is independent of local quiescence. Administrative/migration operations preserve provider-specific locks, connection cleanup and errors.
-
-Maintain ordered parameter binding, scalar/NULL/UTF-8/numeric semantics, native dialect rendering and explicit capability errors. An unsupported SQLite clause must not disappear silently. Expert SQL remains explicit and parameterized, without fallback to managed execution. Preserve typed fields, immutable metadata, complete result shape, static DTO materialization and handwritten/generated parity. Ordinary C# entity/DTO edits reuse native bytes.
-
-Retain primary-key CRUD, explicit relations, tenant/composite keys, optional foreign keys, changesets, upsert and version/affected-row semantics. The rename adds no tracking, lazy loading or graph persistence. Preserve stream budgets, early-break/disposal, canceled operations, callback retirement and source/session close. A timeout is not permission to force-free an owner. Keep structured provider errors and cleanup failures without logging secrets.
-
-## Transport-independent business operations
-
-A C# application owns its business query methods. Console, ASP.NET Core HTTP and ordinary C# gRPC entry points may call the same method with cancellation; database packages introduce no transport wrapper. Internal `Reference.TaskService` and `Verification.EndToEnd` paths preserve their direct database idempotency/replay, conflict lookup, pagination/recovery, optimistic CRUD/outbox, nullable/composite relation, same-session, early-cursor and lost-COMMIT-ack oracles. Their continued database assertions are not new server product scope.
-
-## Current validation and historical boundaries
-
-Follow the [current matrix](../verification/models-and-matrix.md): dependency-selected managed/native/API checks, two separately built candidate packages, and real SQLite/PostgreSQL reads/writes through external PackageReference Native AOT order consumers. Inspect package contents and loaded native paths/hashes; preserve failure attempts and review evidence. No JIT, clean-image, CPU-emulation or additional platform/performance campaign is requested. Stop at passing PR checks for maintainer review, with no merge or public publication.
-
-The earlier Rust/SeaQuery/SQLx source map, pruning commands and four JIT/AOT cells remain available at the [immutable DB-Scope-01 snapshot](https://github.com/IzuSharp/Korda-Design/blob/8298dc4128b745cf1809bad0c3cf02c45eb7f522/docs/database/current-product.md). They retain their original meaning and are not the current implementation map. Frozen `docs/current-scope.json`, C++ migration records and completed DB-API-01 evidence are not rewritten by this task.
+Applications own their C# business query methods and optional ASP.NET Core/gRPC hosting. Database packages introduce no transport/server product. Historical native/Rust source maps, research and acceptance remain at their fixed commits and do not accept current implementation bytes.

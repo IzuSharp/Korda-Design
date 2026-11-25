@@ -4,13 +4,14 @@ Korda provides the PostgreSQL/SQLite Fluent ORM. Public packages and namespaces 
 
 | Read | Authority |
 | --- | --- |
+| [.NET execution migration](../database/dotnet-migration.md) | Driver boundary, compatibility, measurement and delivery obligations |
 | [Compiled reference index](reference.md) | Actual public declarations, defaults, nullability and XML policies |
 | [Database behavior](database.md) and [Fluent ORM contract](../database/fluent-orm.md) | Queries, models, immutable DTOs, codecs, transactions and schema workflows |
 | [NuGet and consumption](nuget-and-consumption.md) | Independent `Korda.Database.Sqlite` and `Korda.Database.PostgreSql` packages |
 | [Getting started](getting-started.md) and [guides](guides.md) | Current copyable models and full product examples |
 | [Documentation system](documentation-system.md) and [API standard](../standards/csharp-public-api-and-documentation.md) | Generated references, naming and exact compatibility obligations |
 
-Exact candidate source, local execution and PR CI results belong to Plan's DB-Rename-01 record. This task stops for maintainer review and does not publish a release.
+DB-DotNet-01 changes execution to .NET drivers under [the migration contract](../database/dotnet-migration.md). Plan records actual implementation, compatibility, measurements and delivery; all are pending until observed. Normal merges, automatic preview and public-package verification are authorized.
 
 ## Frozen compatibility inputs
 
