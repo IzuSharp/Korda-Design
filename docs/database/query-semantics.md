@@ -180,6 +180,16 @@ Native command parameters first enter a private registry. Only successful final
 compilation atomically merges identities into the source registry, so a malformed
 or rejected command cannot reserve a source parameter ID.
 
+**Selected follow-up, pending implementation and measurement:** an exclusive
+command with one root, no dependencies and exactly one tape reference per
+uncaptured origin may use a direct serializer to avoid generic temporary traversal
+and indexing collections. The NWQC frame, dense scalar origin ordinals, typed root
+model sidecar, bounds, source checks and lifetime/error behavior remain unchanged.
+`CreateCte`, shared or captured origins, snapshots and imports retain the generic
+path. This is an implementation detail within the existing complete-command
+contract, selected after the [first SQLite phase observation](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/query-optimization/phase-sqlite-r0-034b40ea/README.md);
+it does not claim an implemented optimization or measured benefit.
+
 ## Parameters, physical statements and contention
 
 A reusable parameter layout should write values directly in final slot order,
