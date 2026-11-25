@@ -10,9 +10,9 @@ No full IQueryable provider, runtime expression compilation, Reflection.Emit, dy
 
 ## 2. What is generated and what is not
 
-The resumed [query decision](../database/query-semantics.md) distinguishes existing
-generation from proposed fixed-query templates. Current product generation covers
-model/projection declarations; it does not capture arbitrary Fluent method bodies
+The resumed [query decision](../database/query-semantics.md) distinguishes the NWQC
+implementation candidate from future fixed-query templates. Current generation
+covers model/projection declarations; it does not capture arbitrary Fluent method bodies
 or precompile their SQL. Fixed-shape query generation is an optional later step,
 with explicit syntax, diagnostics and handwritten parity required before support
 can be claimed.
@@ -56,10 +56,11 @@ JSON continues using explicitly supplied source-generated `JsonTypeInfo` and `Js
 
 Fluent operators are ordinary C# calls. A convenience lambda over expression
 proxies is a normal builder delegate, not an arbitrary domain predicate interpreted
-later. The source-inspected implementation forwards nodes to C++; the proposed
-DB-Perf-01 path records the complete bounded command in C# before a single native
-submission. The generator does not currently rewrite every method invocation or
-intercept arbitrary calls. Unknown application methods are outside static query
+later. The DB-Perf-01 candidate records a complete bounded NWQC command in C# before
+one native compile/render/CTE submission; C++ remains the SQL compiler and execution
+owner. `.Prepare()` performs runtime SQL and parameter-layout compilation, not
+build-time compilation of arbitrary method bodies. The generator does not rewrite
+every method invocation or intercept arbitrary calls. Unknown application methods are outside static query
 generation. Capability-gated operations resolve against the selected profile and
 are validated again by C++ before provider dispatch.
 
@@ -102,8 +103,9 @@ A table's canonical metadata includes schema-format version, logical identity, v
 | --- | --- |
 | Generator input | Stable syntax/semantic equality; deterministic names/order; diagnostics point to source spans |
 | Build | Generated and handwritten descriptors/readers use the same API; no native compiler or database calls |
-| Query call | C# checks entity/value types; native entry checks owner, generation and profile |
-| Seal/submission | Snapshot mutable parameters and freeze the query; reused shapes receive independent execution values |
+| Query call | C# checks entity/value types and records bounded local operations; existing metadata registration keeps its native owner checks |
+| Compile/render/CTE | C++ validates the complete command, source-bound owner sidecar and profile; explicit preparation caches SQL and immutable parameter metadata |
+| Execution | Snapshot changing parameters; every reused shape receives independently validated values and provider execution retains its own error boundary |
 | First result | Validate complete ordered shape; reject duplicates, missing columns and type mismatches before NULL handling |
 | DTO construction | Invoke the selected typed constructor; failures release batches and close/drain cursors |
 | Compatibility | Reject unknown metadata schema, codec and incompatible capability/profile without fallback |

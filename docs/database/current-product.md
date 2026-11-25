@@ -2,11 +2,15 @@
 
 The existing product is the PostgreSQL/SQLite Fluent ORM with C# application models, DTOs and static mappings over the C++20 database engine. libpq and sqlite3 perform provider execution. [DB-API-01 behavior](fluent-orm.md) remains in force; [DB-Rename-01](db-attribute-names.md) changes the ten public attributes to `Db` names while preserving behavior. Exact current commands and module selection come from [Korda AGENTS](https://github.com/IzuSharp/Korda/blob/main/AGENTS.md); actual source/test identities belong to Plan and the product PR.
 
-The resumed [DB-Perf-01 query decision](query-semantics.md) proposes complete-query
-submission and greater fixed-shape reuse while preserving this execution stack.
-Its source-status table distinguishes current per-node composition, logical
-`.Prepare()` reuse and unimplemented physical statement caching. Product delivery
-requires code and actual tests; a Design change does not supply those results.
+The resumed [DB-Perf-01 query decision](query-semantics.md) describes the
+implementation candidate in [Korda #37](https://github.com/IzuSharp/Korda/pull/37)
+and [Design #20](https://github.com/IzuSharp/Korda-Design/pull/20). It adds complete
+NWQC composition, eager runtime `.Prepare()` compilation, bounded shared scalar
+origins and internal shape-cache locking while preserving this execution stack.
+Its audit table remains the earlier starting point. Physical statement caching and
+generated fixed-query templates remain unimplemented. [Plan #34](https://github.com/IzuSharp/Plan/pull/34)
+owns the candidate's local correctness evidence and outstanding performance work;
+this checkpoint does not claim merge, release or final performance acceptance.
 
 ## Public-to-native map
 
@@ -17,7 +21,7 @@ requires code and actual tests; a Design change does not supply those results.
 | BeginTransactionAsync, commit/rollback/savepoints | `src/Data.Transactions` plus Host | Host transaction state and provider operations |
 | Administration and migrations | `src/Data.Migrations` | `administration.cpp`, native schema and migration operations |
 | Typed values and parameters | `src/Data.Abstractions`, `src/Data.Codecs`, `src/Query.Binding` | `contracts.cpp`, `scalar.cpp`, ordered parameter conversion |
-| From / Where / ordering / query operators | `src/Query.Fluent`, `src/Query.Native` | `query.cpp`, native query/dialect state |
+| From / Where / ordering / query operators | `src/Query.Fluent`, `src/Query.Binding`, `src/Query.Native` | NWQC replay in `query.cpp`, existing native query/dialect state |
 | Static models and immutable DTO projections | `src/Query.Generator`, `src/Data.Materialization` | Existing metadata/projection ABI and Host registration |
 | Relations and CRUD | `src/Orm.Relations` | `mutations.cpp`, query composition and provider execution |
 | AsAsyncEnumerable and terminals | `src/Data.Streaming`, `src/Query.Fluent` | Host cursors, provider fetches and bounded result ownership |
@@ -26,6 +30,14 @@ requires code and actual tests; a Design change does not supply those results.
 Native filenames in the table are under `native/cpp/src`; their corresponding headers are under `native/cpp/include/nw`. The product [native build guide](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/docs/guides/cpp-native.md) records toolchain and implementation details. The Database assembly composes the existing query, ORM, migration and materialization sources. Database Host remains required execution infrastructure, not an HTTP server. Independent provider packages include `libnw_database_sqlite.so` or `libnw_database_postgresql.so` with their required managed closure.
 
 The database model generator remains `Query.Generator`. Exact retained native prototypes come from `tests/Query.Binding/generate.py` and `native/database/binding/signatures-v1.json`. The rename changes neither those ABI signatures nor native execution ownership. JSON continues using existing source-generated metadata.
+
+The query candidate adds capability bit 26 (`db.query.command.v1`) and three
+separately negotiated compile/render/CTE declarations in
+`native/database/binding/korda_query_command_v1.h` and `query-command-v1.json`.
+Those additions preserve the frozen v1 signatures and fingerprint. The
+[query decision](query-semantics.md#dynamic-queries-one-complete-command) explains
+the typed owner sidecar, topology and preserved budgets; command bytes contain
+no native pointer values.
 
 ## Preserve behavior, including failure paths
 

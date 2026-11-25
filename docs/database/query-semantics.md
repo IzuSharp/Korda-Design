@@ -1,12 +1,16 @@
 # Current C++ query decision — DB-Perf-01
 
-Status: proposed implementation contract for the resumed Linux x64 task. Preserve
-the existing C# Fluent API and C++20/libpq/sqlite3 execution. This section governs
-the current work; the original D16 Rust/SeaQuery text below remains historical.
+Status: implementation candidate and local correctness checkpoint for the resumed
+Linux x64 task, continued in [Korda #37](https://github.com/IzuSharp/Korda/pull/37),
+[Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and
+[Plan #34](https://github.com/IzuSharp/Plan/pull/34). Preserve the existing C# Fluent
+API and C++20/libpq/sqlite3 execution. This section governs the current work; the
+original D16 Rust/SeaQuery text below remains historical.
 [ADR-0006](../decisions/ADR-0006-database-cpp-native.md) already changed the native
-implementation language. This decision defines intended submission and reuse
-boundaries; it does not accept unimplemented code or unmeasured improvements.
-Plan owns priorities and the [continuation record](https://github.com/IzuSharp/Plan/blob/main/ledger/evidence/batches/DB-Perf-01/handoff-linux.md).
+implementation language. This decision separates candidate behavior from remaining
+work; it does not claim final performance acceptance, merge or release. Plan owns
+exact candidate identities, executed checks, priorities and the
+[continuation record](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/handoff-linux.md).
 
 ## Observed starting behavior
 
@@ -22,10 +26,12 @@ It establishes implementation behavior, not measured cost:
 | Parameterized SQL | Submits a complete template, parameter frame and options to the same C++ Host | [SqlSubmission.cs](https://github.com/IzuSharp/Korda/blob/c1aca12cadfe3f4e2431ded24c13f7afb58453a0/src/Data.NativeHost/SqlSubmission.cs), [host_abi.cpp](https://github.com/IzuSharp/Korda/blob/c1aca12cadfe3f4e2431ded24c13f7afb58453a0/native/cpp/src/host_abi.cpp) |
 | Source generation | Generates table/projection metadata and typed DTO construction; does not compile arbitrary Fluent method bodies | [ModelGenerator.cs](https://github.com/IzuSharp/Korda/blob/c1aca12cadfe3f4e2431ded24c13f7afb58453a0/src/Query.Generator/ModelGenerator.cs) |
 
-Existing #37 allocation reductions remain reusable at their actual source identities.
-They do not establish complete-command Fluent submission or physical statement
-reuse. Logical shape caching, provider statement reuse and the database server's
-execution-plan policy are separate mechanisms.
+These rows describe the inspected starting point, not the resumed implementation
+candidate. Earlier #37 allocation reductions retain their actual source identities.
+The candidate changes composition, eager logical compilation and cache locking as
+specified below; it does not add physical statement reuse. Logical shape caching,
+provider statement reuse and the database server's execution-plan policy remain
+separate mechanisms.
 
 ## Chosen ownership boundary
 
@@ -50,14 +56,21 @@ generation, semantic profile, metadata content, operators, parameter codecs and
 projection. A hash match never replaces equality. Bound retained entries and
 bytes; eviction cannot invalidate in-use owners.
 
-Retain `.Prepare()` and its independently disposable, source-bound plan. Move
-immutable SQL/slot compilation earlier only where error ordering and lazy
-validation behavior remain compatible. Work whose movement changes an observable
-error stays at its documented first-execution boundary, and its cold cost is
-reported separately. Warm execution must not rebuild immutable schema hashes,
-parameter order or projection layout. Concurrent executions use separate sessions
-of the same source and independent snapshots. Disposal rejects new dispatch;
-already accepted operations keep their retained plan.
+The candidate retains `.Prepare()` and its independently disposable, source-bound
+plan. The complete-command compile entry now seals and compiles immutable SQL,
+argument layout and execution-parameter validation metadata before returning the
+plan. Preparation is a runtime, source/profile-aware boundary; it performs no
+database I/O. Warm execution parses and validates each supplied value frame against
+the cached expectation without rebuilding its schema, hash or descriptor vector.
+Per-execution copying and wire encoding still exist and remain measurable costs.
+
+Immediate managed argument/owner checks and recoverable builder errors stay at
+their public call boundary. Native query compilation errors are reported at the
+explicit compile/render boundary; changing-value errors remain execution checks,
+and database description/execution errors remain provider work. Report preparation
+as cold cost rather than moving it out of the measurements. Concurrent executions
+use separate sessions of the same source and independent snapshots. Disposal
+rejects new dispatch; already accepted operations keep their retained plan.
 
 Optional source generation may later emit a fixed command template, direct typed
 parameter writer and static result mapper for a demonstrably static supported
@@ -74,32 +87,58 @@ handwritten parity require a concrete implementation and compiled examples first
 
 ## Dynamic queries: one complete command
 
-The intended path composes the complete query in managed memory and crosses the
-query-composition ABI once at preparation or submission. The command carries a
-versioned header, metadata/codec/projection references, typed operation records,
-ordered parameter slots, terminal/options and explicit lengths. References are
-checked local indices or validated source-bound identities, never caller-supplied
-native pointers. Existing node/depth/parameter/byte budgets apply while composing
-and again while decoding.
+The candidate composes the complete query in managed memory and crosses the
+query-composition ABI once at preparation or submission. Its additive extension
+requires capability bit 26, `db.query.command.v1`, and all three entry points:
 
-C++ validates the entire command before publishing a plan or admitting provider
-I/O, then builds the existing native query representation and uses the same compiler
-and Host. Unknown versions/opcodes, invalid references, cycles, excessive limits,
+| Entry point | Compile boundary |
+| --- | --- |
+| `nw_db_query_command_compile_v1` | Seal and compile the complete query for its terminal, including `.Prepare()` |
+| `nw_db_query_command_render_v1` | Compile a complete diagnostic snapshot for `ToSql()` without sealing the mutable builder |
+| `nw_db_query_command_cte_v1` | Compile a complete body for `CommonTable.Create`, returning an immutable CTE owner |
+
+The frozen database v1 declarations and fingerprint are unchanged. Product callers
+require the complete extension and return a structured unsupported error when it
+is unavailable; there is no silent per-node fallback. Retained direct C ABI calls
+serve compatibility and differential fixtures.
+
+NWQC v1 is a bounded little-endian operation tape with explicit lengths. It carries
+the existing column/value/parameter, binary/unary/list and import records, and all
+22 existing clause opcodes. Subquery snapshots form topological blocks: imports
+refer only to earlier blocks, every block reaches the final root, and result slots
+refer only to earlier records in their block. Projection tokens, JOIN aliases and
+window snapshot order retain their existing semantics. It is a record of supported
+Fluent operations, not a second SQL compiler or a general C# expression format.
+
+Metadata models, immutable plans and CTEs travel in a typed owner sidecar. The Host
+resolves and pins each owner through its registry, checking kind and source
+generation. The bytes contain checked sidecar/block/slot indexes, never native
+pointers or generation tokens. Existing node/depth/parameter/value budgets apply
+while composing and during replay. A separately bounded envelope allows headers
+and references without increasing the native expression or retained-value limits.
+The product's [versioned protocol](https://github.com/IzuSharp/Korda/blob/task/DB-Perf-01-linux/native/database/binding/query-command-v1.md)
+and separate extension header own exact wire layouts and C declarations.
+
+C++ validates and replays the entire command through the existing native query
+representation and compiler before publishing a plan or admitting provider I/O.
+The same Host owns execution. Unknown versions/opcodes, invalid references, cycles, excessive limits,
 wrong owners/codecs and unsupported clauses reject without partial publication or
 a database send. Additive capability/version negotiation preserves old ABI layouts
 and action meanings.
 
-This is proposed behavior, not current operator coverage. Enumerate aliases, joins,
-imported subqueries/CTEs, projections and terminals before claiming completeness.
-An unconverted path remains a visible gap; node-by-node fallback cannot be counted
-as complete-command coverage.
+The native candidate's local differential checks cover the retained SQL/ordered
+argument goldens, malformed input and capability rejection, snapshot/CTE budgets
+and concurrent cache use. These checks establish their own tested cases; Plan
+records managed, package and real-provider results separately. Native decoder
+coverage alone is not final product or performance acceptance.
 
 Preserve public type/owner/disposal/concurrent-use checks and builder recovery after
 a rejected mutation. Checks observable at the mutating call remain there through
 managed validation and negotiated capability/limit metadata. Native-dependent
 checks remain authoritative at compile/submission before I/O. Delaying every invalid
-mutation until execution, poisoning a formerly recoverable builder, changing error
-precedence or silently dropping unsupported SQLite syntax is incompatible.
+mutation until execution, poisoning a formerly recoverable builder, changing
+documented public-call error precedence or silently dropping unsupported SQLite
+syntax is incompatible.
 `ToSql()` remains a diagnostic clone with placeholders, no execution and no seal;
 it may use one complete rendering command without changing subsequent composition.
 
@@ -110,6 +149,37 @@ immutable bytes. No borrowed span crosses await. A complete query submission doe
 not combine fetch/cancel/dispose into that command: bounded cursor batches,
 backpressure, early stop and retirement remain independent operations.
 
+### Scalar origins across clones and CTEs
+
+Clones and immutable subquery snapshots retain scalar origin identity. A command
+uses bounded origin IDs to reuse the same immutable literal/parameter slots across
+its blocks. A successful plan or CTE retains an immutable origin map; a later
+command can bind an origin to that same-source owner through the sidecar. Replay
+checks kind, operation, identity bytes, codec and value before sharing a slot.
+Independent construction of equal values remains a different origin.
+
+This preserves clone/CTE retained-literal and expanded-graph budgets, including a
+constructed but unused escaped text predicate. It is not SQL-placeholder or
+parameter-occurrence deduplication. The local negative control creates a 6002-byte
+escaped literal once; losing its shared identity across a CTE retains 12004 bytes
+and incorrectly rejects an otherwise valid 9000-byte budget. The seeded candidate
+matches the direct path's 6002-byte retention. Plan retains the measured counts and
+source-bound receipts.
+
+Managed origins retain bounded leases for their captured compiled owners while a
+tape/snapshot still uses them; publication of a first shared capture is coordinated.
+Capture is limited to shared/snapshot cases and CTE boundaries; an ordinary unique
+terminal does not retain an extra compiled owner lease.
+Native origin maps hold scalar data and do not point back to the plan or CTE owner.
+No thread-local or source-global literal pool is introduced. Capturing an owner
+can retain its body snapshot as well as its scalar slots; that cold cost must be
+included in memory measurements. Disposal and concurrent snapshot tests remain
+required, rather than assuming a matching SQL string proves lifetime correctness.
+
+Native command parameters first enter a private registry. Only successful final
+compilation atomically merges identities into the source registry, so a malformed
+or rejected command cannot reserve a source parameter ID.
+
 ## Parameters, physical statements and contention
 
 A reusable parameter layout should write values directly in final slot order,
@@ -117,7 +187,8 @@ avoiding repeated sorting, schema/hash construction and intermediate cell/frame
 encoding. Preserve missing/extra/foreign parameter errors, nullability, conversion
 and exception order. Do not retain mutable caller buffers to reduce copies.
 
-Physical statement reuse is a separate proposed connection-local optimization.
+Physical statement reuse remains unimplemented in this candidate. It is a separate
+proposed connection-local optimization.
 SQLite may reset and clear bindings before returning a statement to a bounded
 cache; PostgreSQL may retain named statements on their owning connection. A key
 covers canonical SQL, ordered parameter types and relevant session/schema state.
@@ -127,11 +198,14 @@ or discard resources. Do not replay an accepted mutation or unknown transaction
 to repair a cache entry. Existing SQLite error precedence, PostgreSQL description
 checks and protocol synchronization remain validation requirements.
 
-Shape-cache synchronization should cover lookup, collision checks, budgets and
-LRU mutation. Immutable compilation and execution-specific conversion may run
-outside that shared lock where lifetime permits. Measure wait/hold and queueing
-before claiming a concurrency improvement. Per-row and retirement gates cannot
-be removed without retaining their existing race and disposal behavior.
+The candidate places synchronization inside `ShapeCache`: one mutex protects
+lookup, collision checks, LRU mutation, byte accounting, `counts()` and `clear()`.
+Immutable compilation and key calculation are outside that mutex. The Host no
+longer holds a source-wide shape lock across execution parameter parsing, copying
+and encoding. A returned shared shape remains alive through eviction or clear.
+Local concurrent render/clear/evict checks verify SQL, actual parameter values and
+cache bounds. Measure wait/hold and queueing before claiming a concurrency
+improvement. Per-row, admission and retirement gates remain unchanged.
 
 ## Research inputs and implementation priority
 
@@ -149,8 +223,8 @@ above are navigation, not immutable reproduction identities.
 | Priority | Work and completion criterion |
 | --- | --- |
 | P0 | Establish identical-SQL/parameter/result/connection local comparisons for ordinary Fluent, warmed `.Prepare()` and the same Host's parameterized SQL. Split construction, first row, remaining read and release. |
-| P1 | Implement complete-command composition/validation and remove repeated stable parameter work; verify every existing operator and negative path before claiming coverage. |
-| P1 | Measure/narrow source-wide shape locking; implement bounded physical statement reuse only with hit, invalidation, cancellation and cleanup evidence. |
+| P1 candidate | Complete-command composition/replay, early SQL and parameter-metadata compilation, and scalar-origin ownership are implemented for review; retain native/managed negative, lifetime and real-provider evidence before acceptance. |
+| P1 candidate / gap | Cache locking is narrowed to internal LRU bookkeeping with local concurrent checks. Physical statement reuse remains a gap requiring hit, invalidation, cancellation and cleanup evidence. |
 | P2 | Optimize batch conversion and mapper temporaries where measured costs remain; preserve bounded memory and complete-result correctness. |
 | P2 | Consider optional generated fixed-query templates after the command contract is stable; ordinary Fluent remains fully supported without them. |
 | Acceptance | Retest both real providers and actual Native AOT consumers, then run final candidate and Dapper.AOT local 30-minute mixed segments per provider; record remaining gaps and stopping reasons in Plan. |

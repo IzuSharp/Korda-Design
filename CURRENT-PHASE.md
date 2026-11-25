@@ -1,18 +1,26 @@
 # Current phase — DB-Perf-01 query optimization
 
 The owner has resumed Linux x64 query optimization in [Korda #37](https://github.com/IzuSharp/Korda/pull/37).
-The C# Fluent API and C++20/libpq/sqlite3 execution remain. Fixed query shapes
-should do stable work ahead of repeated execution; dynamic Fluent queries should
-be composed completely in C# and submitted as one bounded query command to C++.
-Result batches, cancellation and ownership remain streaming contracts.
+The C# Fluent API and C++20/libpq/sqlite3 execution remain. The current stage is
+an implementation candidate with local correctness checks. C# composes dynamic
+Fluent queries into one bounded NWQC command; C++ validates and compiles the
+existing operation inventory. `.Prepare()` compiles immutable SQL and parameter
+validation metadata before repeated execution. Result batches, cancellation and
+ownership remain streaming contracts. Physical statement reuse and optional
+fixed-query template generation remain gaps, not delivered features.
 
 Read the [current decision and implementation order](docs/database/query-semantics.md),
 [Fluent contract](docs/database/fluent-orm.md), [generation boundary](docs/generators/query-generation.md)
-and [measurement rules](docs/performance/methodology.md). They distinguish existing
-behavior from intended implementation. The [Plan batch](https://github.com/IzuSharp/Plan/blob/main/ledger/evidence/batches/DB-Perf-01/plan.md)
-and [handoff](https://github.com/IzuSharp/Plan/blob/main/ledger/evidence/batches/DB-Perf-01/handoff-linux.md)
-own current PR identities, unresolved gaps and observed test results. Publish the
-Plan and Design checkpoints before implementing their selected scheme in #37.
+and [measurement rules](docs/performance/methodology.md). Continue
+[Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and
+[Plan #34](https://github.com/IzuSharp/Plan/pull/34) on
+`task/DB-Perf-01-query-optimization`, with product work on `task/DB-Perf-01-linux`.
+The active [Plan batch](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/plan.md)
+and [handoff](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/handoff-linux.md)
+own exact candidate identities, unresolved gaps and observed test results. The
+initial Plan and Design checkpoints are published; new schemes still follow the
+Plan-first, Design-before-product order. Local correctness does not establish the
+final candidate's performance, a merged PR or a release.
 
 Normal validation retains Korda's committed-diff/module-dependency selection and
 existing independent PostgreSQL/SQLite package jobs. Consumers execute directly

@@ -18,7 +18,7 @@ Korda is a strongly typed C# Fluent ORM for PostgreSQL and SQLite, with ordinary
 | [Verification matrix](docs/verification/models-and-matrix.md) | Design gates and the separate product execution requirements |
 | [Repository identity](docs/repository-identity.md) | Canonical URLs and intentionally preserved historical names |
 
-The DB-Rename-01 Design specification is merged. Its naming overlay builds on the DB-API-01 Fluent ORM contract and [ADR-0006's C++ migration decision](docs/decisions/ADR-0006-database-cpp-native.md). Product results remain recorded in Plan. The owner has now resumed DB-Perf-01 query optimization in [Korda #37](https://github.com/IzuSharp/Korda/pull/37). The current decision preserves C++ execution and the Fluent API; its implementation and local Linux performance results remain subject to evidence. The preceding repository-identity maintenance did not itself resume the task.
+The DB-Rename-01 Design specification is merged. Its naming overlay builds on the DB-API-01 Fluent ORM contract and [ADR-0006's C++ migration decision](docs/decisions/ADR-0006-database-cpp-native.md). Product results remain recorded in Plan. The owner has resumed DB-Perf-01 query optimization in [Korda #37](https://github.com/IzuSharp/Korda/pull/37), [Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and [Plan #34](https://github.com/IzuSharp/Plan/pull/34). The current stage is an implementation candidate with local correctness evidence, preserving C++ execution and the Fluent API. Physical statement caching and generated fixed-query templates remain gaps; final local Linux performance, merge and release are not claimed. The preceding repository-identity maintenance did not itself resume the task.
 
 ## Local documentation checks
 

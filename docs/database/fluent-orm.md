@@ -4,39 +4,59 @@ This is the behavior contract for the existing Korda PostgreSQL/SQLite product. 
 
 ## Query optimization contract — resumed DB-Perf-01
 
-The [current query decision](query-semantics.md) defines the proposed change from
-per-node native composition to a complete command, while preserving the business
-behavior below. Source-inspected status is explicit: #37 currently still performs
-individual native composition calls; `.Prepare()` freezes a logical native plan
-whose SQL is first compiled at execution, and the provider still prepares physical
-statements per command. Those are separate costs to measure and optimize.
+The [current query decision](query-semantics.md) describes the implementation
+candidate in [Korda #37](https://github.com/IzuSharp/Korda/pull/37), reviewed through
+[Design #20](https://github.com/IzuSharp/Korda-Design/pull/20), while preserving the
+business behavior below. The candidate uses a complete managed command and eager
+runtime logical compilation. Physical statements are still prepared per provider
+command. [Plan #34](https://github.com/IzuSharp/Plan/pull/34) owns exact source
+identities and local correctness receipts; final performance and delivery remain
+unaccepted at this checkpoint.
 
-Fixed shapes should reuse parameter order/codecs, projection and compiled query
-structure, with changing values captured independently at each execution. The
-existing `.Prepare()` remains the public entry. Optional generation of static
-command templates and direct binders requires an independently defined supported
+Fixed shapes reuse parameter order/codecs, projection and compiled query structure,
+with changing values captured independently at each execution. The existing
+`.Prepare()` remains the public entry and finishes SQL/slot compilation plus
+parameter validation metadata before returning its source-bound plan. It neither
+opens a connection nor prepares a physical database statement. Each execution still
+validates its own values; the immutable schema/hash/descriptors are cached.
+Optional generation of static command templates and direct binders requires an
+independently defined supported
 subset; existing entity/DTO generation does not already provide that feature.
 Handwritten descriptors and ordinary Fluent remain supported without a generator.
 
-For dynamic queries, C# records all selected conditions, operators and projection
-before sending one bounded query command to C++. C++ validates, renders its dialect
-and executes through the existing Host. No C# SQL compiler, provider replacement or
-client evaluation is introduced. One command means a complete logical query;
-results still arrive in bounded cursor batches. Command coverage and any remaining
-per-node paths must be stated explicitly until implementation is complete.
+For dynamic queries, C# records selected conditions, operators and projection in
+bounded local slots before one complete NWQC submission. The candidate extension
+uses capability bit 26 and separate compile, render and CTE entry points, replaying
+the existing 22 clause operations and topological subquery blocks through C++.
+Source-bound models/plans/CTEs use a validated owner sidecar; pointer values are
+never serialized into command bytes. Missing extension support is an explicit
+unsupported error, with no product fallback to individual native node calls.
+C++ owns validation, dialect rendering and execution through the existing Host.
+No C# SQL compiler, provider replacement or client evaluation is introduced.
+One command means a complete logical query; results still arrive in bounded cursor
+batches. Metadata registration and fetch/cancel/dispose remain distinct operations.
+
+Clones and CTEs retain the identity of shared scalar origins through bounded owner
+leases and native origin bindings. This preserves retained-literal budget and
+lifetime behavior, including unused constructed expressions; it does not merge
+independently constructed equal values or deduplicate SQL parameter occurrences.
 
 Preserve immediate public validation, owner/source checks, recoverable mutation
-failure and the nonsealing behavior of `ToSql()`. Prepare/execute preserve existing
-parameter snapshot and lazy error ordering. Existing transaction, cancellation,
-streaming and disposal guarantees remain. A connection-local statement cache is
-separate from logical plan reuse and may retain only bounded, reusable physical
-state after protocol cleanup. Never replay a mutation after an unknown outcome.
+failure and the nonsealing behavior of `ToSql()`. `.Prepare()` and
+`CommonTable.Create` are explicit native compilation boundaries; `ToSql()` compiles
+a diagnostic snapshot without changing the builder. Changing parameters still
+snapshot and validate at execution, while provider errors retain their database
+execution/cleanup boundary. Existing transaction, cancellation, streaming and
+disposal guarantees remain. A future connection-local statement cache must be
+bounded and protocol-clean; it is separate from this candidate's logical reuse.
+Never replay a mutation after an unknown outcome.
 
 Correctness and API/package acceptance continue through existing module-selected
 checks and independent PostgreSQL/SQLite Native AOT package jobs. All performance
 work runs locally on Linux, using the [measurement rules](../performance/methodology.md)
 and [current validation matrix](../verification/models-and-matrix.md). Plan records
-actual results; this contract does not mark the proposed query path as implemented.
+actual results. The implementation candidate and its local checks do not establish
+final performance acceptance, a merged PR or a published package.
 
 ## Business journey and reuse
 

@@ -11,11 +11,22 @@ provider migration. Read the [current query decision](docs/database/query-semant
 and [current phase](CURRENT-PHASE.md) before implementation.
 
 Use a task-marked worktree and branch. Continue implementation in
-[Korda #37](https://github.com/IzuSharp/Korda/pull/37); Plan owns gaps, priorities,
-actual measurements and the durable [handoff](https://github.com/IzuSharp/Plan/blob/main/ledger/evidence/batches/DB-Perf-01/handoff-linux.md).
-Publish the Plan checkpoint and Design decision before the corresponding product
-implementation. This document specifies intended behavior, not completed execution.
-Keep historical contracts, evidence, frozen tools and acceptance hashes unchanged.
+[Korda #37](https://github.com/IzuSharp/Korda/pull/37), this decision in
+[Korda-Design #20](https://github.com/IzuSharp/Korda-Design/pull/20), and evidence in
+[Plan #34](https://github.com/IzuSharp/Plan/pull/34). Design and Plan use
+`task/DB-Perf-01-query-optimization`; the product uses `task/DB-Perf-01-linux`.
+The active [Plan checkpoint](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/plan.md)
+and [handoff](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/handoff-linux.md)
+own gaps, exact candidate identities, executed checks and actual measurements.
+The initial Plan and Design decisions preceded implementation. Continue that order
+for a new scheme; do not restart from the old cancellation on `main`.
+
+The current stage is an implementation candidate with local correctness evidence,
+not final performance acceptance or a merged delivery. Its complete command path,
+eager runtime preparation, scalar origin ownership and cache locking are described
+in the current decision. Physical statement caching and fixed-query template
+generation remain unimplemented. Keep historical contracts, evidence, frozen
+tools and acceptance hashes unchanged.
 
 Korda's current `main` AGENTS and Python module planner govern normal checks.
 PostgreSQL and SQLite keep their existing independent package runners and execute
