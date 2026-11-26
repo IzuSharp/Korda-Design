@@ -1,3 +1,15 @@
+# Current task — DB-Exec-Parity-01
+
+The owner authorizes measurement-first Linux x64 execution parity work from the
+latest mains, including implementation, independent review, normal merges and
+existing CI/release/public NuGet AOT verification. The completed measured Plan
+gate precedes the [current experiment strategy](docs/database/execution-parity-01.md).
+Use task/DB-Exec-Parity-01-linux and task-marked isolated experiments. Keep Go
+Plan35/Korda39 drafts unchanged. All profiling, calibration and benchmarks remain
+local; no direct or indirect performance CI invocation. Preserve all prior task
+records below. Update the strategy with actual retained/rejected results, never
+claim a proposed implementation or a document gate as performance acceptance.
+
 # Korda-Design working rules
 
 ## Current task — DB-Exec-02 complete execution-path refactor

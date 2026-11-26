@@ -1,3 +1,7 @@
+# DB-Exec-Parity-01 — measured execution experiments
+
+The dual-provider measured Plan gate is complete. The [current strategy](docs/database/execution-parity-01.md) specifies isolated common completion and provider resource experiments. Product acceptance, final local four-cell campaign and reviewed delivery are pending. Earlier phases below retain their historical scope.
+
 # Current phase — DB-Exec-11 final local evidence complete
 
 The formal candidate is Korda
