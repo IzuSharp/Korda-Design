@@ -106,6 +106,24 @@ unconditionally enabling chunk32 is rejected. No benchmark-specific SQL exceptio
 or weakened failure order is permitted. A different implementation requires its
 own complete contract proof and measured resource benefit.
 
+## Experiment C: omit ineffective PostgreSQL interrupt hooks
+
+The actual thousand-row path installs1002 cancellation hooks. The compiled
+weak_ptr lambda is stored in std::function's small buffer; these calls are not
+1002 proved allocations. Baseline source shows the PostgreSQL interrupt hook
+only writes an interrupted flag that is never read. Its only engine side effect
+is in the SQLite branch. PostgreSQL already observes cancellation through the
+unchanged per-row and nonblocking receive/poll checks, then bounded cleanup.
+
+An isolated candidate may install provider interrupt hooks only for SQLite and
+remove the unused interrupted flag/stores. Preserve old-token detach, every
+CallContext check/deadline, protocol drain/poisoning and Unknown commit semantics.
+The prediction is PG install1002→0 with identical SQL/protocol/rows/batches and
+unchanged SQLite behavior, not a promised malloc reduction. Actual cancellation,
+late-row error, early stop, cleanup and unknown-commit regressions plus repeated
+count/CPU A/B determine adoption. No cached Cancel identity or skipped external
+detach is introduced.
+
 ## Remaining measured candidates
 
 Per-row Cancel.install, built-in codec temporaries and full-batch offset rewriting
@@ -114,6 +132,108 @@ and allocation boundaries are specified. Full-batch finish rescans are a lower-
 risk but apparently small CPU target:2000 cells/1800 rewrites at1000 rows despite
 only124 B partial-batch payload movement. Any skip must preserve non-NULL empty
 cell offsets, partial/byte-limited batches and canonical frame bytes.
+
+## Current causal outcomes and selected follow-up
+
+The newer Plan checkpoint `b30caf8` records the completed isolated screens before
+this strategy update. The main task product has not yet integrated a candidate.
+Common completion A and PG cancel-hook C are not selected: the intended mechanism
+was observed but ordinary endpoint benefit did not repeat. The lease-B zero-owner
+Release bypass also did not deliver stable CPU improvement. Ready-row-C preserves
+async contexts and passed its AOT checks, but is rejected because PG thousand-row
+CPU and p50 regress in both reversed rounds. Those paths remain independent
+experiment evidence and will not be layered into the next candidate.
+
+SQLite's v3 flag change has repeated actual Host allocation benefit with unchanged
+engine work. It is retained provisionally as a resource optimization, subject to
+the final combined mixed regression gate. It does not establish query parity.
+
+### Decimal configuration: retain exact valid-path parsing
+
+PostgreSQL decimal decoding repeats the same canonical precision/scale JSON
+configuration four times per value at three preserved validation positions. The
+selected isolated implementation recognizes only the complete canonical valid
+form without constructing general JSON trees. Every original validation call,
+profile/OID check and precedence remains; malformed, overflowed, unsupported or
+noncanonical input goes to the original JSON implementation and error path. No
+mutable Codec cache, pointer identity shortcut or skipped validation is added.
+SQLite decimal rejection remains ahead of this parser; other codecs are unchanged.
+
+Repeated actual decode scopes show4000->0 JSON parses and48000->1000 public
+allocations for1000 decimal values, while3000 validations remain. Ordinary two-
+round screening shows useful decimal32/1000 and wide32 gains, but integer/control
+paths and aggregation do not all improve, and the1000-decimal CPU remains about
+8.5 times Dapper. Report the limited scope and small observed control regressions;
+final combined mixed measurements decide full adoption and any alignment claim.
+
+### Worker-D: admitted shared-ThreadPool pull execution experiment
+
+Select a distinct isolated scheduling experiment based on the measured32 batches/
+34 native jobs and queue/ready/managed-take timeline. Reuse the existing bounded
+CallbackCoordinator reservation and never-inline shared ThreadPool worker. The
+worker executes an already-admitted native cursor pull synchronously and then
+performs the existing result take in the same work item. This tests whether
+avoiding the native-queue round trip reduces the repeated ThreadPool idle/wakeup
+cost. No sampled spin instruction is assumed to belong exclusively to this path.
+
+This is a proposed private execution strategy, not product acceptance. Preserve
+C# Fluent, public signatures, Native AOT, both independent packages, native C++
+libpq/sqlite3 algorithms and all current workload/SQL/batch inputs. Native Source
+admission, management, final cursor close, Source join and transaction workers
+remain independent. The declared EngineLocalAsync model keeps native instance
+admission/control; this hybrid pull scheduling must be documented accurately if
+adopted. It does not create a dedicated managed pool or change runtime settings.
+
+A new nonblocking native prepare/admit entry must perform original validation,
+input snapshot, Session gate, generation/Cancel setup and source pending plus
+channel/source retirement reservation before managed queue acceptance. Public
+Async never waits for provider completion on its initiating thread. Deferred work
+owns its references; synchronous OwnerLease/Span/raw borrowed pointers cannot
+escape into the queue. Queued work has a unique run-versus-abandon claim. Source/
+Session close, scheduler rejection and pre-run cancellation must settle accepted
+work, release tickets and break any retained cycle without self-waiting.
+
+Synchronous run reuses original CursorPull::run/open/full metadata validation/
+second admission/fetch/Cancel detach/complete/error enrichment. It must not create
+a separate provider execution algorithm or bypass fresh DDL checks. Old request
+ABI semantics remain unchanged; a new private extension negotiates both providers.
+The same worker may take only after native run returns and the original setup,
+controls, callback and cancellation-registration drains permit it. Retain MRVTS
+asynchronous continuation behavior and do not combine common-A. A bounded ready
+callback may remain for state notification, with no user continuation on its
+native stack; callback elimination is not a claimed causal outcome.
+
+Retirement proof must cover the new exported-run frame's last accessor, not only
+the inner Worker destructor. Source join cannot report quiet while any admitted
+native frame still accesses channel/session/source/provider state. Ready, result
+take and final native retirement remain different events. Preserve all original
+rich errors, code/correlation, error priority, late PG failure, bounded drain,
+connection poisoning and Unknown commit behavior. The experiment does not touch
+transaction finish/deadline workers or redefine cancellation as native retirement.
+
+Required new proof includes held native run with public Async returning, accepted
+prepare plus rejected scheduler, pre-run abandonment and Source close, duplicate/
+stale work, controls or registration draining during run, owner-adoption failure,
+held row plus Dispose, and late old-generation work. Separate diagnostic identities
+must show actual queue, callback, FFI, SQL/protocol, batch, byte and owner counts;
+then matched ordinary A/B must show useful CPU or endpoint improvement. Retain the
+original correct path until the replacement's gates pass, then remove superseded
+internal routing while preserving public/frozen ABI compatibility. All performance
+work remains local and no CI workload is added.
+
+### Relation batch allocation: observe before selecting a strategy
+
+The original related32 case allocates about686KB per Korda business on both
+providers, versus74KB/51KB Dapper. This prioritizes shared managed construction.
+An independent diagnostic first separates key snapshot, one IndexedChild
+projection,32 From/SelectParent,31 Combine/dispose, final synchronous ToList prefix
+and post-await grouping using bounded preallocated records and same-thread
+allocation counters. Do not subtract counters across await or add inclusive nested
+scopes. Hot model/projection metadata already has caching and stack encoding;
+source counts alone do not prove the largest allocation site. No full relation-plan
+cache or public prepared overload is selected at this checkpoint. Any later change
+must preserve complete key snapshots, duplicate-position groups, native collation,
+one SQL statement, shared bounded result budget, DDL and error ordering.
 
 ## Acceptance and delivery
 
