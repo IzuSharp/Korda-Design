@@ -1,5 +1,15 @@
 # Current execution-path target — DB-Exec-02
 
+The [implemented 17da execution path](execution-path-17da.md) is the current
+driver-to-Fluent review: it identifies actual public entries, reuse/rewrite/delete
+decisions, retained costs, fixed upstream/generated sources and contract tests.
+CursorPull, typed command completion and fixed-key Find are implemented in that
+source; earlier implementation-pending tables below retain their historical
+checkpoint meaning. Both independent provider packages have completed their
+recorded correctness/AOT gates. Final continuous1800-second credit remains
+**0/4** at this checkpoint; performance acceptance is separate. The rejected
+92b close-dispatch experiment does not replace the formal 17da path.
+
 ## Current integrated candidate
 
 The fixed-key Find path and PostgreSQL commit-state proof below are implemented

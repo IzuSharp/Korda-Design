@@ -1,5 +1,42 @@
 # Cursor pull execution and scoped rows — DB-Exec-02
 
+## Rejected bounded experiment after the integrated candidate
+
+Public `17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa` already propagates observed
+EOF with a partial final batch. The managed reader releases that batch, checks
+read admission and awaits final cleanup; it does not issue an empty EOF pull.
+The final close still uses an independent control worker, even if its resource
+and fetch-tail proof is already complete when that request arrives.
+
+Select one isolated experiment: reuse the existing final-close receipt, failure
+and generation-zero notification code synchronously only after admission is
+closed, no fetch is running, the fetch fence is complete, cursor cleanup is
+complete, and the existing resource snapshot proves released. This branch must
+never wait. Otherwise retain the original control-queue path exactly. Do not
+infer quiet from known EOF or fetch ready, release the Session gate early, alter
+batch limits/prefetch, remove post-row admission errors, or relax independent
+notification-tail ownership. Existing setup/control/callback access counts must
+still handle a notification arriving before the close request returns.
+
+The experiment requires finite early-ready and blocked-tail/cleanup/error
+fallback assertions, independent source review and paired ordinary measurements
+against `17da`. It remains unselected for publication/performance acceptance
+until these pass and show a measurable benefit. The current integrated path and
+its evidence are in [query-semantics.md](query-semantics.md#current-integrated-candidate).
+Earlier checkpoint text below retains its original source and status.
+
+The completed two-round ordinary comparison rejected this experiment. The
+PostgreSQL single-row read-complete result changed direction between rounds;
+SQLite 1,000-row pooled total p50 increased 6.78%, exceeding the prospectively
+recorded 5% guard. Finite correctness and independent package/AOT gates passed,
+but do not establish performance benefit. Experimental
+[`92b923075952bac347619ee7817c372ee6e415cb`](https://github.com/IzuSharp/Korda/commit/92b923075952bac347619ee7817c372ee6e415cb)
+remains outside the implementation PR. The final product stays at
+[`17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa`](https://github.com/IzuSharp/Korda/commit/17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa),
+retaining the control queue and its existing proof. Plan continuation-7 keeps
+the prospective rule, all two-round samples, rejected result and both successful
+build attempts. No repeated best-of search is authorized by this decision.
+
 Status: **cursor pull/direct final close measured; DB-Exec-07 command completion
 selected, with its implementation acceptance pending**. DB-Exec-02 replaced the per-batch generic operation selected
 for replacement in [the execution target](query-semantics.md). The source links
