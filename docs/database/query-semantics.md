@@ -1,12 +1,20 @@
 # Current execution-path target — DB-Exec-02
 
-Status: **candidate B measured; cursor pull-channel replacement is in progress
-and has no final performance acceptance**. The owner resumed the complete database execution-path refactor on
+Status: **cursor pull and scoped-span source candidate published; integrated
+package verification and final performance acceptance pending**. The owner resumed the complete database execution-path refactor on
 2026-11-26 (Asia/Shanghai), continuing [Korda #37](https://github.com/IzuSharp/Korda/pull/37),
 [Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and
-[Plan #34](https://github.com/IzuSharp/Plan/pull/34). The immediate product input is
+[Plan #34](https://github.com/IzuSharp/Plan/pull/34). This continuation starts from
+[ada28311a384ad149fdc3f9db3b14473aedf0061](https://github.com/IzuSharp/Korda/commit/ada28311a384ad149fdc3f9db3b14473aedf0061).
+The [actual cursor-path record](cursor-pull-execution.md) binds the integrated
+development source, eight negotiated exports, lifetime proofs, test mapping and
+remaining waits/copies. It binds the published source candidate
+`0f3816c4006488821f40afde91bbbd717d57ccd6`; package/binary acceptance and the
+measurement freeze remain separate gates.
+
+The pre-refactor baseline remains
 [f0078da720e07031bc56464995af6791c41aaae8](https://github.com/IzuSharp/Korda/commit/f0078da720e07031bc56464995af6791c41aaae8).
-The local candidate a27ff31 is publicly tree-identical to [c2df05ff01e90a92aa70884827735d7dfa1dbc3d](https://github.com/IzuSharp/Korda/commit/c2df05ff01e90a92aa70884827735d7dfa1dbc3d); its native
+The earlier local candidate a27ff31 is publicly tree-identical to [c2df05ff01e90a92aa70884827735d7dfa1dbc3d](https://github.com/IzuSharp/Korda/commit/c2df05ff01e90a92aa70884827735d7dfa1dbc3d); its native
 producer source dc82792 is publicly tree-identical to [1f93c5addeae962fee692f5d2a533c596efaa16c](https://github.com/IzuSharp/Korda/commit/1f93c5addeae962fee692f5d2a533c596efaa16c).
 The intervening commits only fix a reference-consumer setup call and remove an
 unused managed encoder wrapper; they do not change native producer inputs.
@@ -145,9 +153,9 @@ cold preparation and per-execution snapshots separately.
 
 Candidate B already borrows native batch memory through HostStreamTransport and
 its retained SafeHandle/row lease. There is no proposed removal of a whole-batch
-native-to-managed copy that this starting path does not perform. The next target
-keeps scoped native borrowing but replaces the per-batch wrapper and generic
-operation lifetime with the cursor channel described below.
+native-to-managed copy that this starting path does not perform. The current
+replacement keeps scoped native borrowing and removes the per-batch wrapper and
+generic operation lifetime through the cursor channel described below.
 
 Rewrite native per-cell owning byte vectors, row staging and repeated batch
 parsing into a checked writer for the final bounded batch arena. Validate the
@@ -207,13 +215,13 @@ the complete refactor. None of those experiments establishes a 0 B framework pat
 
 NpgsqlDataReader and Microsoft.Data.SqliteDataReader own a reader across its row
 loop. Dapper.AOT tokenizes that reader once and constructs each DTO directly. The
-selected adaptation is one private C++ pull channel per typed cursor, retaining
+implemented adaptation is one private C++ pull channel per typed cursor, retaining
 the same driver, protocol, shape and result obligations. Public C# Fluent does
 not expose HostStreamBatch or the internal IStreamBatch interfaces. In particular,
 public QueryCursor<TEntity> is a pagination value, not a raw result-buffer API.
 Do not retain an unused raw fallback to preserve a public API that does not exist.
 
-The target first MoveNext creates a lazy channel from the admitted Session, plan
+The first MoveNext creates a lazy channel from the admitted Session, plan
 or complete SQL, and independently captured parameter/options state. Creation
 validates and captures its inputs without executing SQL. The first accepted
 request uses the shared existing execution/open helpers, validates the complete
@@ -237,14 +245,16 @@ The synchronous take checks the exact generation and transfers the Buffer,
 borrowed view and observed EOF once. A failed take retains structured SQLSTATE,
 provider and cleanup errors for the error take. Read-admission checking at known
 EOF remains explicit. A lightweight stop call provides cancellation/Dispose
-control without constructing another operation. Final close may use one existing
-generic operation per cursor and must join all channel worker/callback tickets and
+control without constructing another operation. Final close uses zero or one
+existing generic operation per cursor and must join all channel worker/callback tickets and
 the cursor's drain/discard obligations. SafeHandle release remains nonblocking;
 abandoning a managed cursor does not erase its native cleanup ledger.
 
 The managed controller is reusable, but its GCHandle root, coordinator reservation
-and cancellation registration exist only during an accepted request. An idle
-cursor must have no permanent strong self-root. Before managed publication,
+and per-request cancellation registration cover active setup/request obligations.
+An idle controller has no permanent GCHandle or reserved slot. The enumerator's
+separate cancellation registration remains during mapping and between refills,
+then drains during stream cleanup. Before managed publication,
 request setup has returned, actual controls and managed callback accesses are
 zero, cancellation registration has drained, and the batch/error is safely taken.
 The native detached one-shot notification contract then proves that this request's
@@ -262,13 +272,14 @@ reopen a closed SafeHandle, rebind a MemoryManager, or expose borrowed Memory.
 Public MoveNext keeps its existing pooled async behavior; the internal fetch
 ValueTask does not escape and is consumed before the controller is reset.
 
-Replace the unpublished `db.result.batch.v1` bit 27 and its two exports with
+The unpublished `db.result.batch.v1` bit 27 and its two exports are replaced by
 `db.cursor.pull.v1`; preserve the frozen 42 declarations, the bit-26 complete
-query command and original take-buffer API. Update both independent package
-capability/export inventories together. Delete superseded HostStreamBatch,
-NativeHost.TakeBatch, Source.StartRetiredValueTask and raw streaming interfaces
-after their real production callers move to the scoped channel. Keep general
-Interop async operations for their remaining Task users and conformance tests.
+query command and original take-buffer API. Both independent package
+capability/export inventories require the same eight entries. Superseded
+HostStreamBatch, NativeHost.TakeBatch, Source.StartRetiredValueTask and raw
+streaming interfaces are deleted after their production callers move to the
+scoped channel. Keep general Interop async operations for their remaining Task
+users and conformance tests.
 
 A deterministic test must hold the independent native callback-return/worker tail
 after readiness. Taking the result and requesting the next generation must work,
@@ -276,9 +287,14 @@ while final channel close remains pending until that tail exits. Also prove
 rejected-request compensation, generation mismatch, cancellation and abandonment,
 held-reader release, mapper failure with cleanup attachment, source poison and
 transaction-disposal behavior. Public package consumers must establish that the
-formal entry uses the channel and that the deleted path has no callers. This is a
-design target in implementation; its source, tests, allocation, FFI and latency
-measurements require their own candidate receipts.
+formal entry uses the channel and that the deleted path has no callers. This is an
+implemented source candidate; its final integrated tests, allocation, FFI and
+latency measurements require their own receipts. The
+[actual path and ownership record](cursor-pull-execution.md) lists the eight
+exports, precise readiness/retirement proofs, legitimate zero-close shortcut,
+development test results and every retained wait/copy/format awaiting cost
+attribution. It preserves the first exact-one-close test failure instead of
+converting a timing-dependent assumption into a new public requirement.
 
 ### Complete-command design gate
 

@@ -4,11 +4,15 @@ The existing product is the PostgreSQL/SQLite Fluent ORM with C# application mod
 
 The current [DB-Exec-02 target](query-semantics.md#current-execution-path-target-db-exec-02)
 rebuilds the complete driver-to-Fluent execution path while retaining this product
-surface. It is proposed, with implementation and fresh acceptance pending.
+surface. The cursor pull/scoped-span route is implemented in a published source candidate;
+final integrated package and performance acceptance remain pending. The
+[actual path record](cursor-pull-execution.md) binds its published checkpoint, eight
+exports, tests and remaining costs.
 Selected targets are ordered typed native arguments without a second NWDB
 encode/parse, fresh PostgreSQL Parse/Describe in one pipeline group, one SQLite
 statement for description/binding, direct native batch writing and one validated
-managed row layout. Existing native-batch borrowing is reused. Opening remains
+managed row layout. Native-batch borrowing now uses one stable scoped owner and
+generation-checked synchronous span leases. Opening remains
 nonexecuting; PostgreSQL cross-execution statement/column caching is not selected.
 The command representation has an explicit direct-compilation-versus-replay
 decision gate before completion. Plan owns actual deletion and package evidence.
@@ -27,11 +31,11 @@ this checkpoint does not claim merge, release or final performance acceptance.
 
 ## Public-to-native map
 
-This table identifies the f0078da7 production entry points being reconstructed.
-The target does not claim those paths have already switched. Record the actual
-replacement and removed callers after external provider consumers exercise it.
-In particular, NWQC replay, repeated parameter encoding and native cell staging
-are review targets; the existing borrowed batch owner is retained.
+This table identifies the assembled source candidate described in the
+[actual path record](cursor-pull-execution.md). Development Native AOT tests
+exercise the changed entry; final external provider-package consumers and
+candidate receipts still determine delivery acceptance. The earlier f0078da7
+map remains available in Git history.
 
 | Public operation | C# implementation | Existing native execution |
 | --- | --- | --- |
@@ -40,10 +44,10 @@ are review targets; the existing borrowed batch owner is retained.
 | BeginTransactionAsync, commit/rollback/savepoints | `src/Data.Transactions` plus Host | Host transaction state and provider operations |
 | Administration and migrations | `src/Data.Migrations` | `administration.cpp`, native schema and migration operations |
 | Typed values and parameters | `src/Data.Abstractions`, `src/Data.Codecs`, `src/Query.Binding` | `contracts.cpp`, `scalar.cpp`, ordered parameter conversion |
-| From / Where / ordering / query operators | `src/Query.Fluent`, `src/Query.Binding`, `src/Query.Native` | NWQC replay in `query.cpp`, existing native query/dialect state |
+| From / Where / ordering / query operators | `src/Query.Fluent`, `src/Query.Binding`, `src/Query.Native` | One bounded NWQC graph; direct operand compilation in `query.cpp`, retaining native query/dialect state without the superseded replay adapter |
 | Static models and immutable DTO projections | `src/Query.Generator`, `src/Data.Materialization` | Existing metadata/projection ABI and Host registration |
-| Relations and CRUD | `src/Orm.Relations` | `mutations.cpp`, query composition and provider execution |
-| AsAsyncEnumerable and terminals | `src/Data.Streaming`, `src/Query.Fluent` | Host cursors, provider fetches and bounded result ownership |
+| Relations and CRUD | `src/Orm.Relations` | `mutations.cpp` and shared capture helpers; lazy relation/returning-mutation channels, with generic nonreturning controls retained |
+| AsAsyncEnumerable and typed terminals | `src/Data.Streaming`, `src/Query.Fluent`, `src/Data.NativeHost/HostPullController.cs` | Lazy `CursorPull`, first-request open plus admitted fetch, generation-checked ready/take, bounded arenas and scoped native span ownership |
 | Cancellation, errors and disposal | Required Core/Interop modules | `interop.cpp` and native database retirement |
 
 Native filenames in the table are under `native/cpp/src`; their corresponding headers are under `native/cpp/include/nw`. The product [native build guide](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/docs/guides/cpp-native.md) records toolchain and implementation details. The Database assembly composes the existing query, ORM, migration and materialization sources. Database Host remains required execution infrastructure, not an HTTP server. Independent provider packages include `libnw_database_sqlite.so` or `libnw_database_postgresql.so` with their required managed closure.
@@ -56,7 +60,12 @@ separately negotiated compile/render/CTE declarations in
 Those additions preserve the frozen v1 signatures and fingerprint. The
 [query decision](query-semantics.md#dynamic-queries-one-complete-command) explains
 the typed owner sidecar, topology and preserved budgets; command bytes contain
-no native pointer values.
+no native pointer values. The current candidate also requires capability bit 27
+(`db.cursor.pull.v1`) and all eight declarations in
+`native/database/binding/korda_cursor_pull_v1.h` / `cursor-pull-v1.json`.
+They replace the unpublished batch-result extension. Frozen cursor operations
+and take-buffer remain compatible; they are exercised through test-local
+fixtures rather than an unused production streaming fallback.
 
 ## Preserve behavior, including failure paths
 

@@ -13,15 +13,20 @@ No full IQueryable provider, runtime expression compilation, Reflection.Emit, dy
 The current [DB-Exec-02 target](../database/query-semantics.md#current-execution-path-target-db-exec-02)
 selects one validated result layout and direct typed row access, using the actual
 Dapper.AOT benchmark-generated command factory/reader as the comparison input.
-Candidate B implements that path; actual pinned reference factories/readers and
-public Native AOT consumers are bound in the execution evidence. Final package
-gates and controlled performance acceptance remain pending. Stable parameter
+Candidate B introduced the validated layout; the current
+[cursor pull implementation](../database/cursor-pull-execution.md) carries it
+through one stable scoped native batch owner and synchronous `RowReader` spans.
+Existing generated and handwritten constructors use that same production
+path; no per-cell borrowed `Memory` adapter is required. Actual pinned reference
+factories/readers and public Native AOT consumers are bound in the execution
+evidence. Final integrated package gates and controlled performance acceptance
+remain pending. Stable parameter
 ordinals and value writing are separate from arbitrary Fluent-method capture.
 This refactor does not announce a new public fixed-query generator API.
 
-The following generation inventory describes the f0078da7 starting implementation
-and retained behavior; replace its internal execution stages only with source-
-and test-bound evidence.
+The following generation inventory describes retained public behavior. Its
+changed internal result path is source- and test-bound in the cursor record;
+this does not introduce fixed-query method-body capture.
 
 The resumed [query decision](../database/query-semantics.md) distinguishes the NWQC
 implementation candidate from future fixed-query templates. Current generation
@@ -110,12 +115,13 @@ Cross-entity/value type errors should fail through ordinary C# typing. Runtime p
 
 ## 7. Descriptor and operation invariants
 
-DB-Exec-02 may replace the internal command replay, parameter frames and repeated
-row checks described below. The target keeps native owner/profile validation,
-per-execution value snapshots and complete shape/extent validation while
-generating or binding direct typed access. The existing batch borrow already
-retains native memory; ordinary DTO strings/bytes still own their resulting
-managed data. Do not claim whole-query zero from generated row access or treat
+DB-Exec-02 removes the redundant command replay adaptation and native parameter
+re-encoding and uses generation-scoped spans for typed results. It keeps native
+owner/profile validation, per-execution value snapshots and complete shape/extent
+validation. Each new batch is validated once; projection proof is reused only
+for the same fields and expectation, and each typed value retains its lifetime,
+ordinal, codec and data-dependent checks. Ordinary DTO strings/bytes still own
+their resulting managed data. Do not claim whole-query zero from generated row access or treat
 an upstream generated fixture as the actual emitted consumer.
 
 A table's canonical metadata includes schema-format version, logical identity, validated names, scalar codec/nullability, primary keys and ordered projection fields. The existing v1 table relations array stays reserved empty. An explicit relation has separate canonical metadata containing both table/model identities, ordered parent-key/child-key pairs and child nullability; registering a relation does not rewrite either table hash. Adding a supported entity registers another descriptor and does not change native assets.

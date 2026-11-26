@@ -7,7 +7,12 @@ The owner has resumed complete Linux x64 path reconstruction in the existing
 The [selected target](docs/database/query-semantics.md) preserves public Fluent
 behavior, Native AOT, C++ execution and independent provider packages while
 allowing internal Host, command/parameter, batch and reader replacement.
-Its status is proposed; source review is not implementation or acceptance.
+The cursor pull/scoped-span route is now a published source candidate.
+Its [actual execution record](docs/database/cursor-pull-execution.md) binds the
+published source `0f3816c4006488821f40afde91bbbd717d57ccd6`, all eight exports,
+readiness versus final-tail ownership, retained cost inventory and development
+Native AOT results. Final integrated package and
+performance acceptance remain pending; source review is not delivery acceptance.
 
 The selected provider targets are fresh PostgreSQL Parse+Describe in one pipeline
 group/Sync with no Execute at open, and one SQLite statement for description and
@@ -15,7 +20,12 @@ binding with no step at open. Cross-execution PG statement/column caching is not
 selected because external DDL can change error and transaction semantics.
 Parameters should enter execution as one validated typed owner; results should
 be written directly to bounded native batches and read through one validated
-layout. The current native-batch borrow already exists and is reused.
+layout. The native batch borrow now uses one stable owner with generation-scoped
+span reads. The first request performs lazy open, complete shape validation and
+a second Source/Session/token/channel admission before fetch. Later batches use
+ready/take without a generic operation; final cleanup retains its actual join
+proof, with zero or one generic close operation depending on the completed
+snapshot.
 
 The command representation must independently justify direct compilation versus
 NWQC replay, including removal of superseded stages. Full-path public consumers,
