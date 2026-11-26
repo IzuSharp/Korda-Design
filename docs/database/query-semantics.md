@@ -1,5 +1,19 @@
 # Current execution-path target — DB-Exec-02
 
+## Current integrated candidate
+
+The fixed-key Find path and PostgreSQL commit-state proof below are implemented
+in public [`17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa`](https://github.com/IzuSharp/Korda/commit/17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa),
+tree `bc9087d843d8d741d83d44f53d0b2c5af26dcffc`. The Find implementation's
+independent review and finite correctness results are recorded in
+[the Find review](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-7/find-path-review.md).
+The preceding public `cb233a7` passed both independent native gates but failed
+actual package export admission because the packer's extension inventory omitted
+the Find descriptor. The successor includes bit29 in that exact export audit;
+it does not relax the audit. Public package consumption and current-candidate
+performance evidence are tracked separately in Plan. Earlier statuses and
+measurements below are explicitly historical, not acceptance of this successor.
+
 ## Recovered continuation and selected fixed-key path
 
 The 2026-11-26 continuation starts from public
@@ -27,6 +41,14 @@ hashes do not imply equal materializers. No Session or physical statement is
 stored in the cache. Key validation, caller-buffer snapshot, precancellation,
 DDL/schema failure precedence, duplicate-row rejection and concurrent-session
 behavior remain unchanged. Provider prepare/description remain per execution.
+
+An admitted Find entry already owns its NativePlan and immutable compiled shape.
+Its render therefore reuses that shape directly instead of rehashing the same
+identity and updating the general native ShapeCache on every execution. Ordinary
+Fluent and public Prepare retain their existing general-cache behavior. Source,
+profile, parameter schema, value snapshot and all execution limits remain checked
+at render. Each cache is bounded; these cache charges are not an aggregate Source
+or process RSS limit, and accepted in-use owners can outlive cache eviction.
 
 The cold private factory returns both the retained cache charge and the actual
 fixed logical-query byte charge. These have different meanings. Before copying

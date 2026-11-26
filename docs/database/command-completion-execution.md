@@ -1,5 +1,11 @@
 # One-shot database command completion — DB-Exec-07
 
+Current implementation and evidence are governed by the
+[integrated execution target](query-semantics.md#current-integrated-candidate).
+Completion is implemented, and fixed-key Find now reuses a private compiled
+shape. The following proposal and its original per-call Find observation remain
+the historical basis for the change, not the successor's execution description.
+
 Status: **selected implementation target; one-shot correctness and performance acceptance remain pending**. The private interface was agreed in local ABI-only checkpoint
 `d497dd23098a252d81ca9bf06c4e2efb36ddf02a`; implementation and package
 validation remain pending. This is the selected command-completion extension of the
