@@ -7,7 +7,7 @@ https://github.com/IzuSharp/Korda-Design
 https://github.com/IzuSharp/Korda-Design.git
 ```
 
-The companion repositories are [Korda](https://github.com/IzuSharp/Korda) for the product and [Plan](https://github.com/IzuSharp/Plan) for execution and acceptance records. This change updates repository identity. The retained database contracts, C# package/API names, native assets and persisted database identifiers keep their existing meaning. DB-Perf-01 remains cancelled.
+The companion repositories are [Korda](https://github.com/IzuSharp/Korda) for the product and [Plan](https://github.com/IzuSharp/Plan) for execution and acceptance records. This change updates repository identity. The retained database contracts, C# package/API names, native assets and persisted database identifiers keep their existing meaning. DB-Perf-01 was cancelled during this rename-only maintenance. The later resumption in [CURRENT-PHASE.md](../CURRENT-PHASE.md) authorizes the current query optimization; it does not change the historical meaning of this maintenance.
 
 ## Current references
 

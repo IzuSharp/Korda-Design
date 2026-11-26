@@ -2,6 +2,92 @@
 
 This is the behavior contract for the existing Korda PostgreSQL/SQLite product. [DB-Rename-01](db-attribute-names.md) supplies the current attribute spellings and the explicitly breaking managed-name change; all behavior below is retained. The completed DB-API-01 implementation evidence remains bound to its original names and source. DB-Rename-01 execution is recorded separately in Plan. [ADR-0007](../decisions/ADR-0007-fluent-orm-experience.md) records authority; [fluent-orm.json](fluent-orm.json) maps each behavior to owners and acceptance claims. Exact final public declarations and XML come from compiled Korda assemblies.
 
+## Execution-path refactor contract — DB-Exec-02
+
+The [current target](query-semantics.md#current-execution-path-target-db-exec-02)
+reconstructs the complete implementation path while preserving this public
+business contract. It is a design candidate, not an implemented or accepted
+feature claim. Ordinary Fluent, `.Prepare()`, handwritten descriptors and
+generated models/DTOs continue to use precompiled C++ provider packages.
+
+Prepared shapes retain stable SQL/parameter/projection metadata; each execution
+captures independent values and checks them against that layout. The target
+resolves parameter ordinals once and passes validated typed arguments directly
+to provider binding, removing redundant native frame encoding and parsing.
+Dynamic command representation must pass the explicit direct-compiler versus
+NWQC replay gate; the prior tape is not a public behavior requirement.
+
+Keep validation and recoverable builder-error timing, source/profile checks,
+clone/CTE/literal ownership and nonsealing `ToSql()`. PostgreSQL uses fresh
+Parse/Describe in one preparation group; its cross-execution physical cache is
+not selected because external DDL changes cached-result error semantics.
+SQLite reuses one statement within the command, with no step at cursor open.
+Public opening/execution side effects, transaction failure, cancellation,
+backpressure and safe connection return remain observable acceptance conditions.
+
+The existing borrowed native batch remains owned through reading. Direct native
+batch construction and one-time managed layout matching may replace staging and
+repeated cell checks only while preserving shape, codec, NULL, bounds and mapper
+failure cleanup. Model/DTO-only edits must still rebuild locally without changing
+native bytes. Actual package-consumer evidence, deletion inventory and matched
+local performance belong to Plan; this contract grants no zero-allocation claim.
+
+## Historical query optimization contract — resumed DB-Perf-01
+
+The [current query decision](query-semantics.md) describes the implementation
+candidate in [Korda #37](https://github.com/IzuSharp/Korda/pull/37), reviewed through
+[Design #20](https://github.com/IzuSharp/Korda-Design/pull/20), while preserving the
+business behavior below. The candidate uses a complete managed command and eager
+runtime logical compilation. Physical statements are still prepared per provider
+command. [Plan #34](https://github.com/IzuSharp/Plan/pull/34) owns exact source
+identities and local correctness receipts; final performance and delivery remain
+unaccepted at this checkpoint.
+
+Fixed shapes reuse parameter order/codecs, projection and compiled query structure,
+with changing values captured independently at each execution. The existing
+`.Prepare()` remains the public entry and finishes SQL/slot compilation plus
+parameter validation metadata before returning its source-bound plan. It neither
+opens a connection nor prepares a physical database statement. Each execution still
+validates its own values; the immutable schema/hash/descriptors are cached.
+Optional generation of static command templates and direct binders requires an
+independently defined supported
+subset; existing entity/DTO generation does not already provide that feature.
+Handwritten descriptors and ordinary Fluent remain supported without a generator.
+
+For dynamic queries, C# records selected conditions, operators and projection in
+bounded local slots before one complete NWQC submission. The candidate extension
+uses capability bit 26 and separate compile, render and CTE entry points, replaying
+the existing 22 clause operations and topological subquery blocks through C++.
+Source-bound models/plans/CTEs use a validated owner sidecar; pointer values are
+never serialized into command bytes. Missing extension support is an explicit
+unsupported error, with no product fallback to individual native node calls.
+C++ owns validation, dialect rendering and execution through the existing Host.
+No C# SQL compiler, provider replacement or client evaluation is introduced.
+One command means a complete logical query; results still arrive in bounded cursor
+batches. Metadata registration and fetch/cancel/dispose remain distinct operations.
+
+Clones and CTEs retain the identity of shared scalar origins through bounded owner
+leases and native origin bindings. This preserves retained-literal budget and
+lifetime behavior, including unused constructed expressions; it does not merge
+independently constructed equal values or deduplicate SQL parameter occurrences.
+
+Preserve immediate public validation, owner/source checks, recoverable mutation
+failure and the nonsealing behavior of `ToSql()`. `.Prepare()` and
+`CommonTable.Create` are explicit native compilation boundaries; `ToSql()` compiles
+a diagnostic snapshot without changing the builder. Changing parameters still
+snapshot and validate at execution, while provider errors retain their database
+execution/cleanup boundary. Existing transaction, cancellation, streaming and
+disposal guarantees remain. A future connection-local statement cache must be
+bounded and protocol-clean; it is separate from this candidate's logical reuse.
+Never replay a mutation after an unknown outcome.
+
+Correctness and API/package acceptance continue through existing module-selected
+checks and independent PostgreSQL/SQLite Native AOT package jobs. All performance
+work runs locally on Linux, using the [measurement rules](../performance/methodology.md)
+and [current validation matrix](../verification/models-and-matrix.md). Plan records
+actual results. The implementation candidate and its local checks do not establish
+final performance acceptance, a merged PR or a published package.
+
 ## Business journey and reuse
 
 An application lists a page of orders with customer names and totals, optionally filters customer/status/date, and then loads the page's order lines in one bounded batch. It looks up one order by key, writes an explicitly selected subset of fields, detects an obsolete row version, inserts an order and returns its key, and commits an awaited transaction callback with an explicit failure outcome. The same immutable DTO can consume a Fluent projection or parameterized SQL. A model change yields a reviewable migration; an existing table can yield compilable attributed C# source.

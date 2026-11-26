@@ -8,16 +8,31 @@ Korda is a strongly typed C# Fluent ORM for PostgreSQL and SQLite, with ordinary
 
 | Read | Purpose |
 | --- | --- |
-| [Current phase](CURRENT-PHASE.md) and [working rules](AGENTS.md) | Repository maintenance scope and earlier task authority |
+| [Current phase](CURRENT-PHASE.md) and [working rules](AGENTS.md) | DB-Exec-11 final local evidence, remaining delivery and earlier task authority |
 | [Current API index](docs/api/README.md) and [compiled reference index](docs/api/reference.md) | Current Korda database surface and source-backed declarations |
 | [Database product](docs/database/current-product.md) and [Fluent ORM contract](docs/database/fluent-orm.md) | Retained database behavior and implementation boundaries |
+| [Query semantics and optimization](docs/database/query-semantics.md) | Current C++ decision, fixed and dynamic query paths, and implementation priorities |
 | [Database attribute names](docs/database/db-attribute-names.md) | The ten `Db` attribute names and their compatibility boundary |
 | [Getting started](docs/api/getting-started.md), [guides](docs/api/guides.md) and [NuGet consumption](docs/api/nuget-and-consumption.md) | Models, examples and independent provider packages |
 | [C# public API standard](docs/standards/csharp-public-api-and-documentation.md) | Naming, documentation and compatibility requirements |
 | [Verification matrix](docs/verification/models-and-matrix.md) | Design gates and the separate product execution requirements |
 | [Repository identity](docs/repository-identity.md) | Canonical URLs and intentionally preserved historical names |
 
-The DB-Rename-01 Design specification is merged. Its naming overlay builds on the DB-API-01 Fluent ORM contract and [ADR-0006's C++ migration decision](docs/decisions/ADR-0006-database-cpp-native.md). Product results remain recorded in Plan. Repository identity maintenance does not resume the cancelled DB-Perf-01 task.
+The DB-Rename-01 Design specification is merged. Its naming overlay builds on
+the DB-API-01 Fluent ORM contract and [ADR-0006's C++ migration decision](docs/decisions/ADR-0006-database-cpp-native.md).
+The complete execution-path refactor continues in [Korda #37](https://github.com/IzuSharp/Korda/pull/37),
+[Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and
+[Plan #34](https://github.com/IzuSharp/Plan/pull/34). The
+[implemented 17da path](docs/database/execution-path-17da.md) preserves public
+Fluent behavior, Native AOT, C++ execution and both independent provider packages.
+Its package correctness/AOT gates passed, and the
+[final local evidence](https://github.com/IzuSharp/Plan/blob/adcdc9172bf47a0df8fe5fcb8259357625526280/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-8/README.md)
+records four complete serial 1,800-second cells with source and ownership checks.
+Normal reviewed merges, main CI and public publication/consumption remain pending.
+The comparison preserves its SQL-text and resource-scope limits, remaining Dapper
+gaps and unproven framework-only 0 B. Earlier candidates retain their own evidence
+identities. All performance execution remained local; existing CI selection is
+unchanged.
 
 ## Local documentation checks
 

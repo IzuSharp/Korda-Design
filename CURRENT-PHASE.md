@@ -1,3 +1,128 @@
+# Current phase — DB-Exec-11 final local evidence complete
+
+The formal candidate is Korda
+[`17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa`](https://github.com/IzuSharp/Korda/commit/17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa),
+tree `bc9087d843d8d741d83d44f53d0b2c5af26dcffc`. The
+[implemented driver-to-Fluent record](docs/database/execution-path-17da.md)
+identifies the selected command, value, batch, generated-reader, completion and
+Find paths while preserving public Fluent behavior, Native AOT, C++ execution
+and independently installable PostgreSQL/SQLite packages.
+
+Both package correctness/AOT gates passed. The
+[final local campaign](https://github.com/IzuSharp/Plan/blob/adcdc9172bf47a0df8fe5fcb8259357625526280/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-8/README.md)
+completed four serial 1,800-second cells, including recorded post-disposal idle,
+on 2026-11-26 at 18:39:24 Asia/Shanghai. All 35 business cases were covered in
+each cell, all admitted operations completed without business errors, and
+rejections remain explicit. The unchanged source/identity/owner supplement
+passed; both Korda runs returned all eight recorded owner categories to zero.
+
+This is completed local measurement evidence, with the recorded SQL text,
+resource-scope and allocation limitations. The raw comparisons retain 35
+SQL-description differences per provider and no observed wire-SQL trace.
+Framework-only 0 B, Dapper parity and exhaustion of every potential optimization
+are not established. The rejected quiet-close experiment remains unselected.
+Normal reviewed merges, existing main CI and rule-selected public publication
+and Native AOT consumption are the remaining delivery actions. Performance work
+remains local; existing diff/module CI selection is unchanged.
+
+## Previous implementation checkpoint retained
+
+# Current phase — DB-Exec-02 complete database execution path
+
+The owner has resumed complete Linux x64 path reconstruction in the existing
+[Korda #37](https://github.com/IzuSharp/Korda/pull/37),
+[Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and
+[Plan #34](https://github.com/IzuSharp/Plan/pull/34).
+The [selected target](docs/database/query-semantics.md) preserves public Fluent
+behavior, Native AOT, C++ execution and independent provider packages while
+allowing internal Host, command/parameter, batch and reader replacement.
+The cursor pull/scoped-span route is now a published source candidate.
+Its [actual execution record](docs/database/cursor-pull-execution.md) binds the
+published source `bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8`, all ten exports,
+readiness versus final-tail ownership, retained cost inventory and development
+Native AOT results. The measured `0f3816c` checkpoint's EOF tail selected the
+implemented DB-Exec-03 direct final-close continuation: two additional private
+exports and an independent managed close controller. Both providers passed the
+development close and full NativeHost AOT gates. New public-package and
+performance acceptance remain pending; source review is not delivery acceptance.
+
+The selected provider targets are fresh PostgreSQL Parse+Describe in one pipeline
+group/Sync with no Execute at open, and one SQLite statement for description and
+binding with no step at open. Cross-execution PG statement/column caching is not
+selected because external DDL can change error and transaction semantics.
+Parameters should enter execution as one validated typed owner; results should
+be written directly to bounded native batches and read through one validated
+layout. The native batch borrow now uses one stable owner with generation-scoped
+span reads. The first request performs lazy open, complete shape validation and
+a second Source/Session/token/channel admission before fetch. Later batches use
+ready/take without a generic operation. DB-Exec-03 implements one independent final
+close ready/take after actual provider cleanup, with zero generic operations on
+the normal stream path. The previous zero-or-one generic close remains the
+measured `0f3816c` baseline. A lazy generic fallback must include the new final
+notification fence before releasing an uncertain cookie; Source close joins all
+detached notifier tails. Application continuations remain asynchronous.
+
+The command representation must independently justify direct compilation versus
+NWQC replay, including removal of superseded stages. Full-path public consumers,
+fault/lifetime behavior, same-host before measurements, four sequential local
+1800-second candidate/Dapper.AOT cells and normal reviewed delivery remain
+required. The [Plan gates and recovery](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/execution-refactor/README.md)
+own current evidence. Keep existing CI/module routing, with no benchmark CI.
+
+The previous candidate and its stop record below remain historical. The new
+authorization permits normal merges once the requested end-to-end work is
+verified; it does not turn old results into new-candidate credit.
+
+## Previous candidate phase — DB-Perf-01 query optimization
+
+# Current phase — DB-Perf-01 query optimization
+
+The owner has resumed Linux x64 query optimization in [Korda #37](https://github.com/IzuSharp/Korda/pull/37).
+The C# Fluent API and C++20/libpq/sqlite3 execution remain. The current stage is
+an implemented candidate with completed phase, short-load, resource and all four local 1800-second observations. C# composes dynamic
+Fluent queries into one bounded NWQC command; C++ validates and compiles the
+existing operation inventory. `.Prepare()` compiles immutable SQL and parameter
+validation metadata before repeated execution. Result batches, cancellation and
+ownership remain streaming contracts. Physical statement reuse and optional
+fixed-query template generation remain gaps, not delivered features.
+
+The selected private single-root serializer is now implemented with a 4096-byte
+stack limit and generic fallback. Dependency, origin capture/sharing and sealing
+gate guards preserve the existing protocol and ownership boundary. Local
+correctness and ordinary CI have passed. The [final comparison record](https://github.com/IzuSharp/Plan/blob/bfe4aa3f074789dfac046412eff37fe6ba58b0f7/ledger/evidence/batches/DB-Perf-01/query-optimization/final-f0078da7/README.md)
+binds actual phase, short mixed-load and resource observations. Ordinary Fluent
+still allocates about 25.31% more than recovered, despite lower cumulative
+allocation than the earliest baseline. Dapper.AOT and retained-memory gaps remain;
+these observations do not isolate the last serializer's causal effect. All four cells are validated and the 16-app/926-file post-run rehash is unchanged. Candidate throughput is 3.5762% of Dapper.AOT on SQLite and 12.4863% on PostgreSQL; performance parity is not claimed. The final full archive remains local-only after upload rejection; Plan publishes selected summaries and verification receipts. Earlier failures remain unexplained. The owner instructed recording results and stopping with PRs only, without merging.
+
+Read the [current decision and implementation order](docs/database/query-semantics.md),
+[Fluent contract](docs/database/fluent-orm.md), [generation boundary](docs/generators/query-generation.md)
+and [measurement rules](docs/performance/methodology.md). Continue
+[Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and
+[Plan #34](https://github.com/IzuSharp/Plan/pull/34) on
+`task/DB-Perf-01-query-optimization`, with product work on `task/DB-Perf-01-linux`.
+The active [Plan batch](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/plan.md)
+and [handoff](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/handoff-linux.md)
+own exact candidate identities, unresolved gaps and observed test results. The
+initial Plan and Design checkpoints are published; new schemes still follow the
+Plan-first, Design-before-product order. Local correctness does not establish the
+final candidate's performance, a merged PR or a release.
+
+Normal validation retains Korda's committed-diff/module-dependency selection and
+existing independent PostgreSQL/SQLite package jobs. Consumers execute directly
+as Linux Native AOT binaries. All performance measurements, including the final
+candidate and Dapper.AOT 30-minute segments for both databases, run locally on
+Linux. There is no benchmark CI or extra benchmark package job in this scope.
+Record actual environment versions and measure matched routes on the same local
+host; do not require a hosted-runner image build number.
+
+The cancellation and rename-only authority below remain historical. This resumed
+task supersedes that stop state, without accepting any historical incomplete
+measurement or changing the identity of old results. Existing documentation gates
+and their frozen inputs remain unchanged. Design does not claim product delivery.
+
+## Previous phase record — repository identity maintenance
+
 # Current phase — Korda-Design repository identity
 
 The design repository is now [IzuSharp/Korda-Design](https://github.com/IzuSharp/Korda-Design), alongside the [Korda product](https://github.com/IzuSharp/Korda) and [Plan](https://github.com/IzuSharp/Plan). This maintenance change updates repository identity, current navigation and live repository references. It does not change database behavior, source/package names or accepted historical evidence. DB-Perf-01 remains cancelled.

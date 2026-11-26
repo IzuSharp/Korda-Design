@@ -1,8 +1,80 @@
 # Korda-Design working rules
 
+## Current task — DB-Exec-02 complete execution-path refactor
+
+The owner resumed the complete database execution-path refactor on 2026-11-26
+(Asia/Shanghai), continuing Korda #37, this Design #20 and Plan #34. Preserve C#
+Fluent public behavior, Native AOT, C++ execution and two independent provider
+packages. Internal Host structure, command/parameter formats, ABI granularity,
+batch construction and mapping may be rewritten or deleted. Read the
+[current target](docs/database/query-semantics.md),
+[current phase](CURRENT-PHASE.md) and
+[Plan execution gates](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/execution-refactor/README.md).
+Use task-marked DB-Exec-02 worktrees while continuing the existing open branches.
+
+Plan and the selected Design target precede product edits. The target remains a
+candidate until actual public-package correctness and local measurements exist.
+The complete-command representation must pass its explicit direct-compilation
+versus tape-replay gate; a serializer-only optimization is not task completion.
+Keep prior candidate decisions, research, failure records and frozen gate inputs
+under their original identities. The new user authority supersedes the old stop
+below and permits normal reviewed merges after full verification.
+
+Korda's existing Python diff/dependency planner and independent provider package
+jobs govern CI. Benchmarks, profiling, calibration and all four final 1800-second
+cells run locally on Linux. Do not add a performance workflow, job, manual button,
+scheduled run or hidden benchmark invocation. Continue existing documentation
+gates; they do not grant product or performance acceptance.
+
+## Previous stop — final local evidence recorded
+
+The owner instructed completing tests, recording results in the existing PRs and stopping without merging. All four local 1800-second cells and the 16-app/926-file input rehash are complete. Keep the remaining performance gaps and local-only final archive status explicit. No additional benchmark, optimization, merge or release is selected; the continuation below describes the frozen candidate and is not an instruction to restart work.
+
+## Current task — DB-Perf-01 query optimization
+
+The owner has resumed DB-Perf-01 on Linux x64 after the cancellation recorded in
+the historical maintenance section below. Preserve the existing C# Fluent API,
+`Db*` attributes, independently installable PostgreSQL and SQLite packages, and
+C++20/libpq/sqlite3 execution. This authorization does not introduce a managed
+provider migration. Read the [current query decision](docs/database/query-semantics.md),
+[Fluent behavior](docs/database/fluent-orm.md), [generation boundary](docs/generators/query-generation.md)
+and [current phase](CURRENT-PHASE.md) before implementation.
+
+Use a task-marked worktree and branch. Continue implementation in
+[Korda #37](https://github.com/IzuSharp/Korda/pull/37), this decision in
+[Korda-Design #20](https://github.com/IzuSharp/Korda-Design/pull/20), and evidence in
+[Plan #34](https://github.com/IzuSharp/Plan/pull/34). Design and Plan use
+`task/DB-Perf-01-query-optimization`; the product uses `task/DB-Perf-01-linux`.
+The active [Plan checkpoint](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/plan.md)
+and [handoff](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/handoff-linux.md)
+own gaps, exact candidate identities, executed checks and actual measurements.
+The initial Plan and Design decisions preceded implementation. Continue that order
+for a new scheme; do not restart from the old cancellation on `main`.
+
+The current stage is an implementation candidate with local correctness evidence,
+not final performance acceptance or a merged delivery. Its complete command path,
+eager runtime preparation, scalar origin ownership and cache locking are described
+in the current decision. Physical statement caching and fixed-query template
+generation remain unimplemented. Keep historical contracts, evidence, frozen
+tools and acceptance hashes unchanged.
+
+Korda's current `main` AGENTS and Python module planner govern normal checks.
+PostgreSQL and SQLite keep their existing independent package runners and execute
+Native AOT consumers directly on Linux. Performance probes and the two-database
+30-minute comparisons run locally on Linux when requested, never as PR/push,
+manual, or scheduled benchmark CI. Do not add a benchmark job, runner environment,
+JIT consumer, clean-image run or CPU-emulation check to this task. Keep benchmark
+source ownership registered without an automatic benchmark execution action.
+
+Run the existing documentation gates `python3 tools/verify_db_rename.py` and
+`python3 tools/verify_db_scope_history.py`. These validate naming, links and
+historical integrity; they cannot accept a new command protocol, a generated query
+path, a database result or a performance claim. Product checks and actual local
+measurements must establish those claims in Plan.
+
 The canonical design repository is [IzuSharp/Korda-Design](https://github.com/IzuSharp/Korda-Design). It supports the [Korda product](https://github.com/IzuSharp/Korda) and the [Plan repository](https://github.com/IzuSharp/Plan). Read [the repository identity policy](docs/repository-identity.md) before changing an old repository-name reference.
 
-## Current repository maintenance
+## Previous repository maintenance (historical)
 
 The owner has renamed `IzuSharp/NativeWeave-Design` to `IzuSharp/Korda-Design` and authorized the related README, documentation and repository-reference corrections, a PR and its normal merge. This is repository identity maintenance. DB-Perf-01 is cancelled; no performance or product implementation work is resumed by this maintenance task.
 

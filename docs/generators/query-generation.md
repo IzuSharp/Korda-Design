@@ -10,6 +10,35 @@ No full IQueryable provider, runtime expression compilation, Reflection.Emit, dy
 
 ## 2. What is generated and what is not
 
+The current [DB-Exec-02 target](../database/query-semantics.md#current-execution-path-target-db-exec-02)
+selects one validated result layout and direct typed row access, using the actual
+Dapper.AOT benchmark-generated command factory/reader as the comparison input.
+Candidate B introduced the validated layout; the current
+[cursor pull implementation](../database/cursor-pull-execution.md) carries it
+through one stable scoped native batch owner and synchronous `RowReader` spans.
+Existing generated and handwritten constructors use that same production
+path; no per-cell borrowed `Memory` adapter is required. Actual pinned reference factories/readers and external Native AOT consumers
+are bound in the [implemented 17da record](../database/execution-path-17da.md).
+Both independent provider package gates passed, and the
+[final local evidence](https://github.com/IzuSharp/Plan/blob/adcdc9172bf47a0df8fe5fcb8259357625526280/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-8/README.md)
+records four complete serial 1,800-second cells. Normal merges, main CI and
+public publication/consumption remain pending. Total measured managed allocation
+includes business output, harness, framework and driver; framework-only 0 B is
+not established. Stable parameter ordinals and value writing remain separate
+from arbitrary Fluent-method capture. This refactor does not announce a new
+public fixed-query generator API.
+
+The following generation inventory describes retained public behavior. Its
+changed internal result path is source- and test-bound in the cursor record;
+this does not introduce fixed-query method-body capture.
+
+The resumed [query decision](../database/query-semantics.md) distinguishes the NWQC
+implementation candidate from future fixed-query templates. Current generation
+covers model/projection declarations; it does not capture arbitrary Fluent method bodies
+or precompile their SQL. Fixed-shape query generation is an optional later step,
+with explicit syntax, diagnostics and handwritten parity required before support
+can be claimed.
+
 Generate typed table/column/projection descriptors, static readers and direct constructors, explicit nullable/value codec policies, AOT-visible closed generic mappings and compile diagnostics. Generated and handwritten forms preserve the same metadata, codecs, key/concurrency flags, nullability, projection order and execution path.
 
 Do not generate C# SQL dialects, a query optimizer, hidden client evaluation or application-specific native model code. Generation must not contact a database/network, invoke a native compiler, change native libraries or execute application model getters. Maintainer build integration is separate from consumer source generation.
@@ -47,9 +76,36 @@ JSON continues using explicitly supplied source-generated `JsonTypeInfo` and `Js
 
 ## 5. Fluent binding without method-body capture
 
-Calls to typed native-backed operators are ordinary C# calls. A convenience lambda over expression proxies is a normal builder delegate, not an arbitrary domain predicate interpreted later. The generator does not rewrite every method invocation or intercept arbitrary calls. Unknown C# methods are outside the query contract. Capability-gated operations resolve against the selected profile and are also validated at native execution.
+Fluent operators are ordinary C# calls. A convenience lambda over expression
+proxies is a normal builder delegate, not an arbitrary domain predicate interpreted
+later. The preceding DB-Perf-01 candidate records a complete bounded NWQC command in C# before
+one native compile/render/CTE submission; C++ remains the SQL compiler and execution
+owner. `.Prepare()` performs runtime SQL and parameter-layout compilation, not
+build-time compilation of arbitrary method bodies. The generator does not rewrite
+every method invocation or intercept arbitrary calls. Unknown application methods are outside static query
+generation. Capability-gated operations resolve against the selected profile and
+are validated again by C++ before provider dispatch.
 
-Dynamic filtering resolves only validated table/field/operator metadata and bound parameters, with finite node/depth/byte limits. It introduces no complete serializable C# expression tree, universal Core query IR or managed SQL evaluator. Mutable query ownership, native owner/generation validation and immutable frozen plans retain their existing rules.
+Dynamic filtering resolves validated table/field/operator metadata and bound
+parameters within finite node/depth/byte limits. The complete command represents
+only supported Fluent operations, not a universal Core query IR or managed SQL
+evaluator. Mutable ownership, native owner/generation validation and immutable
+frozen plans retain their existing rules.
+
+A future fixed-query template may precompute shape, parameter slot order and
+projection mapping only when those inputs are statically known. Actual parameter
+values, source generation, provider capabilities, session/transaction and cancellation
+remain runtime inputs. Such generation must not execute user getters, invoke a
+native compiler, depend on a live database or silently evaluate unsupported syntax.
+Dynamic condition branches remain a supported ordinary composition path. Emitted
+templates, runtime `.Prepare()` and physical connection statement caches must be
+reported as separate layers; none proves the other two exist.
+
+The selected runtime fixed-key Find cache is separate from that future generator
+feature. It compiles model-key slots once per bounded Source cache entry and
+uses the existing generated Table.Row reader. It does not capture C# method
+bodies, call user getters during generation, or require generated descriptors;
+handwritten tables keep the same behavior and exact mapper identity.
 
 ## 6. Diagnostics and compatibility
 
@@ -69,14 +125,24 @@ Cross-entity/value type errors should fail through ordinary C# typing. Runtime p
 
 ## 7. Descriptor and operation invariants
 
+DB-Exec-02 removes the redundant command replay adaptation and native parameter
+re-encoding and uses generation-scoped spans for typed results. It keeps native
+owner/profile validation, per-execution value snapshots and complete shape/extent
+validation. Each new batch is validated once; projection proof is reused only
+for the same fields and expectation, and each typed value retains its lifetime,
+ordinal, codec and data-dependent checks. Ordinary DTO strings/bytes still own
+their resulting managed data. Do not claim whole-query zero from generated row access or treat
+an upstream generated fixture as the actual emitted consumer.
+
 A table's canonical metadata includes schema-format version, logical identity, validated names, scalar codec/nullability, primary keys and ordered projection fields. The existing v1 table relations array stays reserved empty. An explicit relation has separate canonical metadata containing both table/model identities, ordered parent-key/child-key pairs and child nullability; registering a relation does not rewrite either table hash. Adding a supported entity registers another descriptor and does not change native assets.
 
 | Phase | Required invariant |
 | --- | --- |
 | Generator input | Stable syntax/semantic equality; deterministic names/order; diagnostics point to source spans |
 | Build | Generated and handwritten descriptors/readers use the same API; no native compiler or database calls |
-| Query call | C# checks entity/value types; native entry checks owner, generation and profile |
-| Seal/submission | Snapshot mutable parameters and freeze the query; reused shapes receive independent execution values |
+| Query call | C# checks entity/value types and records bounded local operations; existing metadata registration keeps its native owner checks |
+| Compile/render/CTE | C++ validates the complete command, source-bound owner sidecar and profile; explicit preparation caches SQL and immutable parameter metadata |
+| Execution | Snapshot changing parameters; every reused shape receives independently validated values and provider execution retains its own error boundary |
 | First result | Validate complete ordered shape; reject duplicates, missing columns and type mismatches before NULL handling |
 | DTO construction | Invoke the selected typed constructor; failures release batches and close/drain cursors |
 | Compatibility | Reject unknown metadata schema, codec and incompatible capability/profile without fallback |
