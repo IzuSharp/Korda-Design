@@ -28,6 +28,20 @@ stored in the cache. Key validation, caller-buffer snapshot, precancellation,
 DDL/schema failure precedence, duplicate-row rejection and concurrent-session
 behavior remain unchanged. Provider prepare/description remain per execution.
 
+The cold private factory returns both the retained cache charge and the actual
+fixed logical-query byte charge. These have different meanings. Before copying
+the changing key values or returning asynchronous work, managed Find adds their
+payload bytes to the fixed logical charge with checked bounds and preserves the
+old synchronous rejection. Its exact exception type and category must come from
+the original Find builder, which uses ExpressionValues and Binding.Value; a
+WhereEqual helper can reject at a different boundary and is not that oracle.
+At public 47fe650, QueryCommand.Capacity uses binding code11 (InvalidState),
+whereas an individually oversized expression frame is an ArgumentException.
+A native render check remains a second defense, including uncached oversized
+shapes. Neither check may relax the
+old Fluent node, parameter, byte or source-identity limits. The extra factory
+output is a scalar in the same cold call, not another record or hot FFI call.
+
 The isolated PostgreSQL commit-proof proposal is also selected for verification:
 an already confirmed, healthy, nonblocking, non-pipeline physical connection in
 PQTRANS_INTRANS, with no live statement and no savepoint, can supply the existing
