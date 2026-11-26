@@ -1,12 +1,12 @@
 # Cursor pull execution and scoped rows — DB-Exec-02
 
-Status: **DB-Exec-03 direct final close implemented; new public-package
-and performance acceptance pending**. DB-Exec-02 replaced the per-batch generic operation selected
+Status: **cursor pull/direct final close measured; DB-Exec-07 command completion
+selected, with its implementation acceptance pending**. DB-Exec-02 replaced the per-batch generic operation selected
 for replacement in [the execution target](query-semantics.md). The source links
 below bind the published source candidate
-[`bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8`](https://github.com/IzuSharp/Korda/commit/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8).
-Its tree is `78e6c419a7e1ee2134a5c4aac86e5d5e21483eba`, matching local
-`3b7fd0259274135cc22eeea73c93e21c5619d46b`. This fixes the reviewed source
+[`933d16bf673dff5310db37cc444ba5019842d81d`](https://github.com/IzuSharp/Korda/commit/933d16bf673dff5310db37cc444ba5019842d81d).
+Its tree is `cdf18c758acc507d1ea84cbd20e1db1813cc5710`, matching local
+`12ac0e6ebd7503fa106106c26278ec98f4e115d9`. This fixes the reviewed source
 input. Plan must separately bind its native images, packages, generated consumers
 and measurements; source publication does not establish their acceptance.
 Earlier candidate B and
@@ -15,16 +15,25 @@ retirement-interval experiments retain their own identities and results.
 The measured [`0f3816c` checkpoint](https://github.com/IzuSharp/Korda/commit/0f3816c4006488821f40afde91bbbd717d57ccd6)
 uses zero or one generic operation for final cursor close. DB-Exec-03 replaces
 that normal close operation with the separate ready/take protocol specified
-below. Its current source links identify `bc6ba1a`; the measurements and old
+below. Its current source links identify `933d16b`; the measurements and old
 waiting-path references retain `0f3816c`. The close implementation passed a
 Release library compilation and development two-provider Native AOT close and
-full NativeHost gates. New public-package consumers and measurements remain pending.
+full NativeHost gates. Public-package short observations for `bc6ba1a`,
+`8058128` and `31693e3` are retained in Plan. The cancellation failure at
+`bc6ba1a` and later correction are explicit; current `933d16b` CI success does
+not transfer those timings to an unmeasured source. Final long credit is 0/4.
 
 The public Fluent calls, result and error behavior, Native AOT requirement,
 C++ execution and independently installable PostgreSQL/SQLite packages remain.
 The frozen database v1 declarations and fingerprint remain byte-compatible.
 The private channel changes who schedules and owns a result, not when a SQL
 side effect is permitted or when a connection is safe to return.
+
+The [one-shot command target](command-completion-execution.md) now covers the
+remaining generic completion used by Count/Any, nonreturning CRUD and transaction
+controls. That target is separate from the completed row fetch/close switch.
+The buffered row-scope A/B shows mixed results across routes and row counts;
+fewer scopes alone is not evidence of a universal timing improvement.
 
 ## Actual consumer-to-driver path
 
@@ -394,36 +403,47 @@ transaction cases, with final native owner counters zero. These are development
 asset receipts, not a frozen external package run. Plan retains the exact logs,
 ELF and provider hashes under the `close-ready-01` evidence identity.
 
-Published `bc6ba1a` has started the existing
+Published `bc6ba1a` failed the existing
 [CI run 45742221278](https://github.com/IzuSharp/Korda/actions/runs/45742221278).
-At this documentation checkpoint its plan passed and selected jobs were still
-running. Its completion, new public packages and measurements require their own
-receipts; the successful `0f3816c` CI is not substituted for them.
+The unchanged local Orm.Relations suite reproduced its immediate cancellation
+failure. The narrowed correction preserves cancellation only for an already
+accepted pull while retaining standalone fetch and frozen provider-error
+precedence. The original failure, direct asset-substitution integrity rejection
+and successful matching-profile rebuild remain recorded separately in Plan.
+
+Public `8058128` [CI 45748812544](https://github.com/IzuSharp/Korda/actions/runs/45748812544),
+public `31693e3` [CI 45749741438](https://github.com/IzuSharp/Korda/actions/runs/45749741438)
+and public `933d16b` [CI 45752759759](https://github.com/IzuSharp/Korda/actions/runs/45752759759)
+each completed successfully under the existing checks. Each retained PR receipt
+records ten successful jobs and the expected modules/publication skips. This is
+not a release claim. The `933d16b` command-cleanup fix preserves primary provider
+errors through cleanup scheduling failure; it is not the prospective one-shot
+completion implementation.
 
 Plan owns exact executable/log hashes and the required rerun, public package
 tests and four serial local
 1800-second candidate/reference cells. No performance claim or CI benchmark is
 introduced by this design checkpoint.
 
-[fluent]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/src/Query.Fluent/QueryContext.cs
-[terminals]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/src/Query.Fluent/Terminals.cs
-[session]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/src/Data.NativeHost/DataSession.cs
-[abi]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/native/cpp/src/host_abi.cpp
-[host]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/native/cpp/src/host.cpp
-[provider]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/native/cpp/src/provider.cpp
-[contracts]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/native/cpp/src/contracts.cpp
-[managed-native]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/src/Data.NativeHost/NativeHost.cs
-[controller]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/src/Data.NativeHost/HostPullController.cs
-[batch]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/src/Data.Streaming/StreamTransport.cs
-[stream]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/src/Data.Streaming/TypedStream.cs
-[rows]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/src/Data.Abstractions/Rows.cs
-[header]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/native/database/binding/korda_cursor_pull_v1.h
-[manifest]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/native/database/binding/cursor-pull-v1.json
-[cleanup-seal]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/native/cpp/src/host.cpp
-[close-controller]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/src/Data.NativeHost/HostCursorCloseController.cs
-[close-tests]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/tests/Data.NativeHost/CursorCloseTests.cs
-[close-record-tests]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/tests/Data.NativeHost/CursorCloseRecordTests.cs
-[native-pull-tests]: https://github.com/IzuSharp/Korda/blob/bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8/native/cpp/tests/streaming_tests.cpp
+[fluent]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/src/Query.Fluent/QueryContext.cs
+[terminals]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/src/Query.Fluent/Terminals.cs
+[session]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/src/Data.NativeHost/DataSession.cs
+[abi]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/native/cpp/src/host_abi.cpp
+[host]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/native/cpp/src/host.cpp
+[provider]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/native/cpp/src/provider.cpp
+[contracts]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/native/cpp/src/contracts.cpp
+[managed-native]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/src/Data.NativeHost/NativeHost.cs
+[controller]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/src/Data.NativeHost/HostPullController.cs
+[batch]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/src/Data.Streaming/StreamTransport.cs
+[stream]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/src/Data.Streaming/TypedStream.cs
+[rows]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/src/Data.Abstractions/Rows.cs
+[header]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/native/database/binding/korda_cursor_pull_v1.h
+[manifest]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/native/database/binding/cursor-pull-v1.json
+[cleanup-seal]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/native/cpp/src/host.cpp
+[close-controller]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/src/Data.NativeHost/HostCursorCloseController.cs
+[close-tests]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/tests/Data.NativeHost/CursorCloseTests.cs
+[close-record-tests]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/tests/Data.NativeHost/CursorCloseRecordTests.cs
+[native-pull-tests]: https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/native/cpp/tests/streaming_tests.cpp
 [measured-transport]: https://github.com/IzuSharp/Korda/blob/0f3816c4006488821f40afde91bbbd717d57ccd6/src/Data.NativeHost/HostStreamTransport.cs
 [measured-close]: https://github.com/IzuSharp/Korda/blob/0f3816c4006488821f40afde91bbbd717d57ccd6/src/Data.NativeHost/CloseController.cs
 [measured-async]: https://github.com/IzuSharp/Korda/blob/0f3816c4006488821f40afde91bbbd717d57ccd6/src/Interop.Async/AsyncOperation.cs

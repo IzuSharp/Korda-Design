@@ -1,19 +1,26 @@
 # Current execution-path target — DB-Exec-02
 
-Status: **cursor pull/scoped-span checkpoint measured; DB-Exec-03 direct final
-close implemented, with new public-package and performance acceptance pending**. The owner resumed the complete database execution-path refactor on
+Status: **cursor pull and direct final close measured; one-shot command
+completion selected, with its implementation and final performance acceptance pending**. The owner resumed the complete database execution-path refactor on
 2026-11-26 (Asia/Shanghai), continuing [Korda #37](https://github.com/IzuSharp/Korda/pull/37),
 [Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and
 [Plan #34](https://github.com/IzuSharp/Plan/pull/34). This continuation starts from
 [ada28311a384ad149fdc3f9db3b14473aedf0061](https://github.com/IzuSharp/Korda/commit/ada28311a384ad149fdc3f9db3b14473aedf0061).
-The [actual cursor-path record](cursor-pull-execution.md) binds the integrated
-development source, its ten channel exports, lifetime proofs, test mapping and
-remaining waits/copies. It binds the published source candidate
-`bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8`; public-package acceptance and the
-measurement freeze remain separate gates. The DB-Exec-03 final-close protocol
-adds two private entries and preserves a separate notification fence. Its
-development Native AOT gates passed; the earlier `0f3816c` measurements remain
-bound to that earlier source and do not establish performance for this protocol.
+The [actual cursor-path record](cursor-pull-execution.md) now binds public
+[`933d16bf673dff5310db37cc444ba5019842d81d`](https://github.com/IzuSharp/Korda/commit/933d16bf673dff5310db37cc444ba5019842d81d),
+including the accepted-cancellation correction, narrow request scheduling,
+deleted unused retirement bridge, buffered row scope and primary-error
+preservation. Its existing correctness/package CI passed. The current short
+measurements bind the earlier public `31693e3` packages; they are not performance
+credit for `933d16b` or an unbuilt successor. Final 1800-second credit remains
+**0/4**. Earlier `0f3816c` and `bc6ba1a` evidence retains its original identities,
+including the real cancellation failure at `bc6ba1a`.
+
+The [one-shot command target](command-completion-execution.md) extends this
+chain to Count/Any, nonreturning CRUD and transaction/savepoint controls. Current
+`933d16b` still uses generic operations for those calls. Ordinary single-case
+transaction tails and separate ABI counts select the new detached completion
+work; a row-query-only zero-generic result does not establish this path is done.
 
 The pre-refactor baseline remains
 [f0078da720e07031bc56464995af6791c41aaae8](https://github.com/IzuSharp/Korda/commit/f0078da720e07031bc56464995af6791c41aaae8).
@@ -43,6 +50,7 @@ follow a compatible responsibility and lifetime boundary.
 | Native execution parameters | Retain immutable ordered shape metadata; create one independently owned, once-validated typed argument set for each accepted execution | Snapshot values before retention; no mutable caller buffers or borrowed span across await |
 | Native result production | Write converted values and offsets directly into one bounded owned batch arena | Complete shape and extent validation; field/row/byte limits; failure-atomic transfer |
 | Native fetch scheduling | One cursor pull channel; first request opens and fetches, subsequent requests fetch directly | Complete open/shape validation precedes first Execute/step; each accepted request has one detached ready notification; final close joins every native tail |
+| Native command completion — selected target | One typed request and independent result state for Count/Any, nonreturning CRUD, transactions/savepoints and child close; replace generic terminal/retirement polling on these formal entries | Existing business functions and error priority; input accessors and Source reservation released before ready; separate notification fences preserve unknown-acceptance and Source join proof; implementation acceptance pending |
 | Managed batch and row access | One reusable channel controller and stable scoped native batch owner; bind a validated layout once and directly construct DTOs | No reader escapes its generation/lease; missing/duplicate/type/NULL/UTF-8/precision errors remain explicit |
 | Prepared Fluent | Reuse compiled SQL, parameter ordinals/codecs and projection; repeated execution changes independently captured values | Source/profile/generation checks; independently disposable plan; concurrent executions use independent owners |
 | Dynamic Fluent | Complete typed composition before submission; compile one validated representation directly if the command gate proves equivalence | Immediate recoverable builder checks, native capabilities, clones/CTEs, literal budgets and nonsealing ToSql |
@@ -54,6 +62,28 @@ with ordered typed values; libpq/sqlite3 supplies bounded results; the batch lea
 retains native storage while the generated reader constructs the DTO. A complete
 command is distinct from registration, fetch, cancel and disposal operations.
 Changing their granularity requires the same observable lifecycle.
+
+### One-shot commands and scalar results
+
+The current [`DbOperation::run/complete`](https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/native/cpp/src/host.cpp)
+delivers a terminal callback before its generic work/callback leases and local
+action capture have all retired. A later managed Pending retirement may wait
+for the existing coordinator tick. The selected replacement reuses the
+[existing capture and business adapters](https://github.com/IzuSharp/Korda/blob/933d16bf673dff5310db37cc444ba5019842d81d/native/cpp/src/host_abi.cpp),
+then transfers a count, owner or existing snapshot buffer through a separate
+ready state. It does not move the old terminal callback to a different line or
+declare terminal delivery to be native quietness.
+
+The [detailed target](command-completion-execution.md) fixes the 48-byte typed
+request, 32-byte typed result, four private exports, existing owner/buffer
+release and cold generic proof. It also defines cancellation, accepted queue
+failure, primary/cleanup error retention, unclaimed owner cleanup and the
+independent request/Source notification fences. Existing transaction Unknown
+results must retain their early decision boundary while separately owned
+cleanup continues. A new scalar count path uses provider conversion directly,
+without encoding and reparsing a row batch; complete shape, cardinality,
+NULL/width, late-error and retirement checks remain required. None of these
+prospective guarantees is counted as an executed product test.
 
 ### PostgreSQL: one preparation group, fresh metadata
 
