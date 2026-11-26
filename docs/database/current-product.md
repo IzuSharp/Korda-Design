@@ -4,10 +4,13 @@ The existing product is the PostgreSQL/SQLite Fluent ORM with C# application mod
 
 The current [DB-Exec-02 target](query-semantics.md#current-execution-path-target-db-exec-02)
 rebuilds the complete driver-to-Fluent execution path while retaining this product
-surface. The cursor pull/scoped-span route is implemented in a published source candidate;
-final integrated package and performance acceptance remain pending. The
-[actual path record](cursor-pull-execution.md) binds its published checkpoint, eight
-exports, tests and remaining costs.
+surface. The cursor pull/scoped-span route and direct final close are implemented
+in published source `bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8`. The
+[actual path record](cursor-pull-execution.md) binds its eight fetch and two
+final-close exports, tests and remaining costs. DB-Exec-03 adds an independent
+close controller after the measured `0f3816c` EOF tail exposed the remaining
+generic-operation retry wait. Development Native AOT correctness passed on both
+providers; new public-package and performance acceptance remain pending.
 Selected targets are ordered typed native arguments without a second NWDB
 encode/parse, fresh PostgreSQL Parse/Describe in one pipeline group, one SQLite
 statement for description/binding, direct native batch writing and one validated
@@ -48,7 +51,7 @@ map remains available in Git history.
 | Static models and immutable DTO projections | `src/Query.Generator`, `src/Data.Materialization` | Existing metadata/projection ABI and Host registration |
 | Relations and CRUD | `src/Orm.Relations` | `mutations.cpp` and shared capture helpers; lazy relation/returning-mutation channels, with generic nonreturning controls retained |
 | AsAsyncEnumerable and typed terminals | `src/Data.Streaming`, `src/Query.Fluent`, `src/Data.NativeHost/HostPullController.cs` | Lazy `CursorPull`, first-request open plus admitted fetch, generation-checked ready/take, bounded arenas and scoped native span ownership |
-| Cancellation, errors and disposal | Required Core/Interop modules | `interop.cpp` and native database retirement |
+| Cancellation, errors and disposal | Required Core/Interop modules; `HostCursorCloseController` for the DB-Exec-03 stream path | Native database retirement, separate final-close ready/take and notifier fence; generic controls remain for other operations and cold fallback |
 
 Native filenames in the table are under `native/cpp/src`; their corresponding headers are under `native/cpp/include/nw`. The product [native build guide](https://github.com/IzuSharp/Korda/blob/task/DB-Rename-01-linux/docs/guides/cpp-native.md) records toolchain and implementation details. The Database assembly composes the existing query, ORM, migration and materialization sources. Database Host remains required execution infrastructure, not an HTTP server. Independent provider packages include `libnw_database_sqlite.so` or `libnw_database_postgresql.so` with their required managed closure.
 
@@ -61,9 +64,11 @@ Those additions preserve the frozen v1 signatures and fingerprint. The
 [query decision](query-semantics.md#dynamic-queries-one-complete-command) explains
 the typed owner sidecar, topology and preserved budgets; command bytes contain
 no native pointer values. The current candidate also requires capability bit 27
-(`db.cursor.pull.v1`) and all eight declarations in
+(`db.cursor.pull.v1`) and its eight fetch declarations in
 `native/database/binding/korda_cursor_pull_v1.h` / `cursor-pull-v1.json`.
-They replace the unpublished batch-result extension. Frozen cursor operations
+The DB-Exec-03 final-close continuation raises the required private inventory to
+ten entries with `close_request_v1` and `close_take_v1`, reusing the same callback
+and cleanup formats. They replace the unpublished batch-result extension. Frozen cursor operations
 and take-buffer remain compatible; they are exercised through test-local
 fixtures rather than an unused production streaming fallback.
 

@@ -9,9 +9,12 @@ behavior, Native AOT, C++ execution and independent provider packages while
 allowing internal Host, command/parameter, batch and reader replacement.
 The cursor pull/scoped-span route is now a published source candidate.
 Its [actual execution record](docs/database/cursor-pull-execution.md) binds the
-published source `0f3816c4006488821f40afde91bbbd717d57ccd6`, all eight exports,
+published source `bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8`, all ten exports,
 readiness versus final-tail ownership, retained cost inventory and development
-Native AOT results. Final integrated package and
+Native AOT results. The measured `0f3816c` checkpoint's EOF tail selected the
+implemented DB-Exec-03 direct final-close continuation: two additional private
+exports and an independent managed close controller. Both providers passed the
+development close and full NativeHost AOT gates. New public-package and
 performance acceptance remain pending; source review is not delivery acceptance.
 
 The selected provider targets are fresh PostgreSQL Parse+Describe in one pipeline
@@ -23,9 +26,12 @@ be written directly to bounded native batches and read through one validated
 layout. The native batch borrow now uses one stable owner with generation-scoped
 span reads. The first request performs lazy open, complete shape validation and
 a second Source/Session/token/channel admission before fetch. Later batches use
-ready/take without a generic operation; final cleanup retains its actual join
-proof, with zero or one generic close operation depending on the completed
-snapshot.
+ready/take without a generic operation. DB-Exec-03 implements one independent final
+close ready/take after actual provider cleanup, with zero generic operations on
+the normal stream path. The previous zero-or-one generic close remains the
+measured `0f3816c` baseline. A lazy generic fallback must include the new final
+notification fence before releasing an uncertain cookie; Source close joins all
+detached notifier tails. Application continuations remain asynchronous.
 
 The command representation must independently justify direct compilation versus
 NWQC replay, including removal of superseded stages. Full-path public consumers,

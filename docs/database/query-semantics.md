@@ -1,16 +1,19 @@
 # Current execution-path target — DB-Exec-02
 
-Status: **cursor pull and scoped-span source candidate published; integrated
-package verification and final performance acceptance pending**. The owner resumed the complete database execution-path refactor on
+Status: **cursor pull/scoped-span checkpoint measured; DB-Exec-03 direct final
+close implemented, with new public-package and performance acceptance pending**. The owner resumed the complete database execution-path refactor on
 2026-11-26 (Asia/Shanghai), continuing [Korda #37](https://github.com/IzuSharp/Korda/pull/37),
 [Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and
 [Plan #34](https://github.com/IzuSharp/Plan/pull/34). This continuation starts from
 [ada28311a384ad149fdc3f9db3b14473aedf0061](https://github.com/IzuSharp/Korda/commit/ada28311a384ad149fdc3f9db3b14473aedf0061).
 The [actual cursor-path record](cursor-pull-execution.md) binds the integrated
-development source, eight negotiated exports, lifetime proofs, test mapping and
+development source, its ten channel exports, lifetime proofs, test mapping and
 remaining waits/copies. It binds the published source candidate
-`0f3816c4006488821f40afde91bbbd717d57ccd6`; package/binary acceptance and the
-measurement freeze remain separate gates.
+`bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8`; public-package acceptance and the
+measurement freeze remain separate gates. The DB-Exec-03 final-close protocol
+adds two private entries and preserves a separate notification fence. Its
+development Native AOT gates passed; the earlier `0f3816c` measurements remain
+bound to that earlier source and do not establish performance for this protocol.
 
 The pre-refactor baseline remains
 [f0078da720e07031bc56464995af6791c41aaae8](https://github.com/IzuSharp/Korda/commit/f0078da720e07031bc56464995af6791c41aaae8).
@@ -245,9 +248,13 @@ The synchronous take checks the exact generation and transfers the Buffer,
 borrowed view and observed EOF once. A failed take retains structured SQLSTATE,
 provider and cleanup errors for the error take. Read-admission checking at known
 EOF remains explicit. A lightweight stop call provides cancellation/Dispose
-control without constructing another operation. Final close uses zero or one
-existing generic operation per cursor and must join all channel worker/callback tickets and
-the cursor's drain/discard obligations. SafeHandle release remains nonblocking;
+control without constructing another operation. The measured `0f3816c` final
+close uses zero or one generic operation. DB-Exec-03 replaces the normal close
+with an independent generation-0 ready/take after the old fetch tickets and
+cursor drain/discard obligations finish. Its own notification tail has separate
+channel and Source fences. Public generic join and snapshots include that tail
+so a cold fallback can prove an uncertain close cookie safe; direct final-close
+work excludes its own tail to avoid self-wait. SafeHandle release remains nonblocking;
 abandoning a managed cursor does not erase its native cleanup ledger.
 
 The managed controller is reusable, but its GCHandle root, coordinator reservation
@@ -275,7 +282,8 @@ ValueTask does not escape and is consumed before the controller is reset.
 The unpublished `db.result.batch.v1` bit 27 and its two exports are replaced by
 `db.cursor.pull.v1`; preserve the frozen 42 declarations, the bit-26 complete
 query command and original take-buffer API. Both independent package
-capability/export inventories require the same eight entries. Superseded
+capability/export inventories require the same eight fetch entries plus the two
+DB-Exec-03 final-close entries. Superseded
 HostStreamBatch, NativeHost.TakeBatch, Source.StartRetiredValueTask and raw
 streaming interfaces are deleted after their production callers move to the
 scoped channel. Keep general Interop async operations for their remaining Task
@@ -290,11 +298,14 @@ transaction-disposal behavior. Public package consumers must establish that the
 formal entry uses the channel and that the deleted path has no callers. This is an
 implemented source candidate; its final integrated tests, allocation, FFI and
 latency measurements require their own receipts. The
-[actual path and ownership record](cursor-pull-execution.md) lists the eight
-exports, precise readiness/retirement proofs, legitimate zero-close shortcut,
+[actual path and ownership record](cursor-pull-execution.md) lists the fetch and
+final-close exports, precise readiness/retirement proofs, cold generic fallback,
 development test results and every retained wait/copy/format awaiting cost
-attribution. It preserves the first exact-one-close test failure instead of
-converting a timing-dependent assumption into a new public requirement.
+attribution. It preserves the first exact-one-close test failure for its original
+checkpoint. The DB-Exec-03 normal-path oracle is zero generic operations through
+final close. Its development two-provider AOT matrix has passed that exact count;
+public-package FFI/correctness and local timing receipts remain separate gates
+rather than credit from the old snapshot race.
 
 ### Complete-command design gate
 
