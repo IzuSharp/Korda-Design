@@ -1,3 +1,32 @@
+# Current phase — DB-Exec-11 final local evidence complete
+
+The formal candidate is Korda
+[`17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa`](https://github.com/IzuSharp/Korda/commit/17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa),
+tree `bc9087d843d8d741d83d44f53d0b2c5af26dcffc`. The
+[implemented driver-to-Fluent record](docs/database/execution-path-17da.md)
+identifies the selected command, value, batch, generated-reader, completion and
+Find paths while preserving public Fluent behavior, Native AOT, C++ execution
+and independently installable PostgreSQL/SQLite packages.
+
+Both package correctness/AOT gates passed. The
+[final local campaign](https://github.com/IzuSharp/Plan/blob/adcdc9172bf47a0df8fe5fcb8259357625526280/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-8/README.md)
+completed four serial 1,800-second cells, including recorded post-disposal idle,
+on 2026-11-26 at 18:39:24 Asia/Shanghai. All 35 business cases were covered in
+each cell, all admitted operations completed without business errors, and
+rejections remain explicit. The unchanged source/identity/owner supplement
+passed; both Korda runs returned all eight recorded owner categories to zero.
+
+This is completed local measurement evidence, with the recorded SQL text,
+resource-scope and allocation limitations. The raw comparisons retain 35
+SQL-description differences per provider and no observed wire-SQL trace.
+Framework-only 0 B, Dapper parity and exhaustion of every potential optimization
+are not established. The rejected quiet-close experiment remains unselected.
+Normal reviewed merges, existing main CI and rule-selected public publication
+and Native AOT consumption are the remaining delivery actions. Performance work
+remains local; existing diff/module CI selection is unchanged.
+
+## Previous implementation checkpoint retained
+
 # Current phase — DB-Exec-02 complete database execution path
 
 The owner has resumed complete Linux x64 path reconstruction in the existing

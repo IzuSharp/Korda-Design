@@ -17,12 +17,16 @@ Candidate B introduced the validated layout; the current
 [cursor pull implementation](../database/cursor-pull-execution.md) carries it
 through one stable scoped native batch owner and synchronous `RowReader` spans.
 Existing generated and handwritten constructors use that same production
-path; no per-cell borrowed `Memory` adapter is required. Actual pinned reference
-factories/readers and public Native AOT consumers are bound in the execution
-evidence. Final integrated package gates and controlled performance acceptance
-remain pending. Stable parameter
-ordinals and value writing are separate from arbitrary Fluent-method capture.
-This refactor does not announce a new public fixed-query generator API.
+path; no per-cell borrowed `Memory` adapter is required. Actual pinned reference factories/readers and external Native AOT consumers
+are bound in the [implemented 17da record](../database/execution-path-17da.md).
+Both independent provider package gates passed, and the
+[final local evidence](https://github.com/IzuSharp/Plan/blob/adcdc9172bf47a0df8fe5fcb8259357625526280/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-8/README.md)
+records four complete serial 1,800-second cells. Normal merges, main CI and
+public publication/consumption remain pending. Total measured managed allocation
+includes business output, harness, framework and driver; framework-only 0 B is
+not established. Stable parameter ordinals and value writing remain separate
+from arbitrary Fluent-method capture. This refactor does not announce a new
+public fixed-query generator API.
 
 The following generation inventory describes retained public behavior. Its
 changed internal result path is source- and test-bound in the cursor record;

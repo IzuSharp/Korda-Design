@@ -4,11 +4,15 @@ The [implemented 17da execution path](execution-path-17da.md) is the current
 driver-to-Fluent review: it identifies actual public entries, reuse/rewrite/delete
 decisions, retained costs, fixed upstream/generated sources and contract tests.
 CursorPull, typed command completion and fixed-key Find are implemented in that
-source; earlier implementation-pending tables below retain their historical
-checkpoint meaning. Both independent provider packages have completed their
-recorded correctness/AOT gates. Final continuous1800-second credit remains
-**0/4** at this checkpoint; performance acceptance is separate. The rejected
-92b close-dispatch experiment does not replace the formal 17da path.
+source. Both independent provider packages completed their recorded
+correctness/AOT gates, and the [final local evidence](https://github.com/IzuSharp/Plan/blob/adcdc9172bf47a0df8fe5fcb8259357625526280/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-8/README.md)
+now records four complete serial 1,800-second cells with source/owner checks.
+Normal merges, main CI and public publication/consumption remain pending.
+The 35 diagnostic SQL text differences per provider, framework-only 0 B and
+remaining cost limits are explicit in that evidence; final measurement completion
+is not parity or optimality. The rejected 92b close-dispatch experiment does not
+replace the formal 17da path. Earlier implementation-pending tables below retain
+their historical checkpoint meaning.
 
 ## Current integrated candidate
 

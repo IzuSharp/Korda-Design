@@ -5,19 +5,32 @@
 The formal product candidate is
 [`17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa`][product], tree
 `bc9087d843d8d741d83d44f53d0b2c5af26dcffc`, on Linux x64. This record describes
-its implemented path and the contracts that constrain further changes. It is a
-source review, not a new product execution or performance observation.
+its implemented path and the contracts that constrain further changes. The
+final local observations below are drawn from the source-bound Plan evidence;
+this document does not constitute another product or performance execution.
 
 CursorPull, typed command completion, direct batch construction, prepared value
 submission, fixed-key Find and the selected PostgreSQL state proof are
 implemented in this candidate. Earlier proposal tables in
 [query-semantics.md](query-semantics.md) that say implementation is pending
 describe their original checkpoints. They are retained unchanged as history.
-The [independent package receipt][packages] records successful builds and public
-Native AOT consumption for both provider packages. **Final continuous
-1800-second performance credit is still 0/4 at this checkpoint.** The
-[current campaign selection][campaign] owns the remaining same-host baseline,
-offered-load and final-run evidence; it does not inherit historical long runs.
+The [independent package receipt][packages] records successful builds and external
+Native AOT consumption of both independent provider packages. The
+[final local evidence][final-evidence] now records **4/4 complete continuous
+1,800-second cells** for the exact 17da candidate and matched Dapper.AOT, with
+serial execution including recorded post-disposal idle. The campaign finished
+on 2026-11-26 at 18:39:24 Asia/Shanghai. All four runs covered 35/35 business
+cases with zero failed admitted operations and zero business-oracle failures;
+rejected arrivals remain explicit. The identity/owner supplement passed with
+394 unchanged observed inputs, including the original 373 frozen inputs, and
+all eight recorded Korda owner categories returned to zero for both providers.
+
+This completes the requested local four-cell measurement evidence. It does not
+establish performance parity, framework-only 0 B, or byte-identical diagnostic
+SQL across every mixed-workload case. Normal reviewed merges, main CI and
+rule-selected publication/public NuGet consumption remain pending at this
+checkpoint. The original [campaign selection][campaign] and all historical
+long-run records retain their own identities.
 
 The already-released close experiment at
 [`92b923075952bac347619ee7817c372ee6e415cb`][close-source] is not selected.
@@ -184,6 +197,53 @@ per-node or generic-fetch path when an asset lacks the selected protocol.
 Frozen direct ABI entries and generic administrative/uncertain-acceptance paths
 retain genuine compatibility or execution callers and are not dead-code claims.
 
+## Final local observations and comparison scope
+
+The final offered load was 3,000 arrivals/s with concurrency 4 for SQLite and
+3,600 arrivals/s with concurrency 8 for PostgreSQL. Each cohort ran alone for
+1,800 seconds; the next cohort started only after the preceding process and its
+recorded post-disposal idle completed. The full raw ledger and ordinary
+same-SQL phase observations remain in [Plan][final-evidence].
+
+| Provider / cohort | Successful operations/s through drain | Rejected arrivals | Offered p50 / p95 / p99 (ms, histogram upper bounds) | Total managed B/success |
+| --- | ---: | ---: | --- | ---: |
+| SQLite / Korda 17da | 2,706.936 | 527,440 / 5,400,000 | 20.185 / 33.423 / 49.545 | 24,790.092 |
+| SQLite / Dapper.AOT | 2,994.376 | 10,114 / 5,400,000 | 0.208 / 3.031 / 8.585 | 7,431.767 |
+| PostgreSQL / Korda 17da | 3,400.012 | 359,927 / 6,480,000 | 14.877 / 27.132 / 38.273 | 25,490.045 |
+| PostgreSQL / Dapper.AOT | 3,591.997 | 14,376 / 6,480,000 | 0.371 / 3.326 / 8.520 | 7,316.433 |
+
+All four have zero failed admitted operations. Rejections are separate outcomes;
+offered percentiles describe successful admitted operations and include
+scheduling/queueing, rather than rejected arrivals. Korda's successful throughput
+was 90.40% and 94.66% of Dapper at these offered rates. These are rate-limited
+completion comparisons, not independently measured maximum-throughput ratios.
+Its offered p99 was 5.77 times and 4.49 times Dapper, and total managed
+B/success was 3.34 times and 3.48 times Dapper respectively.
+
+The preceding same-condition **120-second** before/current supplement is separate:
+SQLite improved from 542.872 to 2,668.577 successful operations/s and PostgreSQL
+from 1,241.453 to 3,458.224. Those paired short observations, their failures and
+rejections, and their exact source identities are retained; the old baseline is
+not relabelled as a new 30-minute baseline.
+
+Each final provider comparison retains 35 diagnostic SQL text differences.
+Ordinary statements largely differ in provider parameter markers, while some
+lifecycle records compare historical descriptions with explicit SQL. The pinned
+source and actual generated-command-factory audit establish the matched
+lifecycle parameter types/value bindings and allowed normalization. They do not
+erase the raw differences or establish an observed server wire trace;
+`runtimeSqlTraceVerified=false` remains explicit. Equal business assertions and
+digests do not by themselves prove byte-identical SQL.
+
+The final CPU, RSS, allocation and GC records keep their actual scopes:
+application steady/drain CPU; process-lifetime peak RSS and observed idle RSS;
+whole-process managed allocations and GC deltas for the measurement window;
+and separately recorded cumulative GC at offered-end. Final process-exit GC
+and a complete PostgreSQL server CPU total were not recorded. Business output,
+harness, framework and driver allocations are not separated by subtraction.
+
+## Remaining limits and stopping rationale
+
 The following limits remain explicit:
 
 - **Additional managed framework allocation of 0 B is unproven.** The current
@@ -203,9 +263,10 @@ The following limits remain explicit:
   windows, not the entire process lifetime including setup/warmup/gaps. Final
   throughput/tails/errors/rejections/CPU/RSS/allocation/GC must retain the final
   runner's actual measurement scope.
-- Same-host before evidence, offered-load validation, four final serial
-  1800-second cells, normal reviewed merges and observed existing CI/release
-  remain separately tracked. This checkpoint grants none of that unrun credit.
+- Same-host before/current evidence, offered-load validation and four serial
+  1,800-second cells are now recorded in the final Plan evidence. Normal reviewed
+  merges, main CI and public publication/consumption remain separate delivery
+  observations and are pending at this checkpoint.
 
 The stopping rationale must name completed work, observed gains or rejected
 experiments, and remaining measured/unproven costs. It must not claim whole-path
@@ -213,6 +274,17 @@ zero allocation or exhaustion of all possible measurable gains. CI retains the
 existing diff/module selection and independent provider package checks; all
 benchmark, profile, calibration and pressure work remains local Linux work.
 
+This round has completed the selected path replacement, its public-package
+correctness checks and the requested final local observations. The narrower
+quiet-close experiment remains rejected under its original prospective rule;
+its results do not justify replacing the tested 17da path. The final evidence
+supports the recorded gains over the before candidate and exposes the remaining
+Dapper latency, refusal, CPU and allocation gaps. No further product change is
+selected by this checkpoint. Stopping after normal delivery does not claim that
+all possible optimizations have been exhausted or that framework-only 0 B has
+been achieved.
+
+[final-evidence]: https://github.com/IzuSharp/Plan/blob/adcdc9172bf47a0df8fe5fcb8259357625526280/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-8/README.md
 [product]: https://github.com/IzuSharp/Korda/commit/17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa
 [close-source]: https://github.com/IzuSharp/Korda/commit/92b923075952bac347619ee7817c372ee6e415cb
 [packages]: https://github.com/IzuSharp/Plan/blob/9e4aad4c04c68dd30ab3bcad68a977000b4717e2/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-7/current-ci-review-evidence/completed-public-builds-17da-02.json
