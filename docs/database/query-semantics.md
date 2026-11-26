@@ -1,5 +1,46 @@
 # Current execution-path target — DB-Exec-02
 
+## Recovered continuation and selected fixed-key path
+
+The 2026-11-26 continuation starts from public
+[`47fe650dfed5d7bba1c4d74c4a127c5d08b66082`](https://github.com/IzuSharp/Korda/commit/47fe650dfed5d7bba1c4d74c4a127c5d08b66082).
+One-shot command completion is implemented there and existing CI passed. The
+earlier completion proposal and candidate-specific measurements below retain
+their original meaning. New final performance acceptance is still pending.
+
+For `FindAsync`, select a Source-owned immutable fixed-key shape compiled once
+from the model's ordered primary keys, with the existing terminal3 SQL and
+Int64 LIMIT2. Reuse the C++ renderer, NativePlan parameter/projection validation,
+lazy CursorPull channel, TypedStream single-or-default consumption and exact
+Table.Row materializer. Repeated Find writes only a new independently owned
+value frame. It must not reconstruct Fluent nodes or encode/replay the complete
+command. Generated and handwritten table descriptors use the same private path.
+
+The private shape uses model-key slots independent of the Source's public
+ParameterRegistry. It must not consume public parameter identities, require the
+public prepared capability, or turn arbitrary terminal3 plans into reusable
+objects. Cache admission and hits retain the old logical node/parameter limits.
+Both retained entry count and bytes are bounded; Source closure releases cache
+ownership, while captured executions retain their own immutable references.
+The exact Table/projection object identifies managed mapping: equal metadata
+hashes do not imply equal materializers. No Session or physical statement is
+stored in the cache. Key validation, caller-buffer snapshot, precancellation,
+DDL/schema failure precedence, duplicate-row rejection and concurrent-session
+behavior remain unchanged. Provider prepare/description remain per execution.
+
+The isolated PostgreSQL commit-proof proposal is also selected for verification:
+an already confirmed, healthy, nonblocking, non-pipeline physical connection in
+PQTRANS_INTRANS, with no live statement and no savepoint, can supply the existing
+pre-COMMIT state proof without SELECT1. Failure/unknown state retains the prior
+probe/error path. Both post-COMMIT and safe-reuse confirmation obligations remain.
+Source inspection alone does not establish the performance of either candidate.
+
+The [continuation plan](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-7/plan.md)
+owns implementation, exact package tests, source-bound local measurements and
+the four final serial1800-second runs. No benchmark is added to CI.
+
+## Prior selected target and evidence at its original checkpoint
+
 Status: **cursor pull and direct final close measured; one-shot command
 completion selected, with its implementation and final performance acceptance pending**. The owner resumed the complete database execution-path refactor on
 2026-11-26 (Asia/Shanghai), continuing [Korda #37](https://github.com/IzuSharp/Korda/pull/37),

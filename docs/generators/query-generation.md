@@ -97,6 +97,12 @@ Dynamic condition branches remain a supported ordinary composition path. Emitted
 templates, runtime `.Prepare()` and physical connection statement caches must be
 reported as separate layers; none proves the other two exist.
 
+The selected runtime fixed-key Find cache is separate from that future generator
+feature. It compiles model-key slots once per bounded Source cache entry and
+uses the existing generated Table.Row reader. It does not capture C# method
+bodies, call user getters during generation, or require generated descriptors;
+handwritten tables keep the same behavior and exact mapper identity.
+
 ## 6. Diagnostics and compatibility
 
 DB-Rename-01 changes the attribute names in matching, generated C# and diagnostic messages; it does not repurpose diagnostic IDs or silently change the negative cases.
