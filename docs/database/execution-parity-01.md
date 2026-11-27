@@ -9,7 +9,93 @@ only potentially useful after short results are very close to Dapper; this is
 not automatic authorization to start one. Do not infer sustained parity from
 short samples. All original evidence and failed experiments keep their identities.
 
-## Continuation09: close tail06 and isolate HostPull queue preference
+## Continuation11: reject pull-local07; isolate final-frame rental08
+
+[Plan Continuation10](https://github.com/IzuSharp/Plan/blob/639e9f3abdd72cc72650c9f0d09d9897c8e4d448/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/continuation-10.md)
+closes pull-local07. Actual default-scheduler correctness, both ordinary ELF
+analyses and all twelve predefined text1000 processes completed. CPU relative
+to integrated05 was SQLite +17.42% / -0.68%, PG +6.55% / +0.06%; no useful reduction
+repeated. Reject pull-local07, skip its conditional mixed gate and extra rounds, and keep
+integrated05. The actual shared Signal type-test belongs to candidate cost; it
+is not independently proved to cause the regression. Tail06 stays rejected.
+
+The subsequent [Plan Continuation11](https://github.com/IzuSharp/Plan/blob/1932bf37b40119cc392d6d7c0f19bf5cd99db460/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/frame-pool-08-hypothesis.md)
+selects one independent **resource experiment**, not an adopted sixth component.
+Start from Korda `2ea67ce1902f330679c3ebff4d6d5733be20f69c`, tree
+`4e3989f2ce9e0c554585aab5a8bbb656e689b18d`. Source/ABI and locked runtime reviews
+support a finite lifetime experiment after the measured related32 final-frame
+allocation of 60,504 B for 60,480 logical bytes. Its 59,680 B tape copy remains.
+This target does not explain or promise to close the current several-times
+text1000 CPU gap.
+
+### Selected boundary and ownership
+
+Only `QueryCommand.Seal` graph slow-path frames with
+`4096 < logicalLength <= 65536` may use a private
+`ArrayPool<byte>.Create(65536, 4)`. Initialize it at the first eligible rental.
+Keep the 4096-byte single-root stack path, smaller/larger fresh arrays, Render,
+CreateCte, complete tape copying, fixups, sidecars and synchronous native Compile.
+Do not combine another queue, graph cache, source-tape transfer or Shared pool.
+
+Seal owns one local rental protected by try/finally established before Encode
+can rent. Acquire it at the original final-array allocation point, after the
+same preceding validation, and assign the owner before later encoding can throw.
+The copyable EncodedCommand is only a borrowed descriptor; it must not dispose,
+store the buffer in persistent query state or require a per-call heap lease.
+Carry explicit logical length into the header and native view, initialize all
+reserved bytes, and exclude oversized bucket tails. Preserve input snapshots,
+public Combine, logical quotas, DDL/mapper/origin identity and error order.
+
+Retain the frame through synchronous Compile and the original metadata/origin
+completion flow. Return it exactly once, to its original private pool, with
+`clearArray:true`; preserve the original native-owner cleanup on all exits.
+Native input borrowing ends on synchronous return, while actual literal and
+origin storage is copied into owned native bytes. Actual poison/re-rent plan
+execution must verify that boundary rather than treating the ABI text as a test.
+
+### Explicit resource tradeoffs
+
+The locked .NET11 source is VMR 297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f,
+runtime deae2e32bf0e018e09d64597b7c59b62b73bb3ce. ConfigurableArrayPool uses a bucket
+SpinLock and has no automatic trim. Four reachable buckets can retain 491,520 B
+payload plus object/metadata costs; related32 alone can cache 262,144 B payload.
+These are cache bounds, not active-memory/RSS bounds. More simultaneous rentals
+can allocate; a miss never becomes a business refusal.
+
+Related32's cold rental is a 65536-byte array, about 65,560 B with its x64 array
+header, 5,056 B above the old exact-size array; pool initialization is additional.
+Return clears the full actual array even if a full bucket then discards it.
+Measure any initial encoding clear as well. Static cache residency can remain
+after idle. Shared's TLS/partition behavior may differ, but is not another
+selected variant. Fewer allocated bytes alone do not establish CPU or memory
+benefit.
+
+### Validation and selection
+
+Use the existing affected API/Binding/relation/public-package AOT routes and
+finite lease controls for boundary/dirty frames, logical lengths, post-rent
+Encode failure, native error/null, held borrowing, poison/re-rent and public
+snapshots. Any synthetic metadata/origin fault uses a separately identified
+local test build; do not add shipping global failure callbacks or force OOM.
+CI correctness must contain no allocation profiling or performance campaign.
+
+Separately identified local diagnostics must count actual rents/returns, lengths,
+miss/new-array and cold cost, and clearing bytes. Ordinary measurements use actual
+local NuGet PackageReference AOT consumers and preserve generated code, symbols,
+packages and native hashes. The first screen is only related32: 05/candidate/Dapper,
+then reverse, on both providers, C1/batch32/persistent, 2048 measured businesses
+and 128 extra warmups. Report net bytes, CPU, p50/p95/p99, GC, exact RSS/idle scope
+and separate PG cost. A material resource saving must repeat without an unacceptable
+CPU/tail/memory regression. Select any subsequent finite concurrent/mixed check
+only to answer a concrete unresolved risk; no automatic broad matrix or long run.
+
+Reject or narrow if lifetime, snapshots, logical quotas or error ordering change,
+if allocation merely moves, or if observed CPU/tail/residency defeats the saving.
+No implementation, safety execution or benefit is claimed at this design stage.
+The five integrated05 components remain selected. Public C# Fluent, Native AOT,
+C++ libpq/sqlite3 and two independent packages remain the product contract.
+
+## Historical Continuation09: close tail06 and isolate HostPull queue preference
 
 [Plan Continuation09](https://github.com/IzuSharp/Plan/blob/2d2a90afe5385adf0dea743347955c9335ee59e1/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/continuation-09.md)
 closes the tail-completion experiment after actual mechanism,114 ordinary
