@@ -9,6 +9,99 @@ only potentially useful after short results are very close to Dapper; this is
 not automatic authorization to start one. Do not infer sustained parity from
 short samples. All original evidence and failed experiments keep their identities.
 
+## Continuation09: close tail06 and isolate HostPull queue preference
+
+[Plan Continuation09](https://github.com/IzuSharp/Plan/blob/2d2a90afe5385adf0dea743347955c9335ee59e1/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/continuation-09.md)
+closes the tail-completion experiment after actual mechanism,114 ordinary
+processes and12 final short mixed cells. **Do not adopt tail06.** Keep the five
+integrated05 components at Korda `2ea67ce1902f330679c3ebff4d6d5733be20f69c`, tree
+`4e3989f2ce9e0c554585aab5a8bbb656e689b18d`: Worker-D, exact valid decimal
+configuration parsing, SQLite short-lived prepare flags, private relation branch
+transfer and bounded private relation capacity. Their remaining gaps and risks
+stay in Plan; this selection does not grant parity or sustained-load acceptance.
+
+Tail06 passed actual correctness and changed the intended delivery mechanism.
+PG mixed CPU decreases in both reversed rounds (-3.85%/-2.25%), but SQLite mixed
+CPU changes direction (-5.30%/+1.92%). SQLite thousand-row and early-stop risks
+remain, and PG released-idle RSS increases in both rounds. The repeated net
+benefit needed for a common implementation is absent. Preserve the rejected
+source and all positive/negative evidence; do not add a provider switch or combine
+tail06 with the next experiment. Integrated05 keeps asynchronous MRVTS completion.
+
+The subsequent [Plan pull-local07 hypothesis](https://github.com/IzuSharp/Plan/blob/2d2a90afe5385adf0dea743347955c9335ee59e1/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/pull-local-07-hypothesis.md)
+precedes this strategy and any product edit. The existing measured cursor
+lifetimes contain33 coordinator turns per text1000 business. Before-tail traces
+cross sender/executor thread identities on440/528 SQLite and456/528 PG offers;
+actual matching ELF instructions pass preferLocal:false. This supports a bounded
+queue-preference experiment. It does not establish global-queue exclusive CPU,
+ordinary migration frequency, kernel wakeups, cache loss or the entire cause of
+RhSpinWait. Local push still requests workers and permits stealing.
+
+### Single-variable implementation boundary
+
+Add a minimal internal singleton adapter forwarding the mature runtime's existing
+`UnsafeQueueUserWorkItem(IThreadPoolWorkItem, preferLocal:true)` overload. Select
+it only as HostPullController's default when no test scheduler is injected. Keep
+the existing CallbackCoordinator/global adapter source unchanged, including its
+constant false argument, and leave command, cursor-close, callback-registration
+and AsyncOperation default selection unchanged. No custom queue/pool, trampoline,
+shared preference field, inline execution, runtime setting, provider condition or
+new batching algorithm is selected.
+
+Preserve integrated05's RunContinuationsAsynchronously=true, unreserved failure
+path, scheduling coalescing, native admission/run/take, generation/version,
+cancellation drain, retirement, row borrow, input snapshots, fresh DDL and error
+ordering. Both provider native libraries and public API remain identical. A new
+interface implementation may change AOT dispatch/devirtualization elsewhere;
+compare actual relevant ELF call sites rather than claiming source isolation
+guarantees identical machine code.
+
+### Actual-default progress requirements
+
+The previous RecordingScheduler explicitly queues globally. Its passing tests
+cannot establish production local-queue behavior. Add finite correctness cases
+with TestPullScheduler, TestCommandScheduler and TestCloseScheduler all null,
+using real Native AOT and both databases. Cover non-pool and pool initiation,
+public return without inline driver execution, an actually held publisher/worker
+with an independent cursor making progress, cancellation/close of independent
+work, and competing cursors completing and returning all owners. Another worker
+may steal before queue return; do not assert a new return-before-start guarantee.
+
+Preserve the selected05 contract: the same cursor's next generation need not
+complete before an old Post returns. Do not reintroduce tail06 to make a new test
+pass. Use explicit causal barriers and bounded existing timeouts, always release
+held workers on failure, and keep original rejection, cancellation, held-run and
+early-stop regressions. These are correctness checks, with no benchmark, profile,
+calibration or stress invocation in CI.
+
+Local owner pop precedes global dequeue and is LIFO. Integrated05's async MRVTS
+completion already prefers local dispatch without a captured context, so this
+change can form a repeated local pull/completion chain. Runtime stealing and a
+dispatch quantum do not prove bounded fairness. A stuck older request, impaired
+cancel/close progress, ownership leak or changed failure semantics rejects the
+candidate before timing.
+
+### Short evidence and stopping rule
+
+Build only the two new ordinary real PackageReference AOT consumers and one
+dual-provider correctness consumer initially, reusing exact native assets. Bind
+generated sources, package, ELF/debug and actual local/global queue arguments.
+Do not automatically build four diagnostic consumers. New instrumentation needs
+a specific unresolved attribution question and an identity separate from timing.
+
+Begin with text1000 C1, batch32, prepared/persistent,2,048 measured operations and
+128 warmup per process:05/local/Dapper and the completely reversed order on both
+databases. Useful repeated CPU benefit is required before the existing30-second
+35-case zero-refusal mixed contention gate, at rate500/queue64 and C4/C8 with
+separate warmup/idle observation. Retain service and scheduled tails, per-kind
+progress, allocation, GC and RSS. No automatic114-case replay or pressure-ramp
+repeat is selected. Reject a change whose mechanism is active but benefit is
+inconsistent, within observed noise, or bought with material progress/tail risk.
+Do not extend a failing experiment to seek favorable rounds. All long workloads
+remain cancelled this round.
+
+## Earlier strategy and experiment records
+
 Status: prospective causal experiments after the measured Plan gate, not adopted
 performance acceptance. The Plan gate was committed locally as
 `da20dc395ca44a0430f933aeb7a45a3ee13aa447` (tree
