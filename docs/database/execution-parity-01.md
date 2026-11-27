@@ -1,5 +1,14 @@
 # DB-Exec-Parity-01: measured execution-path strategy
 
+**Current owner scope:** all long measurements and before-long supplements are
+cancelled in this round. Continue finite diagnostics and ordinary short A/B.
+[Plan Scope08](https://github.com/IzuSharp/Plan/blob/c7c66d56649192512204ca14fc2860ba99336b80/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/short-only-scope-08.md)
+supersedes the unexecuted 1800-second requirements below. No long cell started;
+the former0/4 is a cancelled plan, not an outstanding gate. A future long test is
+only potentially useful after short results are very close to Dapper; this is
+not automatic authorization to start one. Do not infer sustained parity from
+short samples. All original evidence and failed experiments keep their identities.
+
 Status: prospective causal experiments after the measured Plan gate, not adopted
 performance acceptance. The Plan gate was committed locally as
 `da20dc395ca44a0430f933aeb7a45a3ee13aa447` (tree
@@ -326,10 +335,12 @@ or indirect invocation is added to CI. Inspect the committed product diff with
 `python3 eng/ci/impact.py origin/main --output artifacts/plan.json` before push.
 
 Before adoption: independent review, required correctness/public API and actual
-standalone package consumption, repeated ordinary A/B plus mechanism evidence,
-zero-refusal cost and pressure onset, adequate comparable before data. Final
-acceptance requires four serial1800-second ordinary Release Native AOT mixed35
-cells with warmup separate. Only repeatedly supported metrics may be called
-aligned. Report remaining gaps and bounded stopping reasons, then normal reviewed
-merges, existing main CI/releases and real public NuGet AOT consumption. These
-outcomes are all pending at this strategy checkpoint.
+standalone package consumption, repeated ordinary short A/B plus mechanism
+evidence, zero-refusal cost and bounded short pressure observations, and adequate
+comparable short before data. The owner cancelled the previously planned four
+serial1800-second campaign and its long before supplements before any started.
+Only repeatedly supported metrics may be called aligned. Report remaining gaps
+and bounded stopping reasons, then normal reviewed merges, existing main
+CI/releases and real public NuGet AOT consumption. A short pressure observation
+does not establish long-duration sustainable capacity. Delivery outcomes remain
+pending at this strategy checkpoint.
