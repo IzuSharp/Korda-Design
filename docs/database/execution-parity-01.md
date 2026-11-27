@@ -9,7 +9,44 @@ only potentially useful after short results are very close to Dapper; this is
 not automatic authorization to start one. Do not infer sustained parity from
 short samples. All original evidence and failed experiments keep their identities.
 
-## Continuation11: reject pull-local07; isolate final-frame rental08
+## Continuation12: correct native adoption before the pool comparison
+
+[Plan Continuation12](https://github.com/IzuSharp/Plan/blob/e3d967580801f5e0e73ce6407cfefc323a6259fa/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/continuation-12.md)
+records a separately reviewed correctness defect inherited by both05 and the
+initial08 source. Plan/CTE object initializers adopted the native result into a
+finalizable SafeHandle before allocating metadata. Metadata failure could cause
+the raw catch and later finalizer both to release that address; the actual native
+registry has no generation to protect an address that is subsequently reused.
+This is source-confirmed risk, not an observed runtime corruption or ABA incident.
+
+The independent fix completes metadata under the existing raw-owner try/catch
+before adopting the native result. The current DatabaseOwner constructor calls
+SetHandle last, and subsequent existing auto-property assignments do not allocate.
+Native status/null checks, validation, Compile/Cte and origin-publication order
+remain. Metadata moves before wrapper allocation; exact allocation/OOM order is
+explicitly changed. Synthetic failure validation remains a separate local test
+identity, with no shipping fault callback or genuine OOM requirement.
+
+Local fix69b2383dadc280f1a81de592592a1442069eed0c and published Korda
+106fe68b6f6c2537f478daf65a71ab97cc4b15ff share tree
+f7660759bba43ae83324620e2fb731efd479c3b5. This correctness repair is included in
+PR40; frame-pool08 remains isolated and unadopted. Both ordinary comparison sides
+will carry the same repair: ownership05/parity05.2 and frame-pool08/parity08.1.
+The old05 measurements retain their old identities; the repair earns no pool
+performance credit. This correction supersedes any earlier instruction to
+preserve the faulty cleanup statements verbatim while retaining their intended
+single-owner/error contracts.
+
+The finite twelve-process related32 comparison and lifetime/resource gates from11
+remain. Each existing ordinary consumer additionally records five seconds after
+drain, outside measured CPU/allocation, without forced GC. Report released-idle
+RSS with that scope, not minimum reclaimed RSS or private-pool-exclusive memory.
+No08 workload benefit is established yet, and no long or additional broad campaign
+is selected. All existing CI and independent provider-package routing remain;
+no profiling or benchmark is added to CI. Plan owns artifact/readback and recovery
+receipts, including the completed07 archive and closed experiments.
+
+## Historical Continuation11: reject pull-local07; isolate final-frame rental08
 
 [Plan Continuation10](https://github.com/IzuSharp/Plan/blob/639e9f3abdd72cc72650c9f0d09d9897c8e4d448/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/continuation-10.md)
 closes pull-local07. Actual default-scheduler correctness, both ordinary ELF
