@@ -9,6 +9,72 @@ only potentially useful after short results are very close to Dapper; this is
 not automatic authorization to start one. Do not infer sustained parity from
 short samples. All original evidence and failed experiments keep their identities.
 
+## Continuation13: reject final-frame rental08 after ordinary short results
+
+[Plan Continuation13](https://github.com/IzuSharp/Plan/blob/ee1148884041a14e6c046c8ff0c83b7b126bde54/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/continuation-13.md)
+closes the one predefined twelve-process comparison. Retain the five05 strategies
+and the separate metadata-before-native-owner-adoption fix. Do not include the
+private frame pool, its diagnostic hooks, tail06 or local07 in the product.
+The earlier continuation sections below preserve their historical states.
+
+Both ordinary Korda routes contained the same cleanup, with identical native04
+images and actual locked NuGet PackageReference AOT consumers. Source69b/treef766
+is ownership05/parity05.2; source13b/tree1547f404 is frame08/parity08.1. Local03
+sourcec429eff is a separate diagnostic identity. The observed resource saving
+therefore cannot be credited to moving metadata before owner construction.
+
+All24,576 measured businesses and1,302,528 result rows passed the original53-row
+oracle. Managed process allocation fell about60.77–60.82 KB/business in all four
+pairs (11.77–11.78%). This proves a useful resource mechanism; the264–318 B excess
+over the earlier60,504 B scoped target remains unassigned process-level variation.
+It does not prove faster queries or zero framework allocation.
+
+| Provider | CPU change, rounds1 /2 | p99 change, rounds1 /2 | Five-second released-idle RSS change, B |
+| --- | --- | --- | --- |
+| SQLite | +22.80% /−0.93% | +29.48% /−2.82% | +45,056 /+143,360 |
+| PostgreSQL | +0.84% /−18.66% | −5.31% /−5.88% | +667,648 /+548,864 |
+
+The common candidate does not establish the predeclared acceptable CPU/tail/memory
+tradeoff. Reject it without an optional mixed gate, additional favorable rounds,
+provider-specific fork or long test. The bad SQLite interval is an observation,
+not proof that a pool lock or clear exclusively caused it. External scheduling
+was not proved exclusive; variability does not justify discarding the interval.
+Process peak RSS and GC pause decreased, while released-idle RSS increased; both
+outcomes remain in Plan, with GC counts and pauses kept at process scope.
+
+Normal Binding correctness, real dual-provider Relations with poison/re-rent,
+and ten separately built failures at actual encoding/metadata/origin sites passed.
+The first Relations compiler failure remains a failed attempt. The local resource
+fixture observed cold67,000 B including nested pool construction1,400 B, three
+warm rent/return pairs at0 B and a forced miss65,560 B. Its held references and
+post-return scans prevent CPU, RSS and full-query credit. Actual ordinary ELF
+readback confirms the size branch, ownership handoff, logical length and clearing
+arguments; it does not establish runtime hit rates, lock cost or indirect slots.
+
+The prior five retained performance strategies are unchanged: bounded admitted
+managed execution of native pulls, exact canonical decimal recognition with
+preserved fallback/validation positions, SQLite lifetime-appropriate prepare
+flags, exclusively owned private relation-branch transfer, and bounded private
+relation capacity with original growth fallback. The independent owner fix is
+a correctness repair. No public API, ABI, statement/plan cache, runtime spin
+setting, batch size or workload contract is changed by rejecting08.
+
+Substantial gaps remain. This screen's ownership05 related32 CPU is3.22–4.56 times
+Dapper in SQLite and7.61–10.05 inPG; managed process bytes are about6.97/10.08 times.
+The older text1000 CPU gap persists with only about1% allocation difference, so a
+final-frame buffer optimization cannot explain that execution gap. No exact
+exclusive RhSpinWait stage time, full parity, zero framework allocation or sustained
+capacity is claimed. Further product work requires a new measured causal hypothesis;
+none is selected by this rejection. Preserve the earlier PG queued-p99 and idle-RSS
+risks when describing the retained changes.
+
+The finite final integration review found no identified contract/evidence blocker
+for normal merging of current Korda106/treef766; existing PR CI45995931048 passed.
+Normal main CI, rule-selected release and actual public NuGet AOT verification
+remain their existing delivery steps and require observed outcomes. No CI benchmark,
+profiling, calibration or pressure action is added or indirectly invoked. All long
+measurements and long before supplements remain cancelled.
+
 ## Continuation12: correct native adoption before the pool comparison
 
 [Plan Continuation12](https://github.com/IzuSharp/Plan/blob/e3d967580801f5e0e73ce6407cfefc323a6259fa/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/continuation-12.md)
