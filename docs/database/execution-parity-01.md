@@ -267,6 +267,38 @@ Then demonstrate Clone31->0 and CloneCopy54,932->0 with the same diagnostic scop
 and repeated uninstrumented A/B with identical native bytes. These measurements
 select an experiment; they do not establish acceptance or zero framework allocation.
 
+## Recovery 04: provisional combined validation
+
+[Plan selection `338d45f`](https://github.com/IzuSharp/Plan/blob/338d45fce50d454cb282a1557452cf247b9635c6/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/integration-selection.md)
+selects integration of Worker-D, exact decimal configuration recognition,
+short-lived SQLite prepare flags and private relation branch transfer. Each
+retains its isolated evidence identity; combined performance must be measured
+against matching unchanged-main binaries rather than added from those results.
+
+This preserves all strategies and boundaries described above. Native queue-job
+reduction is not a reduction in FFI entry count: the explicit admitted Run entry
+adds a crossing per batch. Managed continuation scheduling remains asynchronous.
+The decimal money1 CPU increase and public Combine tail variability remain open
+regression gates. No unknown `RhSpinWait` caller or kernel scheduling cause is
+assigned from leaf samples. Deep relation scopes decide whether any further
+strategy merits a separate proposal; they do not authorize a cache or public API
+change by themselves. This integration state is not final adoption or freeze.
+
+### Private relation capacity: isolated follow-up hypothesis
+
+Recovery04 deep scopes measure98 tape growth allocations/129,328 managed B per
+related32 request after clone removal, on both providers. A separate experiment
+may reserve at most2048 bytes for a fresh private branch, using the first completed
+branch capacity only when immutable key component encoded lengths match. Different
+lengths or an unsuitable builder use the original growth path. Public From and
+Combine, snapshot, quotas, error order, original growth fallback and ownership
+remain unchanged. No mutable data cache, graph-frame pooling, global initial size
+or early quota failure is introduced. Count actual bytes copied if any command
+prefix already exists. Actual dual-provider scope/oracle/ownership controls and
+reversed ordinary A/B decide adoption; the predicted49,104 B saving is not a result.
+This proposal follows Plan's `recovery-04/relation-capacity-hypothesis.md` and is
+independent of the four-candidate integration state above.
+
 ## Acceptance and delivery
 
 All performance work runs locally on Linux x64. Existing module-routed CI keeps
