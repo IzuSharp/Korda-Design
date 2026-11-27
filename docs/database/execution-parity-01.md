@@ -299,6 +299,24 @@ reversed ordinary A/B decide adoption; the predicted49,104 B saving is not a res
 This proposal follows Plan's `recovery-04/relation-capacity-hypothesis.md` and is
 independent of the four-candidate integration state above.
 
+### Capacity resource result and provisional integration
+
+The isolated capacity source `6b872e3` completed both-provider scope, real AOT
+correctness and reversed ordinary tests. Actual growth plus reserve allocation
+fell from129,328 to80,224 B/business (49,104 B saved), and growth copying fell
+from63,488 to7,936 B. The31 new reserve arrays are included. Public union controls,
+original row/digest/SQL/protocol and zero-owner checks passed. Ordinary related32
+process allocation fell about49KB in all four pairs; CPU/p50/p99 changes were
+mixed between AB and BA. Gen0 increased while Gen1 decreased, and no idle-release
+RSS or pause credit is available from this isolated screen.
+
+Select the private hint for combined validation solely on the repeated resource
+benefit, subject to the final mixed regression gate. Do not claim faster queries,
+add this saving to another native-identity group, or include diagnostic scopes in
+the product. Plan records the failed disk-exhaustion attempt and original error
+mapping controls. The hint remains bounded and has no public API/cache/ownership
+or quota semantic change. Integrated actual package consumers must be rebuilt.
+
 ## Acceptance and delivery
 
 All performance work runs locally on Linux x64. Existing module-routed CI keeps
