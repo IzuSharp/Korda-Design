@@ -235,6 +235,38 @@ cache or public prepared overload is selected at this checkpoint. Any later chan
 must preserve complete key snapshots, duplicate-position groups, native collation,
 one SQL statement, shared bounded result budget, DDL and error ordering.
 
+### Relation batch: private branch transfer selected from measured clones
+
+Recovery 03 now measures first-layer scopes in both providers and nested clone/copy
+scopes in SQLite. Each related32 business performs 31 clones: 120,776 B of managed
+allocation and 54,932 tape bytes copied. Clone accounts for 17.6% of the roughly
+686 KB total; SelectParent remains a larger independent cost. Combine is exactly
+181,760 B in both providers. These are same-thread allocations and actual copy
+events with zero-allocation controls, original 53-row digest, one SQL statement
+and zero final owners. Build overlap makes their CPU/latency data ineligible.
+
+Select an isolated internal consuming import only for RelationBatch's exclusively
+owned temporary branch. Public Combine retains full snapshot/clone semantics and
+source reuse. Under both existing fail-fast admission gates, invoke the original
+command SnapshotAndImport with the actual source command. It must retain the
+dependency, validate selection/seal/source, check finite quotas and parameter
+collisions, append, and complete all metadata updates. Only successful return
+commits consumption; mark the source binding disposed and context sealed without
+any new allocating/fallible step. The existing source gate exit releases its
+original reference, after destination retention is durable. Every pre-commit
+validation/budget/admission failure leaves source ownership intact. Later union
+failure is cleaned up by the private caller's existing disposal path.
+
+Keep key collection/value snapshots, duplicate positions, native collation, one
+SQL, shared row/byte limits, DDL and error ordering unchanged. Do not introduce
+a full relation cache, public consuming API, mapper change or new native path.
+Require equivalent submitted bytes, failed-import reuse, public snapshot reuse,
+private invalidation, cross-source/self/direct/concurrent rejection and zero
+owner leaks in actual Query.Binding AOT; run existing dual-provider Relations.
+Then demonstrate Clone31->0 and CloneCopy54,932->0 with the same diagnostic scopes,
+and repeated uninstrumented A/B with identical native bytes. These measurements
+select an experiment; they do not establish acceptance or zero framework allocation.
+
 ## Acceptance and delivery
 
 All performance work runs locally on Linux x64. Existing module-routed CI keeps
