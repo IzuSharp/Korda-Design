@@ -120,57 +120,48 @@ lifetime contract in the execution layer.
 
 Dynamic SQL composes the same nodes at runtime. It does not require emitting IL,
 compiling expression trees or discovering DTO members through reflection. Fixed
-queries may cache immutable rendered shapes; dynamic queries can cache bounded,
-validated shapes when measurements justify it. Neither path promises zero
+queries reuse explicit immutable rendered templates. A global shape cache is
+excluded from the initial implementation; any later bounded cache needs evidence. Neither path promises zero
 allocation: a newly returned SQL string has an allocation cost, and generic
 specialization may increase Native AOT binary size.
 
-### Public API candidates
+### Fixed public API and implementation boundary
 
-The following **uncompiled design sketch** illustrates intended relationships.
-It is not an API baseline and must be reconciled with `contracts.md`, compiled
-examples and negative compilation cases before the implementation contract is
-frozen. Names and overloads can change without changing the semantics above.
+The earlier illustrative surface is superseded by the exact declarations and
+algorithms in [implementation-spec](implementation-spec.md) and contracts0.2.0.
+The declaration consumer compiles the split assembly surface, natural optional
+predicates, scalar/nullable/reference subqueries, mutations and windows; a mismatched
+Param<string>/Field<long> fails compilation. Reference-only bodies do not implement
+the product. Implementers retain these names/accessibility choices rather than
+choosing an unrelated Fluent design.
 
 ```csharp
-SqlType<int> integer = SqlTypes.Int32;
-var u = Tables.Users.As("u");
-Field<int> id = u.Id;
-Param<int> minimum = Sql.Param("minimum", integer);
-
-Condition filter = id.Ge(minimum);
-if (includeOnlyActive)
-    filter = filter.And(u.IsActive.Eq(Sql.Literal(true)));
-
-var query = Sql.Select(u.Id, u.Name)
-    .From(u)
-    .Where(filter)
-    .OrderBy(u.Id.Asc());
-
-var command = renderer.Render(query, dialectProfile);
-// command exposes SQL, typed parameter layout and result description.
-// A separate execution package consumes it with values and a known mapper.
+var users = Table.Define(new SqlName(ImmutableArray.Create("users"))).As("u");
+var id = users.Column("id", SqlTypes.Int64);
+var name = users.Column("name", SqlTypes.Text);
+var age = users.Column("age", SqlTypes.Nullable(SqlTypes.Int64));
+var active = users.Column("active", SqlTypes.Boolean);
+var condition = active.Eq(true);
+if (filterAge) condition = condition.And(age.Ge((long?)18));
+if (filterName) condition = condition.And(name.Eq("Alice"));
+var query = Sql.Select(id, name).From(users).Where(condition).OrderBy(id.Asc());
+var command = SqlRenderer.RenderAndBind(query, PostgreSqlProfile.Create());
 ```
 
-Generated alias members must all belong to the aliased relation. This sketch's
-generated `Tables.Users` API is illustrative rather than a prescribed generator
-implementation.
-Handwritten metadata must remain possible. Code generation supplies convenience,
-schema fidelity and mapping code; it is not a precondition for constructing SQL.
+This is still pure SQL construction/rendering: it requires no execution package,
+driver or connection. Generated table metadata is a convenience with the exact
+schema/naming protocol in generation-integration; handwritten metadata remains
+supported. Aliased columns retain the new relation identity rather than an old
+table's fields. Ordinary values become captured typed slots, and the reusable
+command.Template contains none of those request values.
 
-Use explicit `.Eq()`, `.And()` and `.Or()` as the primary API so SQL composition
-does not masquerade as CLR equality or short-circuit evaluation. Stable public
-query types should support extension of optional clauses without consumers
-storing a large family of grammar-step interfaces. jOOQ's
-[SelectSelectStep guidance](https://github.com/jOOQ/jOOQ/blob/3c58109e7ab69772de75e640852935ee7e284177/jOOQ/src/main/java/org/jooq/SelectSelectStep.java)
-specifically identifies mutability, composability and compatibility drawbacks
-when clients retain step types. Selective C# grammar interfaces remain an
-implementation option where they add useful compile-time guarantees.
-
-Typed row/projection helpers preserve component types and arity for common
-shapes. Arbitrary runtime projections require explicit runtime descriptors and
-must not claim the same compile-time DTO guarantees. Measure generated overload
-count and Native AOT size before choosing an arity expansion policy.
+Explicit Eq/And/Or retain SQL truth semantics. One Query<T> snapshot supports
+optional composition; no Java grammar-step interface hierarchy is generated.
+The source reason is also visible in jOOQ's
+[SelectSelectStep guidance](https://github.com/jOOQ/jOOQ/blob/3c58109e7ab69772de75e640852935ee7e284177/jOOQ/src/main/java/org/jooq/SelectSelectStep.java).
+Typed rows use fixed arities1–8, scalar Select uses Query<T>, and runtime-selected
+scalar fields use explicit DynamicRecord with typed cells. Unknown projections
+do not create CLR classes or acquire the guarantees of a known generated DTO.
 
 ## Required semantic validation cases
 

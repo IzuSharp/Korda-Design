@@ -1,245 +1,250 @@
 # Shared contracts for parallel implementation
 
-Version: **0.1.0**. Status: **proposed; user review pending**. None of these
-contracts inherits an accepted historical Korda contract or authorizes product
-implementation. The Plan graph pins the immutable Design revision containing
-them. Changes to a shared semantic invariant update its version and all affected
-task inputs before integration.
+Version: **0.2.0 proposed; review pending**. This revision supersedes the first
+own-executor proposal. No historical acceptance authorizes product work. The
+implementation graph pins one immutable Design revision; changes to these
+interfaces require a versioned contract/affected-packet update before integration.
 
-These are normative semantic and module contracts. Candidate C# names below are
-not a compiled public API baseline. `ORM-FOUNDATION` must compile the shared surface,
-positive/negative consumers and test doubles before independent tasks begin.
-Internal allocation strategy, node representation and renderer visitor dispatch
-remain implementation choices unless a measured result requires a decision.
+[Implementation specification](implementation-spec.md) owns exact common C#
+declarations, internal seams, algorithms and diagnostic vocabulary. The disposable
+specification check compiled the initial public surface in separate Contracts,
+Types, Language and Rendering assemblies and rejected incompatible generic operands.
+That is signature evidence, not a shipped implementation. The Plan packets fix
+remaining module-specific declarations and cases; Foundation compiles their complete
+combined surface and must not invent different signatures or representation.
 
-| ID | Owner family | Depends on | Stable responsibility |
-| --- | --- | --- | --- |
-| ORM-C01 | Types/language | None | SQL/CLR types, logical query and parameter identity, scope and snapshot ownership |
-| ORM-C02 | Rendering/dialects | ORM-C01 | Capability validation and semantics-preserving rendering |
-| ORM-C03 | Command boundary | ORM-C01, ORM-C02 | Atomic SQL/layout/result template and per-invocation typed arguments |
-| ORM-C04 | Execution/providers | ORM-C03 | Binding, row mapping, lifetime, cancellation, transactions and errors |
-| ORM-C05 | Schema/generation | ORM-C01, ORM-C03, ORM-C04 | Offline schema/model generation and statically reachable mapping |
-| ORM-C06 | Verification/packages | ORM-C01–ORM-C05 | Feature evidence, independent module checks and package/API compatibility |
-
-The dependency table describes semantic inputs, not a requirement that the full
-implementation of each contract finish before another task starts.
-
-## ORM-C01: SQL language and type identity
-
-`SqlType<T>` contains a stable SQL type identity, CLR representation `T`, SQL
-nullability and relevant facets: length, precision/scale, array element type,
-domain/enum identity and temporal policy. Driver type objects are forbidden.
-Reference-nullability annotations are not the sole SQL-nullability representation.
-Domain types that happen to share a CLR representation remain distinguishable.
-
-`Field<T>` represents a typed scalar expression; `Condition` represents SQL truth
-including UNKNOWN. A relation has identity independent of its alias text, and its
-fields retain that identity. Typed rows/projections preserve degree and component
-types. The model supports physical/derived tables, joins, CTE references and
-correlation without requiring an entity class per intermediate query.
-
-`Param<T>` identifies a logical typed slot. Names aid diagnostics but do not define
-binding order or permit two incompatible slots to collide. Distinct slot identities
-are never merged merely because their names and SQL types match. Query descriptions
-can be shared across invocations; request values belong to invocation state.
-Literal expressions are explicit and distinct from bound slots.
-
-Reusable query objects are immutable snapshots. Builders, if used, have single
-ownership, and `Build` freezes collections. Extending a query cannot modify another
-query that shares a subexpression. Execution cannot mutate a query to attach a
-connection, command or cached request. Render contexts are invocation-local.
-
-Compile-time validation rejects unrelated generic operands, invalid known row
-degree and unsupported generated DTO members where expressible. A pure validation
-pass handles scope, grouping, dialect/version and runtime-composed layout rules.
-Database constraints, permissions, actual cardinality and stale schema may still
-fail at execution. Diagnostics must state that boundary honestly.
-
-SQL equality with a NULL parameter remains SQL equality. `IsNull`, null-safe
-distinctness, missing optional predicates and TRUE/FALSE/UNKNOWN are separate
-operations. Empty membership, row NULL, outer-join nullability and set-operation
-coercion follow the source-linked cases in [language-model.md](language-model.md).
-
-## ORM-C02: rendering and capabilities
-
-Input: immutable query snapshot, explicit database/version profile, render options,
-placeholder mode and structural collection cardinalities where expansion is
-required. Output: a complete C03 template or a deterministic failure.
-No connection, driver, task scheduler or external process is required.
-
-The profile states tested version ranges and relevant extensions/settings rather
-than a single universal database capability bitset. Each operation/context is:
-
-- **Native:** the selected profile preserves the required semantics directly.
-- **Equivalent lowering:** a documented rule preserves semantics under checked
-  preconditions, including NULL, collation, ordering and evaluation behavior.
-- **Unsupported:** reject before execution with operation/profile/precondition.
-- **Planned/unverified:** unavailable to product consumers until separately accepted.
-
-Do not silently omit locks, RETURNING, materialization requests, conflict targets,
-NULL ordering or other requested semantics. Hints that are intentionally advisory
-need an explicitly named advisory API with documented behavior; they cannot weaken
-a strict semantic API. Rewrites may not duplicate volatile expressions or change
-row cardinality without proof that the supported case is equivalent.
-
-Alias resolution and quoting operate on identifier segments, not caller-composed
-SQL. Bound values never become string-concatenated SQL. Raw SQL extensions require
-explicit typed/parameter/result declarations and are marked as escaping some
-static validation; placeholders cannot be discovered by a naive text scan.
-
-Driver-neutral type/dialect code decides casts and SQL declarations. Providers
-decide wire encodings and reader conversions. Limits on parameters, nesting or SQL
-size fail explicitly; an oversized list is not silently truncated.
-
-Initial execution is one database command. Native RETURNING is allowed only in
-profiles that support the requested operation. Generated-key and follow-up SELECT
-emulations are excluded until an explicit execution-plan contract is added.
-
-## ORM-C03: rendered template and bound command
-
-The selected names make ownership explicit:
-
-| Value | Required content | Ownership |
+| Contract | Owner | Fixed responsibility |
 | --- | --- | --- |
-| `RenderedTemplate<TArgs, TRow>` or equivalent typed handle | SQL text; profile/placeholder identity; ordered binding occurrences; typed logical slots; result descriptor; validated lowering requirements | Immutable and reusable; contains no request values, driver objects, connection, active reader or mutable builder callbacks |
-| Binding occurrence | Logical slot identity; parameter ordinal/name required by placeholder mode; SQL type/facets; conversion identity | Ordered by the final rendered tree, including duplicated or removed occurrences |
-| Result descriptor | Ordered projection identity/aliases; SQL/CLR type; nullability; conversion; nested presence policy where applicable | Describes the actual emitted SELECT/RETURNING shape |
-| `BoundCommand<TArgs, TRow>` / invocation | Template plus typed per-invocation argument access and mapping identity | Single execution ownership; values retained only until completion or stream disposal |
+| ORM-C01 | Contracts/types/language | SQL/CLR identity, immutable nodes/values, scopes, typed composition |
+| ORM-C02 | Rendering/dialects | Explicit capability checks and faithful SQL emission/lowering |
+| ORM-C03 | Command boundary | Atomic value-free templates, exact occurrences and logical/physical results |
+| ORM-C04 | Execution/providers | Mature runtime factories, strict mapping, admission, lifetime and errors |
+| ORM-C05 | Schema/generation | Offline schema model, normal SG, closed static mapping and diagnostics |
+| ORM-C06 | Verification/packages | Source traceability, native/database/package evidence and independent CI |
 
-Generics are an implementation candidate; a bounded typed-cell layout may support
-heterogeneous dynamic slots. Do not make `object[]`, reflection or unbounded
-runtime generic construction the mandatory path. Supported scalar types and
-custom codecs must be statically reachable. Handwritten static binders/projectors
-are valid alternatives to generation.
+These are semantic dependencies, not a demand to finish all downstream code before
+parallel work begins. Contracts holds the immutable shared data; task owners hold
+operations in disjoint paths. No driver/Roslyn/Dapper type enters the pure contracts.
 
-SQL, occurrence map and result descriptor must come from one successful render.
-The exporter cannot publish separately updated arrays. Repeated logical slots may
-map to repeated occurrences or intentional positional reuse according to the
-placeholder policy; adapters follow the recorded map exactly. A typed NULL keeps
-its declared SQL type. Missing required slots, unknown explicitly supplied slots
-and incompatible values are errors. A statically known `TArgs` may be a superset
-of the members used by one optional query shape; unused members are not errors
-and are not bound. An `Eq(T)` convenience overload, if introduced, must specify
-whether it captures an invocation value or creates an explicit literal. It may
-not silently retain request values inside a reusable template.
+## ORM-C01 — language, type and ownership
 
-Expanded `IN` lists declare their cardinality as structural render input; `Bind`
-rejects a different length. A native-array parameter may instead be a single
-typed slot where the profile supports its semantics. A `RenderAndBind` convenience
-path may snapshot a collection and its arity before rendering; the executor may
-not rewrite SQL or append placeholders after validation.
+SqlType<T> has stable SQL ID, typeof(T), SQL nullability and length/precision/scale/
+element/domain facets. Same CLR carrier does not erase SQL domain or JSON/JSONB
+identity. SqlTypes.Define<T> validates the descriptor; Nullable<T> and
+NullableReference<T> apply the explicit representation rules. Closed provider
+codecs must support the resulting ID; a new descriptor alone does not grant an
+encoding or AOT mapping. No automatic arbitrary object fallback exists.
 
-Cache identity includes query shape, explicit SQL literal constants,
-profile/version/settings, placeholder policy, SQL type facets, expanded-list
-cardinalities, conversion and result shape. Bound request values are excluded;
-`Literal(1)` and `Literal(2)` are different shapes. Debug/inlined rendering is not
-the cache-key algorithm. No global unbounded shape cache is
-required; caching is opt-in or bounded with an eviction policy justified by data.
-Pooled render memory cannot escape in the returned string/layout.
+Field<T>, Param<T>, ListParam<T>, Condition, TableLike, Projection<T>, Query<T>,
+Mutation and ReturningMutation<T> have the fixed signatures in implementation-spec
+and their owning packets. Field/parameter operations reject incompatible generic
+carriers at compilation where expressible; SQL domains, scopes, grouping and
+runtime-selected degree/type errors fail the pure validation pass. SQL execution
+constraints/cardinality/permissions may still fail at the database.
 
-A representative **uncompiled** composition sketch is:
+Immutable sealed record nodes, ImmutableArray collections and explicit NodeKind
+visitors are fixed. Public fluent operations are Language extension methods;
+Contracts owns handle/node payloads and internal constructors. No partial class is
+split across assemblies. Extending a query cannot mutate another query. Alias
+text is independent of RelationId; dialect-specific identifier equivalence is an
+additional validation after common Ordinal collision checks.
 
-```csharp
-var minimum = Sql.Param<int>("minimum", SqlTypes.Int32);
-var predicate = users.Id.Ge(minimum);
-if (onlyActive)
-    predicate = predicate.And(users.IsActive.Eq(Sql.Literal(true)));
+Ordinary values create captured typed slots in an immutable sidecar, not literals
+inside the AST. Nodes/templates retain no request values. ParameterValues holds
+BoundValue<T> cells plus frozen SlotId lookup; Accept calls a generic visitor,
+never reflection or MakeGenericType. Builder Add rejects duplicate identities;
+With deliberately replaces one slot in a new snapshot. Unused known superset
+values are allowed and not bound. Arrays/bytes/lists are snapshotted once; custom
+mutable payloads require an explicit static snapshot policy.
 
-var query = Sql.Select(users.Id, users.Name).From(users).Where(predicate);
-var template = renderer.Render(query, postgresProfile);
-var command = template.Bind(arguments); // generated or manual typed argument access
-// Rendering above requires no execution package or database driver.
-await foreach (var row in session.StreamAsync(command, userProjection, cancellationToken))
-    Consume(row);
-```
+Condition represents SQL TRUE/FALSE/UNKNOWN. Equality to a nullable NULL stays
+`= parameter`; IsNull and null-safe distinctness are separate. Empty IN is FALSE,
+empty NOT IN is TRUE; NULL entries in nonempty lists remain semantically present.
+Row null predicates, grouping and scalar cardinality follow the source-linked
+cases. SQLite cannot be advertised as throwing for an arbitrary multirow scalar;
+that shape is rejected unless at most one row is proved.
 
-The foundation task resolves exact signatures and overloads, including typed
-`arguments` and `userProjection`, before this becomes a compilable example.
-It must not replace these semantics with untyped dictionaries for convenience.
+COUNT returns nonnull Int64. Integer SUM returns nullable decimal through a checked
+native result conversion; exact-decimal SUM/AVG and integer exact AVG are rejected
+on SQLite. Float/double aggregates return nullable double. MIN/MAX preserve SQL type
+with nullable empty-set result. A caller wanting approximate integer AVG explicitly
+casts to Double. These rules and concrete numeric overloads are fixed by Expressions.
 
-## ORM-C04: execution and resource lifecycle
+## ORM-C02 — pure rendering and capability contract
 
-Execution preflight verifies template/provider compatibility, codecs, arguments,
-result mapping and caller cancellation before sending SQL. It binds explicit
-layout entries through generated/manual typed access and never reparses SQL to
-rediscover them. Validate reader shape once, then use typed per-row access. Strict
-ordinal mapping must reject a mismatched result layout before silently assigning
-wrong members; name-based compatibility is an explicit alternate policy.
+Input is immutable query/mutation, explicit family/version/settings profile and
+structural list cardinalities. Output is one complete template or a diagnostic.
+No connection, driver, scheduling or runtime code generation is required.
 
-For buffered results, owned records/DTOs outlive reader disposal. A streaming
-sequence starts execution on enumeration, has one active enumerator, rejects
-concurrent `MoveNextAsync`, and holds command/reader/owned connection until EOF,
-failure, cancellation or `DisposeAsync`. Early break returns those resources.
-Rows are owned by default; a future borrowed-row API must use a separate explicit
-lifetime. Re-execution requires creating a new invocation, not reusing a live one.
+Pass order is descriptor/scope validation, semantic degree/context validation,
+pure nested lowering, checked dialect lowering, revalidation, one traversal for
+SQL/occurrences/result shape, then limit/fingerprint/freeze. Unknown nodes never
+fall back to ToString. An emitter cannot publish a partially valid SQL/layout pair.
+Each profile classifies a requested operation as native, equivalent under recorded
+preconditions, unsupported or planned/unverified. Only the first two execute.
 
-The API distinguishes an owned connection/session from an externally supplied
-connection/transaction. It disposes only resources it owns. User-owned resources
-must not be shared concurrently unless the driver contract explicitly allows it.
-Request scalars may be copied; mutable arrays/memory and custom reference values
-are either snapshotted or borrowed under a documented no-mutation-until-completion
-rule. A `Span` cannot cross an asynchronous retention boundary.
+IDialectRules and ISqlWriter live in Contracts. Dialects depend inward on pure
+contracts/types/language, and Profile.Create attaches the static implementation
+through an internal Contracts interface. Rendering has no concrete dialect reference. Nested
+lowering is pure and cannot depend back on RenderContext. Precedence, name quoting,
+clause scopes, returning contexts and exact occurrence order are fixed in the
+Rendering packet. One identifier segment containing a dot stays one segment.
 
-Use `CancellationToken` last with the usual default and `Async` naming. Cancellation
-before admission prevents sending; later cancellation requests the driver's
-behavior and does not prove a transaction had no effect. SQLite async methods may
-perform synchronous work and cannot promise in-flight `Cancel` interruption.
-Do not manufacture cancellation support by dispatching to a private thread pool.
-Timeouts, caller cancellation and provider errors retain their distinct meaning.
+No requested RETURNING, locking, ordering, materialization or conflict target is
+silently removed. Volatile expressions cannot be duplicated by an equivalent
+lowering. Native RETURNING is one command and operation/profile-specific; generated
+keys/follow-up SELECT are outside this contract. MySQL/Maria assignment semantics
+are checked rather than reordering written columns. Update/Delete without Where
+require the explicit AllRows marker. LIMIT/OFFSET public values are nonnegative Int32.
 
-Transactions remain driver transactions. State explicitly who begins/commits/
-rolls back, whether nested savepoints are supported, and what happens on disposal.
-A failure during commit can have an unknown outcome; no automatic retry is implied.
-Korda adds no implicit cross-provider transaction or retry engine.
+Raw/function extension points require an explicit type, known parameter/result
+layout and volatility/semantics declaration. They never parse user values into SQL
+or weaken normal validation implicitly. Oversized SQL/list/parameter layouts fail
+before sending; no truncation or automatic literal inlining is permitted.
 
-Argument/type/scope/capability errors are deterministic domain/argument errors;
-conversion and unexpected NULL failures identify the column and expected type.
-Preserve provider exceptions/codes or wrap them with a retained inner exception
-and stable category. Do not include credentials or parameter values by default.
-Logging/DI/hosting are optional outward integrations. Session/transaction state is
-not globally mutable, while immutable templates can be shared.
+## ORM-C03 — templates, physical occurrences and result shape
 
-## ORM-C05: schema and generation
+| Type | Exact content and ownership |
+| --- | --- |
+| RenderedTemplate<T> | Id, SQL, immutable profile, ordered ParameterOccurrence array, ResultShape; internal constructor, reusable, value-free |
+| RenderedMutationTemplate | Same command data without row-result mapping; nonquery affected-row endpoint only |
+| ParameterOccurrence | Logical SlotId, element index (-1 scalar), contiguous zero-based ordinal, physical name, exact SQL type descriptor |
+| ResultShape.Columns | Actual physical output columns in order, with alias, SQL/CLR descriptor, nullability and conversion |
+| ResultShape.Members | Logical DTO members with name, first physical ordinal, width, scalar/required-row/optional-row/collection kind, logical type and optional nested descriptor |
+| BoundCommand<T>/BoundMutation | One template, frozen values and a private atomic invocation state; sealed classes, not publicly copyable records |
 
-A deterministic schema snapshot records source provider/profile, object identities,
-qualified names, SQL types/facets/nullability, keys/constraints and unsupported
-metadata. Discovery is an explicit local CLI action using the appropriate driver.
-Roslyn consumes versioned offline input and source symbols, without opening a
-database or contacting a service during compilation.
+Every final textual occurrence becomes one parameter. PostgreSQL uses `$1` onward
+and an empty Name; other profiles use `@p0` onward and Name `p0` onward. Repeated
+logical slots keep the same value identity but have separate physical parameters.
+Distinct slots with the same diagnostic label do not merge. Bind validates all
+required slots/types/nullability/facets and exact list lengths. Typed NULL retains
+its declared SQL type. The executor never appends placeholders or expands lists.
 
-Schema types generate typed tables/columns/keys, not runtime database objects.
-DTO/projection generation emits explicit constructors/member assignments and
-statically registered conversions; no reflection fallback or runtime IL is allowed.
-Incremental generator inputs must be deterministic and diagnostics actionable.
-Public record constructors and accessible `init` members are supported through
-generated constructors/object initializers. Unknown schema types, ambiguous names,
-inaccessible or otherwise unexpressible assignments and missing codecs fail
-compilation/configuration rather than silently becoming `object`.
+A logical scalar has physical width1. Nested required/optional rows can span
+several columns; optional presence precedes payload. Collections occupy one JSON
+column with a separately described element shape. Outer physical ordinals and
+relative child ordinals are explicit, never recovered by splitting alias strings.
+Logical child non-nullability is checked only when its presence discriminator is1.
+[The nested packet](https://github.com/IzuSharp/Plan/blob/task/Korda-Orm-01-linux/docs/korda-orm/tasks/ORM-NESTED.md)
+fixes the descriptor and bounded JSON decoder protocol.
 
-Handwritten metadata and static mapping remain supported. A schema change requires
-regenerating/recompiling C# only; no Java/Rust/C++ query engine compilation is part
-of consumer development. Generation has its own build-time dependencies; these
-cannot leak into the runtime pure DSL. Schema drift is a separate validation
-concern and is not disproved by successful code generation.
+Template identity is SHA-256 over a versioned canonical binary shape including
+literal bytes, profile/settings, list arities, types/facets, lowerings and complete
+result shape. Bound request values are excluded. Same hash does not substitute
+slot identity. Initial reuse is explicit: no global unbounded cache or command
+recycling. No pooled memory or mutable builder escapes into a template.
 
-## ORM-C06: validation, packaging and compatibility
+## ORM-C04 — mature execution, mapping and lifecycle
 
-Each implemented operation links upstream source/semantic basis, deliberate C#
-differences, positive/negative cases, supported profiles and actual evidence state.
-Pure checks validate types, scopes, SQL/layout and semantics without a server.
-Independent database tests validate real behavior; native consumers validate AOT
-and dependency closure. [Validation](validation.md) distinguishes these gates from
-research probes and documentation checks.
+Dapper.AOT1.1.0 Runtime is the execution implementation. LayoutCommandFactory
+consumes already known occurrences, visits typed cells and calls a closed provider
+ParameterEncoder. It shares one binding helper between GetCommand/AddParameters.
+If initialization fails inside LayoutCommandFactory.GetCommand before factory
+return, it disposes its local command; a cleanup failure is attached to the primary exception and does not replace
+its stack. The later upstream connection/transaction/timeout setters are outside that catch;
+selected providers validate legal values/association first, with no concurrent
+mutation of borrowed resources. No replacement reader loop/pool/scheduler/retry
+machinery is added.
 
-Product modules register source/test paths, genuine dependencies and selected
-checks in the existing Korda mechanism. Metadata-only package edits validate
-shipped metadata; source/generator/API changes validate affected public APIs and
-compiled examples. Every top-level package is independently restored and consumed
-from the exact candidate nupkg in an isolated package cache. Driver-specific
-native assets and license/NOTICE closure are inspected as shipped.
+CompiledMapping<T> holds immutable logical RowMember metadata. Bind(ResultShape,
+ProviderServices) validates logical compatibility and creates a projection-bound
+RowFactory<T>. ProviderServices supplies ValidateParameter, ValidateResult,
+BindReader<T>(SqlTypeDescriptor,string? conversionId), and
+ValidateReaderColumn(DbDataReader,int,ResultColumn,RowMember). BindReader returns a
+closed `Func<DbDataReader,int,T>`; no codec lookup occurs per row. Tokenize validates
+actual physical count/order/aliases/accepted storage representations once before
+materializing the first row. It does not infer provider representation from DTO T.
 
-Public signatures, defaults, nullability, error/cancellation/resource semantics,
-XML reference and source examples evolve together. A semantically breaking
-lowering change requires compatibility review even without a signature change.
-No documentation check accepts database behavior, AOT or performance. No benchmark,
-profiling or temporary evidence upload belongs in normal document CI.
+The default mapping is strictly bound to the declared template. Declared projection
+reordering is allowed and changes the immutable ordinal plan; unexpected reader
+reordering fails. Generated constructors/initializers then consume typed delegates.
+A required DBNull fails KORM-MAP-003; a known checked conversion failure is
+KORM-TYPE-005. Both identify ordinal/alias/type and retain any underlying cause. Empty results skip upstream Tokenize and return empty;
+no empty-schema mismatch guarantee, hidden schema query or runtime fork is implied.
+
+Mapping<T>.Register uses a generic static slot and rejects a second registration.
+Fixed BCL scalars have explicit registrations. Closed Row combinations use a unique
+RowMappings<T...> static constructor plus EnsureRegistered; consumer SG discovers
+or explicitly roots them. No Type dictionary, assembly scan or dynamic generic
+construction fills a missing mapper. A deliberate handwritten CompiledMapping can
+be passed to the manual terminal overload.
+
+OrmSession.Borrow never disposes a caller connection/transaction. Own disposes its
+connection once when idle. Session states are Idle, Active and Disposed; concurrent
+use fails KORM-EXEC-002, active disposal fails KORM-EXEC-003, and neither queues work.
+Pre-cancellation/argument/profile/shape validation occurs before lease/admission.
+After acquiring the lease, consume BoundCommand atomically; a second execution
+fails KORM-EXEC-006 and releases the attempted lease. Once admitted, failure still
+consumes that invocation. Bind the reusable template again to create another one.
+
+Streaming is lazy and single-use. GetAsyncEnumerator claims the wrapper; first
+MoveNext validates/adopts the invocation and forwards the mature runtime iterator.
+Overlapping MoveNext/active disposal is rejected. EOF/failure/early-break disposal
+forwards cleanup exactly once, releases the lease and disposes any linked token
+source. Rows are owned values and retain no reader. No background prefetch worker
+or borrowed-row lifetime is part of the baseline.
+
+Timeout null passes -1 to preserve driver default; explicit0 is unlimited; positive
+values are seconds; negative public input fails. Cancellation after dispatch requests
+the driver's actual behavior and does not prove no transaction effect. SQLite's
+synchronous async facade and lack of in-flight cancellation are declared. Provider
+errors propagate unchanged except specified contextual wrappers. Transactions and
+savepoints remain explicit driver operations; commit failure is not automatically
+retried. SQL values and credentials are excluded from diagnostics by default.
+
+## ORM-C05 — offline schema and normal source generation
+
+The version1 schema contract records stable schema IDs, qualified names, ordered
+columns/keys/FKs, SQL facets/nullability, generated/default semantics, profile and
+explicit unresolved representations. Schema IDs are not runtime RelationIds.
+Filtered external FK targets remain explicit externalTarget references; they are
+not silently deleted or pulled into the selection. The exact portable declarations,
+canonical JSON, catalog queries and acquire/validate/generate CLI are fixed in the
+Schema/SchemaTool/provider packets and generation-integration.
+
+The generator targets netstandard2.0, uses Roslyn4.14 build-only dependencies and
+has a validated private JSON dependency closure. It reads source symbols and
+AdditionalFiles only. The default is a normal incremental generator producing
+Dapper RowFactory subclasses and module-initializer registration. It does not need
+generator-to-generator interception, experimental Roslyn PreCompilation output,
+network access, live metadata discovery or a second production build stage.
+
+DbRow, DbConstructor, DbColumn, DbIgnore, DbNested, DbCompileRow and CompiledRow
+attributes have fixed owners/targets/diagnostics. Known public record constructors
+and init members compile into direct calls. Unsupported/inaccessible/ambiguous
+members fail ORMGEN diagnostics, not runtime reflection. Nested parent factories
+construct known children explicitly; only the outer factory tokenizes a reader.
+JSON collection readers use static typed cell readers and explicit depth/item/byte
+budgets, preserving duplicates, ordering, SQL NULL and JSON null.
+
+Generation emits typed table/column metadata and typed DTO projection helpers.
+Handwritten metadata and static mapping remain valid. The schema tool is an
+explicit framework-dependent local tool; normal builds are offline. Schema drift,
+IDE compatibility and exact packaged analyzer hosting have their own acceptance
+cases and are not proved by one successful source compilation.
+
+## ORM-C06 — traceability, evidence and package acceptance
+
+For every operation record upstream commit/path/symbol, semantic rule, adaptation
+reason, local positive/negative cases, supported profile and evidence state. Reuse
+available mature test algorithms; do not claim private jOOQ suites or unavailable
+commercial transformations. Preserve license/NOTICE obligations for source
+translation and actual package/native dependencies; see upstream-policy.
+
+The fixed seven packages are listed in architecture. Each must be independently
+restored from the exact candidate nupkg with an isolated cache and run through its
+appropriate native/host consumer. One Execution DLL is shared by provider products.
+No driver/Dapper/Roslyn dependency leaks into pure Korda.Orm. XML/API/default/
+nullability/exception/ownership contracts and compilable examples evolve together.
+
+Future product CI extends the existing module registry and Python selection,
+including actual project dependencies and exact package inputs. Ordinary Markdown
+selects no product checks; provider leaf changes select only themselves and real
+consumers. Performance campaigns remain explicit. Document CI validates documents,
+not prototypes, SQL correctness, AOT, release suitability or parity.
+
+The reopened study has real native/database/generator/performance evidence in
+mature-execution, generation-integration and java-execution-options. Full product
+implementation, complete feature conformance, shipping packages, cross-platform
+hosting and final public-path performance budgets remain future acceptance. A
+positive research decision does not silently mark those gates passed.

@@ -40,18 +40,20 @@ families; merely updating a version number is insufficient.
 This review covers the named symbols and relevant branches, not every method in
 those files or every dialect/version path. Advanced window/recursive-query,
 JSON/MULTISET, and metadata-acquisition conclusions are source-reviewed design
-inputs, not executed C# implementations. No PostgreSQL, MySQL, or MariaDB server
-was used for this review's metadata or rendering experiments. The bounded Java
-probe and five SQLite semantic cases in [validation](validation.md) define the
-actual execution coverage. Missing upstream tests and commercial bodies remain
+inputs, not complete executed C# implementations. The first review used a bounded
+Java render probe and five SQLite cases. The reopened study subsequently ran the
+four-provider native matrix and focused nested/SQLite edge SQL experiments;
+[validation](validation.md) and [java-execution-options](java-execution-options.md)
+separate those actual results from full product capability claims. Missing upstream tests and commercial bodies remain
 explicit evidence gaps, not implicitly accepted behavior.
 
 ## Rendering and capability contracts
 
 The logical pipeline is validate query and target profile, apply required proven
 rewrites, render SQL and parameter occurrences, then seal the command description.
-The internal representation may combine passes after measurement, provided the
-observable contract remains the same. Rendering is synchronous and independent
+The exact node representation, visitor and pass order are fixed in
+implementation-spec; an optimization changing them requires a reviewed contract
+update and semantic evidence. Rendering is synchronous and independent
 of a connection, driver, network service, execution scheduler, or native compiler.
 
 A target profile includes a dialect family, an explicitly supported version range,
@@ -101,9 +103,8 @@ there is no zero-allocation claim for building a new AST and SQL string.
 
 The first product validation profiles are **PostgreSQL 18**, **SQLite 3.45 or later
 with the exact runtime library recorded**, **MySQL 8.4**, and **MariaDB 11.8**.
-PostgreSQL and SQLite form the first validation wave. MySQL and MariaDB are
-independent provider/dialect tracks whose contract and pure rendering work can
-start alongside the first two. This plan's final mandatory acceptance covers all
+All four families are mandatory baseline integration lanes and their dialect/
+provider implementations start in parallel against the shared contracts. This plan's final mandatory acceptance covers all
 four profiles and the declared advanced/nested feature matrix; early validation
 of one profile or package does not authorize a partial release. A narrower release
 requires a separately reviewed scope and dependency-graph revision. These are
@@ -322,3 +323,14 @@ selection; shared contract changes select actual consumers.
 [pg-returning]: https://www.postgresql.org/docs/18/dml-returning.html
 [mysql-upsert]: https://dev.mysql.com/doc/refman/8.4/en/insert-on-duplicate.html
 [maria13]: https://mariadb.com/resources/blog/announcing-mariadb-community-server-13-0-ga/
+
+## Reopened generation/execution integration
+
+The fixed generator is the normal netstandard2.0 incremental generator described
+in generation-integration. It emits explicit mature Dapper runtime factories,
+public static registrars and final-consumer roots, not a new Korda reader loop.
+Portable schema model/format/emitter sources are shared without referencing a
+net11 runtime assembly from the analyzer. The schema CLI remains explicit/offline
+for ordinary builds. Exact DTO/nested attributes, snapshot JSON, diagnostic IDs,
+module paths and four provider catalog SQL recipes are fixed in the implementation
+packets; the earlier source research above supplies their semantic provenance.

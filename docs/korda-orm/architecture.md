@@ -1,227 +1,203 @@
 # Architecture and decisions
 
-Status: proposed, version 0.1.0. This document selects the architecture; it does
-not announce installable packages or a completed replacement product. Normative
-module boundaries are in [contracts.md](contracts.md). Source findings are in the
-[language](language-model.md), [dialect](dialects-and-generation.md) and
-[execution](execution-aot.md) reviews.
+Status: **proposed, version 0.2.0**. The reopened research selects mature runtime
+reuse and supersedes the first delivery's own Binder/Projector default. This is a
+reviewable implementation specification, not an installed product or permission
+to implement, release, migrate, retire or merge. The Plan graph pins this Design
+revision; every product task remains `planned_candidate`.
 
-## Product boundary
+## Selected architecture
 
-Korda.Orm expresses SQL directly and strongly in C#. It supports static and
-runtime-composed queries without a database connection, code emission, JDBC,
-ADO.NET or a native query compiler in its language/runtime dependencies. Its
-language includes scalar/row expressions, relations, aliases, projections,
-predicates, joins, subqueries, CTEs, set operations, windows, DML and declared
-database-specific expressions. This is not an object tracking or LINQ translation
-framework. Entities, records and DTOs are useful result/input types, not the only
-way to represent SQL.
+Use a source-translated jOOQ SQL language in modern C#, the unmodified Dapper.AOT
+1.1.0 runtime for command/reader execution, generated derived RowFactory<T>
+implementations, a small typed-layout CommandFactory adapter and mature .NET
+drivers. The original Dapper.AOT interceptor plus controlled explicit
+DynamicParameters route also works; it remains a compatibility/reference route.
+It is no longer used as an untested reason to build a replacement executor.
 
-The mature reference is the pinned jOOQ OSS implementation. Each supported
-operation retains its source/semantic case mapping; an API spelling alone is
-insufficient. Implementation is phased by operation families, not restricted
-permanently to CRUD. Parser/translator and optional Dapper.AOT bridging are
-separate follow-on capabilities with their own acceptance scope.
+[The mature execution investigation](mature-execution.md) records actual source
+paths, successful original-library and runtime-factory native executions, the
+four-database matrix and measured allocation/runtime tradeoffs. [Generation
+integration](generation-integration.md) proves a normal incremental generator can
+emit the required factories and preserve a generic Fluent facade. [Java execution
+options](java-execution-options.md) records the successful C# Native AOT to Graal
+native JDBC path and source-level jOOQ mapping inheritance. Those results support
+research stop condition A: this combination merits formal implementation. They do
+not establish complete product correctness or production performance parity.
 
-Execution consumes a rendered command contract. It does not visit AST nodes,
-translate Fluent calls, discover DTO members at runtime, implement a protocol,
-manage a second connection pool, or schedule database work through a new worker
-runtime. Mature drivers retain those responsibilities. SQLite's driver-owned
-native dependency is compatible with this decision.
+## Product and dependency boundary
 
-## Dependency direction
-
-The arrows below mean a module consumes a lower-level contract. Tooling and
-execution may depend on the language model; the reverse edges are forbidden.
+Korda.Orm expresses SQL, including runtime optional predicates and dynamic list
+cardinality, without driver I/O or runtime code generation. SQL type/field/parameter
+identities remain known. Rendering exports SQL, ordered typed occurrences and a
+logical/physical result shape atomically. The executor consumes that boundary; it
+never visits an AST or reparses SQL to discover parameter names. Query extension
+terminals are a thin facade which calls the renderer before entering execution.
 
 ```mermaid
 flowchart TD
-    App["C# application"] --> Dsl["Query language"]
-    Dsl --> Model["Types and semantic model"]
-    Render["Renderer and dialect modules"] --> Model
+    App["C# application"] --> Language["Typed SQL language"]
+    Language --> Contracts["Immutable contracts and nodes"]
+    Render["Rendering and dialect rules"] --> Contracts
     App --> Render
-    Render --> Command["SQL command contracts"]
-    Exec["Execution and mapping"] --> Command
-    Provider["Driver adapters"] --> Exec
-    Provider --> Driver["Mature .NET drivers"]
-    Generator["Offline source generator"] --> Schema["Schema snapshot contracts"]
-    Generator --> Model
-    Tool["Schema CLI and adapters"] --> Schema
-    Tool --> Driver
+    Render --> Template["SQL, layout and result shape"]
+    Execute["Small execution adapters"] --> Template
+    Execute --> Runtime["Dapper.AOT runtime"]
+    Runtime --> Driver["Mature .NET driver"]
+    Generate["Offline incremental generator"] --> Factory["Static row factories"]
+    Execute --> Factory
 ```
 
-The model includes pure SQL types and result/parameter descriptors. A dialect's
-SQL type declaration or cast is independent of the provider's serialization
-codec. Shared command descriptors may physically reside in the small model
-assembly. This does not require an assembly for every box.
+The exact assembly/file map is fixed in [implementation-spec](implementation-spec.md).
+Contracts owns immutable nodes and handle data. Language implements composition and
+validation. Dialect projects consume Contracts/Types/Language and pure nested lowering.
+Profile.Create attaches its static rules implementation through a Contracts interface;
+Rendering consumes that interface without referencing a concrete dialect. Nested lowering consumes pure shared descriptors,
+not a RenderContext or executor. Execution references the pure products for its
+facade and metadata contracts but introduces Dapper/ADO.NET only on its own side.
+The standalone execution API also accepts explicitly declared SQL/templates and
+static factories; it does not require a Fluent query or Source Generator.
 
-| Module family | Owns | Forbidden dependency / separate responsibility |
+| Component | Fixed responsibility | Mature implementation retained |
 | --- | --- | --- |
-| Types/model | SQL identity, facets, logical slots, relation identity, expression metadata | Drivers, connections, generator runtime, hosting |
-| Query/expressions/DML | Typed composition, scope and contextual validation, immutable snapshots | Database scheduling, provider binding, query execution |
-| Rendering | Traversal, scoped names, atomic SQL/layout/result production | Opening connections or fetching generated keys |
-| Dialects | Profile capabilities, faithful SQL lowerings and explicit rejections | Driver object models and silent loss of semantics |
-| Schema | Deterministic, versioned schema snapshot and names/types | Live database access during normal compilation |
-| Generator | Offline snapshot to typed metadata; known DTO/binder/projector generation | Network calls, database discovery inside Roslyn, runtime reflection fallback |
-| Schema tool/adapters | Explicit discovery command, credentials handled locally, snapshot generation | Requiring discovery for every build or for handwritten metadata |
-| Execution | Invocation lifecycle, generated/manual binding and projection contracts | AST interpretation, SQL parameter-name parsing or a new task scheduler |
-| Driver adapters | Npgsql/SQLite/MySqlConnector parameter/reader types, provider capabilities and metadata access | Reimplementing driver pooling/protocol; depending on unrelated providers |
-| Verification/tooling | Semantic corpus, selected AOT consumers, package/API checks and integration | Product work in document CI or ordinary benchmark execution |
+| Contracts/types | SQL identity/facets/nullability, logical slots, immutable values, scopes, result shape | jOOQ DataType/Param/Field/Record semantic distinctions |
+| Language | Typed operators, query/DML/CTE/set/window composition, contextual validation | Pinned concrete jOOQ node algorithms and documented C# changes |
+| Rendering/dialects | Checked lowerings, SQL plus exact occurrence/result emission | jOOQ accept/traversal/quoting/version-specific rules where OSS bodies exist |
+| Command adapter | Visit typed cells, create provider parameters once, defensive early cleanup | Dapper CommandFactory/UnifiedCommand protocol and mature command runner |
+| Mapping generator | Compile-time constructor/init/member selection, strict shape wrapper, closed read delegates | Dapper Tokenize/Read split plus jOOQ Records.mapping/Converter/presence semantics |
+| Execution | Admission/ownership facade and direct calls to runtime sync/async/buffer/stream endpoints | Dapper reader loops, token storage, command/reader cleanup |
+| Providers | Closed parameter/read codecs and explicit server/metadata validation | Npgsql, Microsoft.Data.Sqlite, MySqlConnector transport/pooling/cancellation |
+| Schema/generation | Deterministic offline metadata, normal Roslyn host integration | jOOQ metadata semantics adapted to the selected provider catalogs |
 
-## Decisions and rejected alternatives
+No Korda connection pool, scheduler, worker thread, automatic retry, protocol,
+reader loop, dynamic IL mapper or Java runtime is part of the selected product.
+SQLite's driver-owned native library and Native AOT's ordinary linker are distinct
+from introducing another query execution engine.
 
-### ORM-ADR-01: retain SQL semantics, split Java coupling
+## Architecture decisions
 
-Select a source-informed semantic rewrite instead of a mechanical Java port.
-jOOQ's query/type classes mix rendering with execution/binding concerns and its
-QOM is experimental. Copying those dependencies would contradict standalone DSL
-use. Preserve source-backed rules and semantic cases, reusing only upstream tests
-actually available in the authorized source, while making query snapshots immutable and
-provider codecs separate. A mutable private builder is an implementation option
-if freezing detaches all mutable state.
+### ORM-ADR-01: perform a traceable semantic source translation
 
-The stable asset is the supported SQL behavior and typed public API. Internal AST
-representation, visitor implementation, pooling and node storage remain private
-choices measured during implementation. Do not expose every internal node or
-generate a large arity/interface hierarchy merely to resemble Java.
+Retain jOOQ's concrete SQL algorithms and tests that are actually available in its
+OSS tree. Record source commit/path/symbol, changed mechanism, reason and local
+semantic case per operation. Java mutable builder state becomes immutable C#
+records and frozen arrays; JDBC/attached execution leaves the language model;
+reflection-based constructor discovery moves to compilation. QOM's experimental
+surface is evidence for decomposition, not a new public dependency.
 
-### ORM-ADR-02: export one atomic template, bind values separately
+The previous open choices are now fixed: record node layout, explicit NodeKind
+visitor, typed cells, occurrence policy, project ownership and public operations.
+No task chooses an alternative AST, binder architecture, template identity or
+visitor during implementation. [Language research](language-model.md) remains
+valid; the exact surface and algorithms are in implementation-spec and the packets.
 
-Rendering returns SQL, ordered typed occurrences and a result descriptor from
-the same traversal. It either succeeds completely or returns a diagnostic; no
-partial template is executable. `RenderedTemplate` contains no request values.
-`BoundCommand` associates a template with typed per-invocation arguments.
+### ORM-ADR-02: export a value-free template and explicit invocation
 
-This avoids separate SQL/parameter traversals disagreeing after a rewrite, and
-allows fixed shapes to reuse SQL without retaining requests. Repeated slots,
-list cardinality and rewrites remain explicit. An execution package need not know
-that the template originated from Fluent SQL.
+RenderedTemplate<T>/RenderedMutationTemplate contain immutable SQL, profile,
+physical occurrences and result metadata. BoundCommand<T>/BoundMutation add one
+frozen ParameterValues snapshot and one atomic consumed flag. Every textual
+parameter occurrence gets a physical parameter; labels never identify slots.
+Expanded-list arity is structural input, and Bind rejects a changed length.
+Ordinary Eq(value) captures a typed slot; only explicit Literal enters SQL text.
 
-### ORM-ADR-03: generated/manual typed execution by default
+Templates can be held and reused explicitly. There is no initial global shape
+cache, pooled invocation buffer, speculative prepare or command recycling.
+TemplateId is a canonical SHA-256 shape fingerprint, not CLR GetHashCode and not
+permission to bind another query instance's slot identities. Mutable input arrays
+are snapshotted; no borrow-across-await convention is hidden in the ordinary API.
 
-Use the Dapper.AOT source patterns for typed parameter access, command reuse and
-per-reader shape validation followed by typed row reads. The default Korda
-generator emits against Korda's own small contracts, so the query model does not
-depend on Dapper interception or unstable upstream runtime APIs. Narrow source
-adaptations require provenance and notices.
+### ORM-ADR-03: reuse Dapper.AOT runtime and generate its factory subclasses
 
-Direct Dapper.AOT integration is useful for statically typed call sites, including
-some runtime SQL strings. It is not selected as the universal engine because
-dynamic layouts, unsupported overloads and runtime template objects have distinct
-boundaries. A future bridge must demonstrate its supported shapes, emitted code,
-diagnostics and measured cost before becoming a product dependency.
+This replaces version 0.1's own Binder/Projector default. The original explicit
+parameter-bag path was successfully executed as Native AOT; its object-template
+branch was separately shown to fail at runtime despite a warning-free publish.
+The runtime APIs support explicit factories and therefore bypass the limitation
+that an open generic Dapper wrapper is not intercepted. A normal generator emits
+factory subclasses and static registration directly; developers retain natural
+Fluent terminals and known DTO/record/init mapping.
 
-### ORM-ADR-04: profile-specific capability checks before execution
+Pin the upstream version and isolate its dependency in Execution. Upgrades rerun
+factory API, lifecycle, generator, diagnostic and exact-package tests. No runtime
+fork is required for the selected baseline. One small GetCommand override closes
+the proven early-initialization cleanup gap; it retains the original exception if
+Dispose also fails. Provider encoders replace repeated bag/name discovery because
+the renderer already knows each type and occurrence. Measured allocation savings
+support this adapter; no small timing result justifies replacing the mature loop.
 
-Separate SQL grammar/semantic capability from driver transport/type capability.
-A pure render profile declares database family, tested version range, relevant
-extensions/settings and placeholder policy. Execution validates that its actual
-provider/server can honor that profile. It does not infer support from a provider
-name or silently remove clauses.
+### ORM-ADR-04: separate capability, transport and result correctness
 
-Represent support as native, equivalent lowering with preconditions, explicit
-unsupported, or planned/unverified. Only the first two are executable. Commercial
-jOOQ transformation stubs are not available implementation. A generated SQL string
-is not proof of server semantics. Initial validation targets PostgreSQL and SQLite;
-MySQL/MariaDB dialect and adapter work can start concurrently against shared
-contracts. Each profile earns support through its own database/AOT matrix.
+Profiles state family, tested version range and relevant settings. An operation
+is native, a checked equivalent lowering, unsupported or planned/unverified.
+Only the first two execute. Never silently drop RETURNING, locks, ordering,
+materialization, conflict intent or unsupported types. Native single-command
+RETURNING is supported per mutation kind; generated-key/follow-up-SELECT emulation
+requires a separate future execution-plan contract.
 
-`RETURNING` initially supports native single-command behavior only. jOOQ's
-multi-command/generated-key fallbacks need a separate execution-plan contract
-covering atomicity, triggers, row identity and round trips before adoption. They
-are not hidden in the renderer or advertised as an equivalent string rewrite.
+All four database profiles are mandatory for the baseline acceptance matrix;
+provider-specific operations retain independent supported/unsupported cells.
+SQLite scalar subqueries require an at-most-one proof to preserve the common
+cardinality contract. SQL integer SUM uses an explicit checked decimal carrier;
+SQLite exact decimal aggregation remains unsupported. These are defined semantic
+boundaries, not implementation choices to resolve later.
 
-### ORM-ADR-05: AOT is a constraint, not a static-query restriction
+### ORM-ADR-05: strict static mapping with an honest empty-result boundary
 
-Use .NET 11.0.0 / SDK 11.0.100 / C# 15, confirmed from official release metadata
-and the installed research SDK. Runtime SQL composition remains supported; runtime
-IL emission and unregistered reflection materialization do not. Generated or manual
-metadata makes all participating CLR types and converters reachable to AOT.
+CompiledMapping<T>.Bind validates logical result members and prepares immutable
+closed reader delegates. Tokenize validates actual physical columns before the
+first row is returned. A declared reordered projection can map to the same DTO;
+actual unexpected ordering cannot silently pass merely because aliases form the
+same set. Optional nested rows use an explicit discriminator; absent payload is
+not read, while a present required child value still rejects DBNull.
 
-Unknown runtime projection shapes can use a separately designed explicit row
-model; they cannot conjure a new typed DTO after compilation. Measure generic
-specialization, code size and startup alongside throughput and allocation. Zero
-GC is not a blanket architecture promise: strings, DTOs and driver parameters
-have real costs.
+Dapper's runtime calls Tokenize only after the first successful Read. Empty results
+therefore return empty without a schema mismatch promise. A separate direct-reader
+oracle tests empty schemas; no hidden query or replacement loop changes this.
+[Generation integration](generation-integration.md) fixes DTO attributes, constructor
+selection, closed scalar/row registration, analyzer hosting and failure diagnostics.
 
-### ORM-ADR-06: independent implementation before replacement
+### ORM-ADR-06: use ordinary C# development and preserve isolation
 
-Build new modules beside the existing product under distinct `src/Orm/` and
-`tests/Orm/` ownership. Preserve the old public products until the new system has
-passed independent acceptance. No hidden adapter to the old C++ executor is a
-prerequisite. API/source compatibility with the old Fluent is not assumed.
+The product baseline is .NET 11.0.0 / SDK 11.0.100 / C#15. The generator is portable
+netstandard2.0 with the fixed Roslyn/private dependency closure. Experimental
+PreCompilation APIs and a two-stage build are tested alternatives, not default
+production requirements. Schema acquisition is an explicit tool action; normal
+compilation never opens a database. AOT publication executes native consumers and
+forbids silent reflective/dynamic-IL fallbacks.
 
-The later sequence is acceptance, reviewed migration/cutover, then deletion.
-Cutover requires a migration guide, deliberate package/API version policy,
-representative business equivalence, rollback to a published prior version and
-explicit authorization. Retirement removes only proven-unused old modules,
-registrations and native assets; shared infrastructure with other consumers must
-remain. None of these product actions occur in this research task.
+Implement independently under src/Orm and tests/Orm. Accept the new product, then
+consider a separately authorized migration and retirement. Existing product code,
+C++ execution, historical tasks and released package identities remain outside this
+research change. No compatibility wrapper through the old executor is required.
 
-## Proposed packages and development experience
+## Seven fixed public packages
 
-Package names are design candidates, not an install command for an available
-release. Publish complete usable products; internal modules stay independently
-buildable/testable without publishing each as a tiny package.
-
-| Candidate public product | Contents and dependency boundary |
+| Package | Contents and dependency contract |
 | --- | --- |
-| `Korda.Orm` | Pure language/model/rendering and the declared built-in dialect modules; no database driver or live connection requirement |
-| `Korda.Orm.PostgreSql` | PostgreSQL execution/metadata adapter and Npgsql; normal dependency on the matching core product |
-| `Korda.Orm.Sqlite` | SQLite adapter and Microsoft.Data.Sqlite including its declared native runtime assets; no PostgreSQL/MySQL driver |
-| `Korda.Orm.MySql` | MySqlConnector adapter for independently tested MySQL/MariaDB profiles; no PostgreSQL/SQLite driver |
-| `Korda.Orm.Generators` | Optional analyzer/source-generation tooling; no runtime database discovery |
-| `Korda.Orm.Schema` | Explicit local schema tool with selected discovery adapters; no requirement that ordinary consumers install it |
+| Korda.Orm | Pure contracts/types/language/rendering/dialects/neutral schema and pure advanced/nested components; no Dapper or driver |
+| Korda.Orm.Execution | One shared Execution assembly, Dapper.AOT runtime dependency and pure product dependency; usable with explicit SQL/templates/static factories |
+| Korda.Orm.PostgreSql | PostgreSQL adapter/metadata plus Execution and Npgsql only |
+| Korda.Orm.Sqlite | SQLite adapter/metadata plus Execution and Microsoft.Data.Sqlite/native closure only |
+| Korda.Orm.MySql | MySqlConnector adapter with separately validated MySQL/MariaDB profiles |
+| Korda.Orm.Generators | Analyzer/build assets and private host dependencies; no runtime DLL injection |
+| Korda.Orm.Schema | Explicit framework-dependent schema CLI with the declared discovery adapters |
 
-The packaging task may adjust these products when dependency closure and consumer
-experiments justify a simpler boundary. Core must always remain independently
-usable. A physical package bundling multiple internal dialects does not make them
-one semantic module: build/check selection follows registered module inputs, and
-package validation separately follows the actual shipped inputs.
+These are proposed products, not currently installable release claims. Do not
+silently publish a second copy of Execution under each provider package. Exact
+nupkg consumers, framework/API/XML metadata, licenses and native assets are fixed
+acceptance gates. Optional parser support does not block a release excluding it.
 
-A normal developer can write metadata or run the schema tool locally, compile
-the application, publish `linux-x64` Native AOT, and run it. GitHub CI is optional
-for that workflow. No Java, Rust or C++ query toolchain is required by a product
-consumer; Java is used only by the maintained upstream conformance oracle. AOT's
-normal native linker and the SQLite driver's own native library are distinct
-requirements.
+## Parallel implementation and ownership
 
-## Public API and engineering policy
+Foundation freezes shared declarations, node fields, deterministic fakes and
+project files. Language families, four dialects, types/schema, runtime adapters,
+generator, three providers, oracle and CI then develop in disjoint paths against
+those contracts. Start dependencies enable work; acceptance dependencies require
+real composition. Integration, performance, independent acceptance, migration and
+retirement are separate stages. Plan owns scheduling and progress.
 
-Follow `Korda.<Domain>` naming and documented ownership, nullability, cancellation,
-thread safety, compatibility and XML/API reference requirements. Reuse applicable
-guidance from the existing C# standard; its mandatory native-engine mappings,
-historical task IDs and accepted contract snapshots do not apply to this direction.
-`ORM-C01` through `ORM-C06` are this direction's own contract set.
-
-Use `Task<T>` for ordinary asynchronous execution and `IAsyncEnumerable<T>` for
-streaming; inherit `ValueTask` where the enumerator/disposal contracts require it.
-Avoid sync-over-async and hidden `Task.Run` database wrappers. Provider-specific
-limitations, including SQLite's synchronous async facade, are documented rather
-than concealed. Optional DI/Options/Logging integrations depend inward; pure SQL
-does not import Hosting or Logging. Disabled diagnostics avoid SQL/value formatting,
-and values/credentials are not logged by default.
-
-Public API checks compare compiled signatures and XML against reviewed baselines.
-Changing a nullability/default/exception/cancellation contract needs review even
-if a binary comparison passes. Candidate snippets remain clearly labelled until
-compiled against the actual implementation. Every feature's reference includes
-its SQL semantics, supported profiles, AOT behavior, costs and limitations.
-
-## Parallel delivery and CI
-
-The foundation task freezes only the contracts needed for independent work,
-project boundaries and test fixtures. Type/query/expression/DML, rendering,
-four dialects, schema, generator, execution, three driver adapters and verification
-can then proceed in separate worktrees. Start dependencies do not require every
-implementation collaborator to finish. Acceptance dependencies require real
-composition before a module can be accepted.
-
-The Plan graph is the scheduling authority. Each packet owns specific paths;
-shared registry/API-baseline edits have an integration owner. No universal registry
-or project file becomes a file that every parallel agent edits uncoordinated.
-Use the existing product registry's actual source/test/dependency selection and
-package input rules; do not create a competing dispatcher or put path routing in
-YAML. Ordinary documentation selects no product checks. Provider leaf changes
-select that provider and actual consumers; shared model changes select all real
-dependents. Performance campaigns remain explicit local/manual work.
+The current product's module registry/Python runner remains authoritative for
+future CI. Register real source/test/project/package dependencies, keep provider
+services independent and let ordinary documentation select zero product checks.
+No new dispatcher or benchmark-in-document-CI design is introduced. The exact
+implementation packets specify commands, case IDs, expected outputs and stop
+conditions, leaving coding and bug fixing rather than architecture selection.

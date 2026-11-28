@@ -110,3 +110,35 @@ deliberate differences and applicable tests are reviewable. Documentation CI can
 validate the maintained records; it cannot establish licensing rights for unseen
 material, SQL correctness or product readiness. Source gaps and unexecuted tests
 remain explicit limitations in the implementation plan.
+
+## Selected runtime and adaptation manifest
+
+The reopened choice reuses the unmodified Dapper.AOT1.1.0 Runtime as a package,
+not an untracked copy or new executor. The actual derived CommandFactory adapter
+and generated RowFactory algorithms remain attributed adaptations. The maintained
+product manifest must start with these operation families:
+
+| Family | Fixed upstream implementation | Required local difference and owner |
+| --- | --- | --- |
+| Command lifecycle | Dapper.AOT CommandT.cs, CommandT.Query.cs, CommandFactory.cs at0e071bf05e54caecfa98c885b075fa3e247f3ecc | Runtime package unchanged; typed occurrence binding and local early-failure cleanup in Execution |
+| Row generation | DapperInterceptorGenerator.WriteTokenizeMethod/WriteArgs and RowPlan at the same commit | Normal Korda SG input, strict template-bound shape, closed typed delegates and explicit registration roots |
+| Bind/read conversion | jOOQ DefaultBindContext.bindValue0, Binding, DefaultBinding, Converter at3c58109e7ab69772de75e640852935ee7e284177 | Closed provider codec and descriptor protocols; no JDBC classes in pure C# |
+| Constructors/presence | jOOQ Records.mapping, Functions.nullOnAllNull/nullOnAnyNull, DefaultRecordMapper branches | Move known selection to SG; explicit nested discriminator and direct constructor/init calls |
+| Nested transport | jOOQ Multiset, JSONArray/JSONArrayAgg and ListAgg | Preserve positional rows/duplicates/NULL; use independently verified single-statement MySQL window/Maria guard instead of hidden session SET |
+| Original compatibility control | Dapper DynamicParameters and Dapper.AOT IsDynamicBag | Controlled explicit Add/custom parameters only; object-template path retained as negative evidence |
+
+The portable analyzer additionally uses the pinned Roslyn4.14/Immutable9 and
+System.Text.Json11 private closure enumerated in generation-integration/ORM-PACKAGE.
+Inspect licenses for exactly the shipped closure. Graal/JDBC artifacts were used
+only for the disposable comparison and are not included in the selected NuGet
+products; their source/version/license inputs remain in java-execution-options.
+LinqToDB was an investigated alternative, not incorporated product source.
+
+On Runtime upgrades audit both factory-call signatures and the code before/after
+factory ownership transfer, including timeout defaults, empty-result Tokenize,
+initialization cleanup and iterator disposal. On original-interceptor upgrades
+re-audit every DoNotGenerate path and diagnostic severity; an Info diagnostic can
+escape TreatWarningsAsErrors. Keep the actual negative native tests and generated
+coverage checks. Do not silently substitute source inspiration for a promised
+runtime dependency, or promise upstream semantics that a strict local wrapper
+intentionally changes.

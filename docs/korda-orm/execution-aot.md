@@ -1,31 +1,36 @@
 # Korda.Orm execution, generation and Native AOT
 
-Status: proposed design for `Korda-Orm-01`; source-reviewed with a bounded Linux
-Native AOT probe, with product validation still required. This document owns execution-specific decisions. The shared
-[contracts](contracts.md) own the SQL command boundary and its identifiers.
-Neither this document nor documentation CI accepts an implemented product.
+Status: **proposed0.2.0, reopened research completed for architectural selection**.
+The selected route reuses Dapper.AOT's mature runtime and normal generated factory
+subclasses. This replaces the first delivery's own Binder/Projector default.
+Product implementation/acceptance remains unauthorized and unexecuted.
 
-## 1. Decision
+## 1. Selected route and evidence authority
 
-Keep the SQL framework independent of all database drivers. A rendered command
-shape (`RenderedTemplate`, contract ORM-C03) contains SQL, an ordered typed parameter
-layout/occurrence map, a dialect profile, capability proof and a result description.
-A `BoundCommand`/invocation binds owned typed arguments to that template. Execution
-consumes the bound command without interpreting its AST or rediscovering parameters
-by parsing its SQL. Reusable templates contain no request values; they have a
-different ownership from per-invocation arguments even if a convenience API returns
-both together.
+Keep the SQL language/renderer independent of execution. Export value-free typed
+templates; execute them through pinned unmodified Dapper.AOT1.1.0 command/runtime
+APIs, a small layout CommandFactory adapter, generated RowFactory<T> and mature
+Npgsql/Microsoft.Data.Sqlite/MySqlConnector drivers. Explicit SQL/templates plus
+manual static mapping also work without Fluent or a generator. Exact declarations,
+ownership and algorithms are in [contracts](contracts.md) and
+[implementation-spec](implementation-spec.md).
 
-Use mature .NET drivers for connections, pooling, protocol, I/O, preparation,
-transactions and cancellation. Korda owns the small boundary that binds values and
-materializes declared result shapes. The default design uses explicit or generated
-typed binders and projectors, informed by Dapper.AOT's source. It does not depend on
-Dapper call-site interception or on Dapper.AOT's runtime API remaining stable.
+The substantive evidence is maintained in three focused documents:
 
-A Dapper.AOT bridge remains a separately gated optional integration. It must prove
-which call shapes are intercepted, whether its parameter protocol is AOT-safe, and
-whether its additional conversion work is justified. This does not limit users
-who only want SQL and parameters from the DSL.
+- [Mature execution reuse](mature-execution.md): original-library DynamicParameters,
+  runtime factories, initialization faults, typed values, four databases and fair
+  comparison data with explicit limits.
+- [Generator integration](generation-integration.md): actual incremental generator,
+  generic facade, portable analyzer, consumer registration roots, strict mapping,
+  same-compilation alternatives and a stable prebuild route.
+- [Java/jOOQ execution options](java-execution-options.md): concrete Binding/Converter/
+  Records.mapping inheritance and an actually executed C#/Graal/JDBC native path,
+  including ownership, threads, deployment and boundary-cost evidence.
+
+A clean AOT publish alone is insufficient: the object-template parameter control
+published without warnings and failed when run. Conversely, 'DynamicParameters'
+is not a reason to reject a route: explicit typed Add with no object template ran
+successfully through the original Dapper.AOT generated path.
 
 ## 2. Source and version baseline
 
@@ -49,8 +54,8 @@ do not use a floating `latest` value or enable preview features by default.
 Important distinctions between release availability and compatibility evidence:
 
 - Dapper.AOT 1.1.0's own [package pins](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/Directory.Packages.props)
-  use Dapper 2.1.79. Dapper 2.1.100 is newer; the bounded probe below checked one
-  combination with it, not complete compatibility with every call shape.
+  use Dapper 2.1.79. Dapper 2.1.100 is newer; the reopened native matrix checked the declared combination and paths,
+  not compatibility with every possible call shape.
 - Npgsql 11.0.0 targets `net10.0`; MySqlConnector 3.0.0 includes `net11.0`.
   Microsoft.Data.Sqlite 11.0.0 is a stable package targeting `net10.0`, compatible
   with a `net11.0` consumer. Framework compatibility is not proof of every feature's
@@ -77,7 +82,7 @@ that generated SQL automatically receives compile-time optimization.
 | [CommandFactory.cs](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/src/Dapper.AOT/CommandFactory.cs), `Include`, `AddParameters`, `UpdateParameters`, `TryRecycle` | The generic runtime can scan SQL for member names, create/update parameters, and optionally recycle commands | Korda already knows its layout and can avoid this rediscovery; command reuse needs explicit shape and ownership rules |
 | [ParamPlan.cs](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/src/Dapper.AOT.Analyzers/CodeAnalysis/Model/ParamPlan.cs), `Create` | Projects Roslyn types into an equatable data model; separately recognizes a dynamic parameter bag | Use a deterministic generation model and separate a runtime value layout from compiler symbols |
 | [DapperInterceptorGenerator.cs](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/src/Dapper.AOT.Analyzers/CodeAnalysis/DapperInterceptorGenerator.cs), `WriteTokenizeMethod`, `WriteArgs` | Emits parameter setup and column-name/type tokenization followed by typed reads; list expansion changes binding shape | Reuse the two-phase mapping design; record variable-arity list expansion in layout identity |
-| [RowFactory.cs](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/src/Dapper.AOT/RowFactory.cs) and [CommandT.Query.cs](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/src/Dapper.AOT/CommandT.Query.cs) | Tokenization happens per reader; typed reads process rows. Small synchronous token buffers use stack storage, while asynchronous paths lease storage | Separate result-shape validation from per-row materialization; pooling is a measured implementation choice, with exception-safe return |
+| [RowFactory.cs](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/src/Dapper.AOT/RowFactory.cs) and [CommandT.Query.cs](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/src/Dapper.AOT/CommandT.Query.cs) | Tokenization happens per reader; typed reads process rows. Small synchronous token buffers use stack storage, while asynchronous paths lease storage | Retain the actual runtime loop/token storage; bind strict generated wrappers without replacing those mechanisms |
 | [ApiSurface.expected.txt](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/test/Dapper.AOT.Test/ApiSurface.expected.txt) and generator `Parse` | API recognition is not full call-site acceptance. `CommandDefinition` overloads are diagnosed; type-based mapping and other families are refused; some parameter-shape combinations still skip generation | A bridge needs negative tests and actual generated-code inspection, not just a warning-free build |
 
 ### 3.1 Dynamic parameters are not one capability
@@ -94,343 +99,144 @@ uses `DynamicMethod` for general parameter readers and object materializers.
 Explicit typed values, arbitrary object templates, and runtime-selected DTO types
 are separate cases. Korda's supported path cannot fall back to the latter two.
 
-### 3.2 Integration alternatives
+## 4. Reopened route comparison and final decision
 
-| Alternative | Useful scope | Decision |
+| Route | Source-backed mechanism and actual evidence | Decision |
 | --- | --- | --- |
-| Direct Dapper calls plus Dapper.AOT | Application call sites with known argument/result types and supported overloads | Valid optional bridge candidate; prove each supported shape and diagnostic |
-| Direct Dapper.AOT `Command<T>`, `CommandFactory<T>`, `RowFactory<T>` | Explicit generated factories without Dapper source syntax | Prototype candidate only behind an adapter; upstream [FAQ](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/docs/faq.md) states direct runtime use does not trigger generators and the API can change |
-| Korda-generated binding/materialization over drivers | DSL-owned layouts, strict projections and dynamic query composition | Selected default; preserve the useful source patterns and port narrow code where justified and attributed |
-| Reflection mapping or runtime IL emission | Arbitrary unregistered runtime shapes | Excluded from the AOT contract |
+| A Original Dapper.AOT | IsDynamicBag generates AddParameters; explicit typed bags/custom parameters plus known DTO callsites execute natively; open generic wrappers are not intercepted | Viable controlled compatibility/reference route; arbitrary caller bags/templates are excluded |
+| B Generator integration | Normal SG writes explicit factories; physical prebuild-generated wrappers are also intercepted; experimental PreCompilation works in its restricted probe | Select ordinary SG to runtime factories; no preview API or second default build phase |
+| C Mature runtime/source reuse | Public Command/CommandFactory/RowFactory, buffered/async/stream loops and disposal run representative DSL/known-DTO paths, plus supplemental typed-cell closures on four databases | Selected unmodified runtime with a small layout/strictness adapter; pin/upgrade tests contain API risk |
+| D jOOQ execution source translation | DefaultBindContext, Binding/Converter, DefaultRecordMapper branches, Records.mapping and nested presence/JSON algorithms have concrete C# targets | Combine their type/conversion/constructor/nesting semantics with Dapper runtime; do not port JDBC execution loops unnecessarily |
+| E Java AOT backend | C# Fluent to Graal shared library to real SQLite JDBC to known C# DTO passed27 native assertions, including cursor/transaction/thread ownership | Technically viable; no demonstrated advantage that warrants dual GC/ABI/deployment/async-cancel burden in this product |
+| F Other mature combinations | EF Core compiled-query boundary, LinqToDB explicit raw-command/static-reader route, Jdbi/Micronaut/SimpleFlatMapper alternatives reviewed | Useful sources/alternatives; none demonstrated a simpler complete fit than the selected combination |
+| G Own generated executor | First study established small pure-C# feasibility but did not prove reuse impossible | Retain only a diagnostic/control/fallback idea; no task implements a new execution engine |
 
-The selected default does not authorize a new connection pool, network protocol,
-database scheduler, retry engine or SQL parser in execution. Code reuse decisions
-must identify the exact borrowed symbols, modifications and upstream tests. Do not
-copy Dapper.AOT's complete analyzer, SQL Server parser or runtime to obtain a small
-binding primitive.
+### 4.1 Additional .NET alternatives, including attempted recovery
 
-## 4. Execution input and ownership
+EF Core11's pinned [QueryCompiler](https://github.com/dotnet/efcore/blob/9e685c7a52d1a344d133a3d370e458db97417b3f/src/EFCore/Query/Internal/QueryCompiler.cs)
+uses precompiled queries when available and otherwise gates runtime compilation
+on RuntimeFeature.IsDynamicCodeSupported. The Native AOT failure branch is a
+current library query-compiler policy, not a limit on dynamic SQL strings or known
+typed parameters. Adopting EF's model/tracking/query pipeline adds responsibilities
+that the SQL-first contract does not need; Microsoft.Data.Sqlite is independently
+reused without the EF ORM.
 
-Execution accepts the shared rendered-command contract, not a query builder. Its
-invariants are:
+LinqToDB6.4.0 source was inspected at
+[82fbf0f91399cc8c9cea22d09dcae20e4d7568c6](https://github.com/linq2db/linq2db/tree/82fbf0f91399cc8c9cea22d09dcae20e4d7568c6).
+Its CommandInfo accepts raw SQL, explicit DataParameter[] and a static
+Func<DbDataReader,T>, including async buffered/streaming operations. That made it
+a real candidate rather than a name-only comparison. A disposable typed-field DSL
+produced two runtime predicate shapes for SQLite with explicit Int64 parameters
+and a direct Item(long,string,long?) reader under SDK11 Native AOT.
 
-1. SQL and layout are produced by the same successful render. A layout entry has
-   stable slot identity, SQL type/nullability, parameter occurrence/order and any
-   necessary precision, scale, size or provider type information.
-2. Values are associated with slots through typed access. The driver adapter
-   rejects missing required values, unknown explicitly supplied slots, incompatible
-   types and unsupported provider mappings before sending SQL. A known `TArgs`
-   type may contain members unused by an optional query shape; those members are
-   neither errors nor bound parameters. `null` does not erase the declared type.
-3. Repeated logical parameters follow the renderer's occurrence map. Positional
-   reuse, duplicated occurrences and list expansion are never inferred from a
-   dictionary's iteration order.
-4. A result description states ordinal/alias, SQL and CLR representation,
-   nullability and conversion policy. A renderer cannot silently change that
-   description while retaining an old materializer.
-5. Dialect/version/capability settings are part of the command's semantic identity.
-   Driver transport capability is a separate check. The executor verifies the
-   selected provider against that profile before execution.
-6. The command carries no connection, transaction, active reader, provider object,
-   callback into mutable builder state, or rented buffer whose lease has ended.
+Three progressively narrower attempts were made. First, strict native publication
+failed IL2104/IL3053 aggregate warnings and IL3000 Assembly.Location use. Second,
+explicit SQLiteProvider.Microsoft, ResolveSQLite(typeof(SqliteConnection).Assembly),
+AutoDetectProvider=false and Compilation.SetExpressionCompiler using interpreted
+expressions produced a native binary only after leaving warnings visible but not
+fatal for this diagnostic experiment. There were254 IL2026 and106 IL3050 messages,
+plus reflection/dataflow warnings; it failed at runtime because the reflective
+provider adapter could not resolve SqliteTransaction. Third, explicitly rooting
+the Microsoft.Data.Sqlite assembly moved past that failure but exposed a trimmed
+reflection/static-initializer failure in Methods.LinqToDB.SqlExt/AsyncFactory.
+No full native query success is claimed for these attempts.
 
-Immutable SQL and layout can be shared. Values and execution state are per
-invocation. A caller-supplied mutable array, memory region or custom value must
-remain unchanged until the invocation completes or its stream is disposed; the
-API documents copy or borrow behavior. A convenience API may snapshot values, but
-must report its allocation cost. No value may survive in a cache after its intended
-lifetime merely because a SQL shape is cached.
+These are concrete current-library reflection/reachability integration costs,
+not proof LinqToDB or expression interpretation can never work in AOT. A statically
+bound provider adapter, further precise roots or a source adaptation could be
+investigated if this route offered a needed advantage. Here the selected Dapper
+runtime already passes the representative path without these warning/rooting
+burdens and without bringing a second LINQ/query model. A broad warning suppression
+or a copied replacement executor is not an acceptable way to label the probe
+clean. Further equivalent trials are not required to establish research condition A.
 
-## 5. Binding and reuse
+### 4.2 What Korda must implement, and why
 
-### 5.1 Fixed and dynamic shape paths
+The remaining code is the explicit product boundary: source-translated SQL nodes
+and dialect rules; immutable typed values/layouts; provider codec selection from
+already-known SQL IDs; a derived command factory; SG type/constructor analysis and
+derived row factories; strict logical/physical shape validation; session admission
+and lazy single-use iterator forwarding; offline schema/generation/packaging.
+Every piece has a source/behavior mapping and concrete implementation packet.
 
-Both paths use the same command contract and diagnostics.
+These adapters cannot be replaced by simply changing a library namespace. jOOQ's
+Java/JDBC object model cannot be referenced as C# types, and Dapper's callsite/SQL
+member discovery does not consume Korda's typed layout or nested logical shape.
+The translation changes those boundaries while retaining the mature algorithms
+and runtime loops. It does not copy their ideas and then rebuild all execution.
 
-- A fixed shape can reuse SQL, layout and generated typed access. Values change
-  independently. A typed parameter binder writes directly to provider parameters.
-- A dynamic query changes AST structure and can produce a new layout at runtime.
-  The supported CLR types and converters remain statically registered. A bounded
-  type dispatch or generated typed cell operation binds the resulting layout
-  without `MakeGenericType`, reflection-based member discovery or runtime codegen.
-  An expanded list's arity is a structural render input; binding rejects a different
-  cardinality. A provider-native array can instead occupy one declared slot. A
-  render-and-bind convenience operation snapshots the shape before rendering;
-  execution never patches SQL to accommodate an unexpected value count.
-- Dynamic projection means choosing among already representable results, not
-  inventing a new CLR DTO after native compilation. Unstructured results, if added,
-  require an explicit row/value model and separate allocation expectations.
+## 5. Exact execution mechanism and constrained adaptations
 
-Do not require a homogeneous `object[]` as the only parameter representation.
-Preserve typed access until a driver genuinely requires `object`. Conversely, do
-not promise zero boxing or zero GC for every provider: SQLite and MySQL's public
-parameter values are object-based, and each driver has its own allocation behavior.
+The terminal performs pre-cancellation, profile/value/mapping/connection validation,
+then acquires one session lease and consumes one invocation. It creates
+DapperAotExtensions.Command(connection,transaction,sql,Text,timeout,CommandFactory)
+and calls QueryBuffered/QueryBufferedAsync/QueryUnbufferedAsync or Execute/ExecuteAsync.
+Return the lease only after upstream operation/iterator disposal. Sync uses sync
+endpoints; there is no Task.Run or sync-over-async wrapper.
 
-### 5.2 Cache and preparation boundaries
+The parameter factory visits each final occurrence and its typed cell. A provider
+ValidateValue<T> runs before admission; Create<T> returns one fully configured
+parameter. No SQL/name scan or object-template discovery is needed. PG uses typed
+positional parameters; SQLite/MySQL normal Value APIs may box. Static conversions
+are pure/deterministic, and mutable input is snapshotted first. No universal zero
+allocation claim follows from the typed visitor.
 
-Reusable render plans are keyed by query shape, dialect/version/settings,
-parameter structure and result contract. Raw hash equality is insufficient; verify
-structural identity or use a collision-safe key. Cache entries do not retain user
-values or connections, have a documented size bound, and can be disabled.
-Explicit SQL literal constants participate in structural identity because changing
-one changes the emitted SQL semantics; only bound request values are excluded.
+Mapping binds declared logical members to immutable typed read delegates, then
+Tokenize validates actual physical metadata before the first row. Optional nested
+payload is read only when its discriminator is present; collections use bounded
+static JSON readers. Closed scalar/row/DTO registration is explicitly rooted,
+including cross-assembly final-consumer roots. The mature runtime still owns row
+iteration, token buffers and reader/command cleanup.
 
-Prepared statements and mutable commands belong to the connection/session domain
-defined by the driver. Reuse cannot cross providers, incompatible layouts,
-transactions, concurrent executions or an open reader. A parameter's size/type
-change can invalidate preparation even when SQL text is unchanged. Start with
-driver-owned pooling/preparation and measure before adding command recycling.
+The defensive GetCommand override covers locally created command initialization
+and parameter binding before returning the command. Preserve a primary exception
+and attach a second disposal exception safely. Upstream also assigns connection/
+transaction/timeout after the factory returns; this override does not promise to
+repair arbitrary throwing custom DbCommand setters. The selected adapters validate
+legal values/connection/transaction association first, and callers must not dispose
+or mutate borrowed resources concurrently. A future adapter unable to satisfy that
+precondition needs a separately reviewed narrow upstream fix, not an unreported
+DbCommand proxy or second loop.
 
-The Npgsql [positional path](https://github.com/npgsql/npgsql/blob/4d174200ed48e3e3ab16419dbf84dd655da59de6/src/Npgsql/NpgsqlCommand.cs)
-avoids named-placeholder rewriting. Its
-[generic parameter](https://github.com/npgsql/npgsql/blob/4d174200ed48e3e3ab16419dbf84dd655da59de6/src/Npgsql/NpgsqlParameter%60.cs)
-supports `TypedValue` without boxing the value through `Value`. These are concrete
-optimization candidates; they are not a measured Korda speedup.
+Command timeout null maps to -1 (driver default); explicit0 is unlimited. No command
+recycling/prepare/global shape cache is enabled initially. Dapper's empty result
+skips Tokenize; the contract deliberately promises strict validation before a
+materialized row, not an exception for every empty schema mismatch. These policies
+and the exact failure codes are normative in implementation-spec and ORM-EXECUTION.
 
-## 6. Generated materialization
+## 6. Provider, AOT and future acceptance boundaries
 
-Keep a clear distinction between a source generator and a schema acquisition tool.
-The compiler generator reads declared CLR types and deterministic metadata inputs;
-it does not connect to a database. A separate local schema tool can acquire
-metadata and emit a reproducible input. The core DSL remains usable with handwritten
-typed schema declarations and explicit projectors.
+Npgsql/SQLite/MySqlConnector retain their protocol, pool and transaction machinery.
+Profiles distinguish PostgreSQL18, SQLite>=3.45, MySQL8.4 and MariaDB11.8. The actual
+reopened research ran SQLite3.53.4, PostgreSQL18.7, MySQL8.4.11 and MariaDB11.8.10.
+Each feature/profile still earns product support through its own implemented matrix.
+Network cancellation/timeout behavior is separate from SQLite's synchronous async
+facade and busy-timeout behavior. No private worker pretends to add cancellation.
 
-Generation must support accessible constructors, records/DTOs and explicit
-converter methods without invoking private members through reflection. Unsupported
-construction, ambiguous names, inaccessible types, missing required members,
-incompatible nullability and unsupported conversions produce stable diagnostics.
-Do not generate code that silently leaves required data at its default value.
+Advanced codecs preserve JSON versus JSONB, SQL NULL versus JSON null, temporal
+kind/precision, decimal range and array/range identity. PG arrays are explicitly
+sequence-normalized because the inspected Npgsql reader discards lower bounds;
+no false claim of detecting a discarded bound is made. Driver-specific types stay
+inside provider leaves. Nested ordered SQL/MariaDB budget guards and SQLite scalar/
+RETURNING boundaries have focused actual SQL evidence in java-execution-options.
 
-Use two stages:
+Product acceptance still requires full immutable-model/strict-factory integration,
+all promised operation/profile cells, lifecycle races, exact seven packages,
+portable analyzer/IDE hosting, documented API/XML and preregistered public-path
+performance budgets. The research measurements compare finite representative paths
+and disclose missing final wrappers; they do not establish production parity or
+zero framework GC. [Validation](validation.md) separates these evidence levels.
 
-1. Validate the actual reader shape once when schema information is available:
-   required columns, duplicates, ordinals, nullability/conversion expectations and
-   provider read types. An empty result does not excuse an invalid declared shape.
-   Drivers with limited metadata require an explicit documented validation rule.
-2. Read each row through known typed getters and construct the declared result.
-   A NULL for a required non-null result is a mapping error. Numeric narrowing is
-   checked unless a caller explicitly requests a different conversion contract.
+## 7. Source maintenance and distribution
 
-Known projections prefer strict ordinal access. Mapping an external SQL result by
-name is a separate mode, with one-time tokenization following the Dapper.AOT
-pattern. Duplicate aliases require explicit ordinal binding or fail; permissive
-name matching is not an implicit escape from the type contract.
+Pin the exact upstream Runtime API and rerun generated-source/API/native/fault tests
+on every upgrade. The original-interceptor compatibility route additionally audits
+all generation-skipping diagnostics, generated coverage and the object-template
+negative control. Do not maintain an unneeded Dapper runtime fork by default.
 
-Neutral advanced representations and static codec contracts are driver-free. They
-specify SQL/CLR identity, NULL behavior, precision loss, timezone treatment and
-exceptions, and can be validated before any provider is complete. JSON uses
-source-generated serialization metadata or an explicit text/binary representation.
-Provider adapters separately register transport/read mappings through AOT-visible
-typed operations and earn support through real-database integration. A neutral
-codec test does not accept its provider transport. Nested collections and
-multi-result materialization require their own shape/lifetime contract; Dapper
-multi-mapping support must not be assumed.
-
-## 7. Async, streaming, resources and failures
-
-Execution APIs expose cancellation tokens and separate buffered from streaming
-results. A stream is pull-driven; it does not create a worker pool or eagerly buffer
-all rows. A stream associated with a bound invocation has one active enumeration
-and does not implicitly replay it. Re-execution creates a fresh invocation;
-concurrent `MoveNextAsync` is rejected. The transaction and connection must outlive
-any stream using them.
-
-The executor disposes its command, reader, token buffers and any connection it
-opened on normal completion, early enumeration break, mapping failure, cancellation
-and driver failure. Caller-owned connections and transactions remain caller-owned.
-A data-source-based convenience overload can open and close a connection; a
-connection overload must document whether it opens a closed connection and restores
-the original state. Prefer an explicit already-open connection contract initially.
-
-Allow only the concurrency that the selected driver/connection contract permits.
-Immutable queries can be rendered concurrently; a command, reader and transaction
-are not thereby safe for concurrent use. Transactions are explicitly supplied,
-associated with the same connection, and support only declared isolation and
-savepoint capabilities. Do not introduce ambient transaction assumptions or
-automatic retries around side effects. Connection loss around commit can leave an
-unknown outcome and must be reported as such.
-
-Errors have separate sources: invalid query/capability, binding, result mapping,
-driver/database, cancellation and lifecycle misuse. Preserve provider exception
-information and the original cause; a mapping error includes safe column/slot
-context. Do not flatten a provider error into success, expose parameter values by
-default, or classify every failure after token cancellation as cancellation.
-Timeout and cancellation remain distinct signals where the provider supports them.
-
-Cancellation is cooperative and provider-specific. Passing a token does not prove
-an in-progress database command can be interrupted. The SQLite limitation below
-must be visible in its capability profile, API guide and tests. Do not add hidden
-`Task.Run` scheduling to make synchronous SQLite calls appear asynchronously
-cancelable.
-
-## 8. Provider contracts
-
-| Provider | Initial binding/reading direction | Required limitations and gates |
-| --- | --- | --- |
-| PostgreSQL / Npgsql | Native `$1` positional placeholders; explicit PostgreSQL type where needed; typed parameters for known CLR types; typed reader getters | Validate NULL/arrays/enums/JSON independently; no mixed named/positional placeholders; prepared commands are session-bound |
-| SQLite / Microsoft.Data.Sqlite | Named parameter layout accepted by the provider; explicit SQL-to-storage conversion; `SqliteType` where meaningful; strict result conversions | SQLite storage classes do not reproduce every SQL type. Input parameters only; asynchronous methods can execute synchronously; cancellation cannot promise interruption |
-| MySQL and MariaDB / MySqlConnector | Provider parameters with declared `MySqlDbType` when inference is ambiguous; direct async I/O; typed reader getters | Separate MySQL and MariaDB dialect/version profiles; decimal precision, unsigned values, zero dates, timezone and connection settings need explicit mapping tests |
-
-### 8.1 Npgsql AOT profile
-
-Npgsql marks its library AOT-compatible and includes a
-[native consumer](https://github.com/npgsql/npgsql/blob/4d174200ed48e3e3ab16419dbf84dd655da59de6/test/Npgsql.NativeAotTests/Program.cs).
-That consumer only establishes a narrow upstream example; it does not certify all
-Korda type mappings. The pinned
-[NpgsqlSlimDataSourceBuilder](https://github.com/npgsql/npgsql/blob/4d174200ed48e3e3ab16419dbf84dd655da59de6/src/Npgsql/NpgsqlSlimDataSourceBuilder.cs)
-has explicit opt-ins and annotations:
-
-- Statically registered `MapEnum<TEnum>` and supported built-in mappings can be
-  AOT candidates; retain required enum metadata.
-- `EnableDynamicJson`, tuple-based records, unmapped types and `MapComposite<T>`
-  have dynamic-code/trimming restrictions. Their availability under JIT must not
-  cause Korda to advertise them in the default AOT profile.
-- JSON text/bytes and supported `JsonDocument`/`JsonElement` mappings provide
-  alternatives. Arbitrary POCO JSON requires an explicit static serialization path
-  and validation; merely passing serializer options does not remove annotations.
-
-Advanced SQL expressions can still render in the independent DSL even when a
-particular driver representation is unavailable. Execution fails with a capability
-diagnostic or uses an explicitly declared supported representation.
-
-### 8.2 SQLite async and storage profile
-
-The pinned [SqliteCommand](https://github.com/dotnet/efcore/blob/9e685c7a52d1a344d133a3d370e458db97417b3f/src/Microsoft.Data.Sqlite.Core/SqliteCommand.cs)
-checks cancellation before synchronous execution in `ExecuteReaderAsync`, returns
-the completed result as a task, and implements `Cancel()` without an interrupt.
-The [official async guidance](https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/async)
-agrees. Cancellation before execution and between application-level row reads can
-be honored; interruption during a native step is not promised by this adapter.
-
-[SqliteParameter](https://github.com/dotnet/efcore/blob/9e685c7a52d1a344d133a3d370e458db97417b3f/src/Microsoft.Data.Sqlite.Core/SqliteParameter.cs)
-exposes SQLite storage typing and rejects non-input directions. Do not treat
-`DbType` assignment as a complete conversion contract. Date/time, decimal, GUID,
-boolean and unsigned values require an explicit storage policy and round-trip
-tests. Required native assets remain the mature provider's package responsibility;
-verify Linux x64 publish and independent package consumption.
-
-### 8.3 MySQL and MariaDB profile
-
-The pinned [project](https://github.com/mysql-net/MySqlConnector/blob/95875a195369f0dd804f63ded2f95da3fed59ec2/src/MySqlConnector/MySqlConnector.csproj)
-enables AOT compatibility for supported modern targets.
-[MySqlCommand](https://github.com/mysql-net/MySqlConnector/blob/95875a195369f0dd804f63ded2f95da3fed59ec2/src/MySqlConnector/MySqlCommand.cs)
-has genuine async execution and cancellation integration; these semantics are not
-interchangeable with SQLite's.
-[MySqlParameter](https://github.com/mysql-net/MySqlConnector/blob/95875a195369f0dd804f63ded2f95da3fed59ec2/src/MySqlConnector/MySqlParameter.cs)
-has an object-based value boundary, so boxed scalar values are not eliminated by
-calling the framework strongly typed. The upstream
-[AOT consumer](https://github.com/mysql-net/MySqlConnector/blob/95875a195369f0dd804f63ded2f95da3fed59ec2/tests/MySqlConnector.NativeAot.Tests/Program.cs)
-checks a small query and schema; Korda must add its own value, cancellation,
-transaction and result-shape tests against each supported server family.
-
-## 9. Native AOT and local development requirements
-
-The consumer can generate schema inputs, build, publish and run from a Linux x64
-shell. GitHub CI is not required to use the library. The same maintained product
-commands should later serve local and CI runs. Build tooling and analyzers do not
-become runtime dependencies of the pure DSL.
-
-Product validation must compile the actual generated consumer and execute its
-native binary. Check trimming/dynamic-code warnings for the chosen package graph;
-do not hide them with blanket suppression or root every consumer type. Treat
-missing generation as an explicit diagnostic. Exercise both generator-enabled and
-explicit hand-written binder/projector routes where those are advertised.
-
-Generic expansion is a code-size budget: measure representative numbers of query,
-argument, result and provider shapes. Avoid specializing every AST node combination
-into a distinct generic execution pipeline. Dynamic SQL is ordinary runtime data;
-it requires neither runtime IL generation nor a cross-language compiler.
-
-The source review supports technical feasibility for this architecture. It does
-not replace local publish/run evidence, provider integration results, or an API
-compatibility baseline for the final assemblies and packages.
-
-## 10. Validation and performance obligations
-
-### 10.1 Observed bounded local probe
-
-This task published and directly executed a Linux x64 native console consumer on
-Debian 13 with SDK 11.0.100, C# 15, Dapper 2.1.100, Dapper.AOT 1.1.0 and
-Microsoft.Data.Sqlite 11.0.0. The linked provider reported SQLite 3.53.4. Publishing
-used GCC as the native linker; no JIT consumer execution was used.
-
-| Check | Observed result | Limit |
-| --- | --- | --- |
-| Native execution | Published ELF x64 binary ran with `RuntimeFeature.IsDynamicCodeSupported == false` | One Linux environment; not a clean-machine or other-platform test |
-| Runtime SQL shape | Optional `score > @threshold` predicate selected at runtime; otherwise identical `id >= @minId` query returned the expected 2 or 3 rows | Two finite shapes, not arbitrary SQL or parameter object types |
-| Binding and mapping | Static anonymous `long` arguments mapped into a public DTO with `long`, `string`, `long?`; SQL NULL preserved; results matched direct `SqliteCommand` row by row | Buffered queries and one fixed single-row query; no throughput or cancellation claim |
-| Generated implementation | Both call sites were intercepted; emitted binder tested parameter presence for runtime SQL; emitted row factory used typed getters and NULL handling | Inspection of this generated consumer, not all upstream generator paths |
-| Unsupported overload | Replacing the single-row call with a `CommandDefinition` overload and making `DAP057` an error caused expected compilation failure | A deliberately enforced diagnostic, not proof all unsupported shapes are diagnosed |
-
-Reproduce with a local `net11.0` console project containing the exact package
-versions above, `[module: DapperAot]`, `InterceptorsNamespaces` including
-`Dapper.AOT`, and emitted compiler-generated files. Create an in-memory SQLite
-table `(id INTEGER PRIMARY KEY, name TEXT NOT NULL, score INTEGER NULL)` with
-rows `(1, alpha, NULL)`, `(2, beta, 25)`, `(3, gamma, 50)`. A non-inlined helper
-builds the SQL with and without the optional threshold predicate; bind `minId=1`
-and `threshold=20`, select aliased DTO columns ordered by `id`, then compare with
-the same SQL through direct driver calls. Publish Release for `linux-x64` with
-`PublishAot=true`; this environment needed `CppCompilerAndLinker=gcc` and disabled
-shared compilation/server startup. Run the published executable. For the negative
-variant, change only the fixed call's overload and set `WarningsAsErrors` to
-include `DAP057`; publishing must fail before native execution.
-
-The positive publish completed without compiler, trimming or dynamic-code warnings.
-This proves that runtime SQL, generated binding/materialization and this mature
-driver can coexist under Native AOT for the stated cases. It is not Korda product
-acceptance, a custom Korda generator test, PostgreSQL/MySQL validation, streaming
-validation or evidence of Dapper.AOT performance parity.
-
-### 10.2 Implementation acceptance
-
-The implementation plan must include these independently runnable groups. Each
-provider consumes fixed shared contract fixtures, so provider implementation can
-start after contracts are established without waiting for the complete DSL.
-
-| Group | Positive cases | Required negative or lifecycle cases |
-| --- | --- | --- |
-| Driver-free command contract | Dynamic optional predicates, repeated parameters, nulls and variable-length lists; render without provider assemblies | Missing/wrong value types; unsupported dialect operation; mismatched result/layout identity |
-| Binder and projector | Known DTO and tuple shapes; constructor and converter paths; named and ordinal modes | Inaccessible construction, missing/duplicate columns, forbidden narrowing, NULL into required result, unsupported mapping |
-| Native consumer | Fixed and runtime-composed SQL; generated and explicit factories; independent NuGet consumption | A deliberately ungenerated/missing mapping path fails clearly; no runtime IL fallback |
-| Provider correctness | Scalars and relevant advanced types, preparation, transaction/savepoint behavior, buffered and streaming reads | Pre-cancel, supported in-flight cancel, timeout, rollback, early stream disposal, mapping failure, connection mismatch and reuse after failure |
-| Optional Dapper bridge | Actual intercepted calls; supported nonconstant SQL and explicit parameter layout conversion | `CommandDefinition`, unsupported overloads, generic/type-erased DTOs, object-template bags and silently skipped generator shapes |
-
-For performance, keep SQL, typed parameter values, result shape, driver version,
-database data, preparation state, connection ownership and buffered/streaming mode
-the same. Measure separately:
-
-1. AST construction and rendering, including allocations and output length.
-2. Binding and materialization over deterministic readers or local fixtures.
-3. Direct driver, Dapper.AOT and Korda execution over the same provider.
-4. Fixed render reuse and dynamic shape changes, including cache misses.
-5. End-to-end latency, throughput, allocation/GC and published binary size.
-
-Do not attribute network/database latency to DSL construction or subtract unrelated
-benchmark means to claim a precise framework cost. Report distributions and
-measurement uncertainty, with cold/warm boundaries. Define a concrete acceptance
-budget after comparable baselines exist; no current source finding proves
-Dapper.AOT parity. Java jOOQ rendering benchmarks have a different runtime and
-remain a separate engineering comparison.
-
-## 11. Provenance and evidence boundary
-
-Only the source references, decisions and reproduction conditions belong here.
-Local clones, generated output, runtime logs, binaries, packages and benchmark
-samples stay outside the document repositories and are not uploaded elsewhere.
-
-The source licenses were inspected in
-[Dapper.AOT](https://github.com/DapperLib/DapperAOT/blob/0e071bf05e54caecfa98c885b075fa3e247f3ecc/License.txt),
-[Dapper](https://github.com/DapperLib/Dapper/blob/188094784256da61d7a37c43ea54c64213c2ce7c/License.txt),
-[Npgsql](https://github.com/npgsql/npgsql/blob/4d174200ed48e3e3ab16419dbf84dd655da59de6/LICENSE),
-[MySqlConnector](https://github.com/mysql-net/MySqlConnector/blob/95875a195369f0dd804f63ded2f95da3fed59ec2/LICENSE)
-and [EF Core](https://github.com/dotnet/efcore/blob/9e685c7a52d1a344d133a3d370e458db97417b3f/LICENSE.txt).
-Future copied/translated code retains applicable copyright/license/NOTICE material,
-identifies modifications and records its exact source symbols. Dependency and
-native asset notices are verified from the shipped packages, including SQLitePCLRaw,
-rather than inferred from the top-level provider license alone. No upstream product
-name or logo is adopted as Korda branding.
-
-The bounded probe above is the actual newly executed provider/generator evidence.
-The task's validation record consolidates it with other experiments and limits.
-Unexecuted tests in the acceptance matrix remain implementation obligations, not
-completed acceptance items.
+Preserve applicable license texts/notices and source adaptations. Dapper.AOT and
+Dapper use the reviewed Apache-2.0 source licenses with separate branding notices;
+Npgsql's PostgreSQL license, MySqlConnector/SQLite managed MIT and actual native
+assets have separate provenance. The research Java backend is not shipped by the
+selected package set. See [upstream-policy](upstream-policy.md) for exact linked
+sources, attribution and the bounded upgrade procedure.

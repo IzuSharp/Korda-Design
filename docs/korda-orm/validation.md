@@ -17,7 +17,49 @@ results, limits and reproduction methods rather than raw execution material.
 | Document checks | Schema, references, dependency DAG and diff routing | Product, database, AOT or benchmark acceptance |
 | Future product acceptance | The implemented feature's declared matrix actually passes | Capabilities outside its explicit profile and test scope |
 
-## 2. Environment and source pins
+## 2. Reopened mature-reuse evidence
+
+The continuation preserved the first study's correct language/oracle findings and
+reopened its premature own-executor decision. The following are actual executed
+research paths. Their detailed inputs, source symbols, commands, fixtures and
+limitations are in [mature-execution](mature-execution.md),
+[generation-integration](generation-integration.md),
+[java-execution-options](java-execution-options.md) and
+[execution alternatives](execution-aot.md). Counts belong to separate suites;
+they must not be added to imply one complete product test suite.
+
+| Evidence | Actual result | What remains outside this result |
+| --- | --- | --- |
+| Original Dapper.AOT + explicit typed DynamicParameters; runtime bag/layout comparison | Initial SQLite90 assertions, with later targeted initialization/cleanup suite96; six intercepted callsites and three generated DTO factories | Arbitrary object templates and open generic interception are not accepted |
+| Four-database native runtime matrix | SQLite3.53.4:92; PostgreSQL18.7:99; MySQL8.4.11:97; MariaDB11.8.10:97 | Full final language/model/strict mapper/package conformance |
+| Typed cell → generic visitor → closed provider encoder |13 native assertions across those four families, zero publish warnings | No zero-boxing or complete value/codec catalogue claim |
+| Real normal SG → Dapper factories → SQLite DTOs |21 native checks, including nullable record/init and strict projection-bound wrapper; portable netstandard2.0 analyzer loaded successfully | Final packaged analyzer/IDE/OS matrix and complete nested SG |
+| Explicit cross-assembly registration roots | Library-only native negative control exposed missing registration; consumer SG roots passed7 independent native registration cases; actual DTO suite reran21 checks after the fix | The rerun is not42 distinct DTO assertions; unknown runtime CLR types remain excluded |
+| Stable physical prebuild source → original Dapper interceptor |3 native checks, zero publish warnings | Alternative build route, not default product dependency |
+| Java native backend |27 native C#/Graal/JDBC assertions, no running JVM/JIT; exact handles/threads/rollback/UTF-8 tested | Full jOOQ native backend, other live JDBC providers and network async/cancel |
+| Nested SQL and edge semantics | PG/MySQL/Maria ordering/duplicates/NULL/empty; Maria46-byte and88-byte budget boundaries; SQLite scalar-first-row and RETURNING alias behavior | Complete generated nested DTO product acceptance |
+| Core public surface and assembly seams | Contracts/Types/Language/Rendering/Nested/dialect declaration assemblies and extended Fluent consumer compiled with warnings as errors; incompatible field/parameter failed CS1503 | Declaration checks use reference bodies and are not production implementations |
+| Execution infrastructure signatures | Actual Dapper.AOT1.1.0 factory/row/runtime endpoint declarations compiled; Contracts and metadata0 warnings; bare csc net11 versus Dapper net10 produced two visible CS1701 version-unification warnings kept nonfatal, with all other warnings fatal | Signature check only, no new native/database result or AOT suppression |
+| Alternative .NET route | LinqToDB raw SQL/static-reader native attempts recorded actual warnings, then provider/member reachability failures after two recovery changes | No claim LinqToDB is fundamentally incapable of AOT |
+
+Native publishes/run assertions establish that runtime query structure and parameter
+cardinality do not require dynamic IL. The selected successful paths had no global
+AOT/trimming suppression. The negative object-template bag published cleanly but
+failed at runtime; diagnostics plus generated-source inspection and native execution
+are all required. SQLite async/cancel capabilities are kept separate from the three
+network server interruption/timeout checks. All disposable servers were stopped.
+
+The selected combination meets research condition A: enough source, correctness,
+AOT and maintenance/performance evidence to justify implementation. It does not
+claim product acceptance, a release, full jOOQ parity or exhaustive proof that no
+other library could be adapted.
+
+## 3. First-study environment and preserved results
+
+The following environment/results describe the earlier bounded language study.
+They remain valid within their stated scope; the continuation above supplies the
+new execution/generation/database evidence and replaces its architecture decision.
+
 
 The C# experiments used Debian 13 Linux x64, SDK **11.0.100**, runtime **11.0.0**
 and **C# 15**. The SDK archive was downloaded from Microsoft's release metadata
@@ -38,7 +80,7 @@ driver, connection or server. Python's SQLite module reported **3.53.1**; the
 Microsoft.Data.Sqlite native runtime separately reported **3.53.4**. These are
 different executions and must not be conflated into one SQLite version.
 
-## 3. Actual research experiments
+### Preserved first-study experiments
 
 | ID | Experiment | Observed result | Scope limit |
 | --- | --- | --- | --- |
@@ -211,12 +253,21 @@ pooling behavior from an in-process microbenchmark.
 
 Java jOOQ rendering is a semantic and engineering reference. JVM versus .NET AOT
 timings are cross-runtime observations, not a controlled claim that a language or
-engine is faster. No Korda-versus-Dapper performance comparison was executed in
-this study. The 704-byte prototype observation establishes no production budget.
+engine is faster. The first study's704-byte observation establishes no production budget. The
+continuation did execute two comparable SQLite path comparisons, recorded in
+mature-execution: original static/bag Dapper, runtime bag/object-layout/typed-cell,
+direct driver and a small full DSL. The initial and follow-up distributions are
+both retained; the noisier follow-up cannot establish strict speed ordering.
+Stable typed-cell savings versus a bag were592 bytes per end-to-end operation and
+480 bytes per isolated parameter bind. These are bounded infrastructure-path
+measurements, not the final strict public terminal's production performance.
 
-`ORM-PERFORMANCE` must establish explicit per-workload overhead/allocation budgets
-and reproducible baselines before accepting an optimization or claiming near
-Dapper.AOT execution. Freeze the comparison conditions and budgets before tuning;
+ORM-PERFORMANCE now fixes explicit future budgets and repeat/invalid-measurement
+rules before implementation tuning. The main pre-rendered public-path gate is
+paired median ratio<=1.35 against original static Dapper.AOT and extra allocation
+<=1024 B/op for declared0/1/10/100-row SQLite workloads; the packet specifies full
+DSL and value-isolation budgets separately. These are prospective gates, not a
+claim that the research microbenchmarks already pass them. Freeze the comparison conditions and budgets before tuning;
 report misses and rejected ideas. `ORM-ACCEPTANCE` cannot mark performance parity
 or zero framework allocation complete from source review or these probes. Long
 benchmark/profiling campaigns are explicit work, outside normal document/product CI.
@@ -224,10 +275,12 @@ benchmark/profiling campaigns are explicit work, outside normal document/product
 ## 6. Remaining limitations and next decisions
 
 The research validates architectural feasibility slices, not their full product
-composition. Remaining gates include the final typed command protocol, generated
-Korda binders/projectors, complete semantic corpus, PostgreSQL/MySQL/MariaDB live
-tests, advanced codecs, nested-result decoding, streaming/cancellation races,
-package/analyzer hosting and controlled performance comparisons.
+composition. The typed protocol, mature runtime choice, generator integration and
+representative four-provider/native/advanced/nested paths now have direct evidence.
+Remaining product gates are the complete immutable implementation and semantic
+corpus, every advertised profile cell, strict nested generator/codec coverage,
+lifecycle races, exact seven packages/analyzer hosting, other platforms and the
+fixed complete-public-path performance campaign.
 
 The reviewed jOOQ public tree does not expose the complete upstream integration
 test suite. Commercial transformations and some older-version emulations are not
