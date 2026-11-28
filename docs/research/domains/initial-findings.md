@@ -239,4 +239,3 @@ This delivery stores only research summaries and links; it neither copies large 
 8. An independent reviewer should sample the pinned-SHA evidence to check that it supports each conclusion, explicitly distinguishing "test source read" from "executed and passed."
 
 **Deliverable status for this round**: research boundaries, candidate comparisons, and 7 pieces of partial source evidence have been established; phase B's formal public API, database choices, ORM query subset, server-engine selection, and performance commitments remain unaccepted. They are explicit inputs to the next round of parallel research and documentation, rather than being deferred as vague future matters.
-

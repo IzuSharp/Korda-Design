@@ -8,19 +8,6 @@
 
 审查快照使用内容 SHA256，避免后续修改使本次意见看似针对新版本。整改后必须记录复查范围与新快照；不能仅更改发现状态。
 
-| 文件 | 初始被审查 SHA256 |
-| --- | --- |
-| docs/architecture/candidate-boundaries.md | `6baed2965aac588633dcecd2959fe592d9972ec95ddd9d4d835097a735dd3670` |
-| docs/verification/evidence-policy.md | `78c8a47ca86ec918b0c11628443575dbe7bb3f468e20b2c6169da5426a430de1` |
-| docs/contracts/registry.json | 初次结构读取与取哈希之间有并行修订；本项以文末最终复查快照为准，不把修订后哈希当成初稿哈希 |
-| docs/requirements/charter.md | `ada66993334e1754832c7e8e4be90cc61c91b1ca13568bc4ec26a4c68a7bc5ad` |
-| docs/decisions/ADR-0001-three-graphs.md | `2e78346f3a464185c24d39bb33a12e12b8a43f826b719f47371dab93ffb331e7` |
-| templates/adr.md | `bfe674b927ec53bdeecb770a70d08d71142ea60ca011bfdd14ebffbbf15278e0` |
-| templates/code-validation.json | `e8df6d4472a47731efc03874105774d2ca9d3ee34ab7a9e49998420026770285` |
-| templates/research-report.md | `7a591ff5b4d106ad31144b08761f0ee4e65be17cdab60e6fd8695fdc25cb7c6f` |
-| templates/task.md | `e722716e7c8eb2eb6b4ef7a9a236e28d34d89992c3a3d5354ae4d097c096e8b2` |
-| templates/technical-spec.md | `137f4a4ec42a400a0cef2220223c69da43a188fd9d36fbabb37f82baddcecbeb` |
-
 ## 已确认的范围内优点
 
 1. 用户“ArcForges 规范只参考格式”已明确写入需求章程、AGENTS、证据政策和 ADR；本次被审文本没有要求沿用其业务、技术选择或串行规则。
@@ -148,7 +135,7 @@ Plan 作者增加 conditional dependencies、selection snapshot、release scope 
 
 ### 有限异步研究模型的独立审查与复跑
 
-独立读取并复跑 root 的 `experiments/async-quiescence/model.py`，输出到临时结果，不覆盖作者结果。修订模型 SHA256：`2e05810a13a46959dc301dab8deef69fad49af8435934c62250900820a4178c7`；独立输出 SHA256：`47706780600c303d36c2c886286ad05b5de3d8f386812973c17b0fff7cae2755`，与作者结果逐字段相同。
+独立读取并复跑 root 的 the historical research fixture，输出到临时结果，不覆盖作者结果。修订模型 SHA256：`2e05810a13a46959dc301dab8deef69fad49af8435934c62250900820a4178c7`；独立输出 SHA256：`47706780600c303d36c2c886286ad05b5de3d8f386812973c17b0fff7cae2755`，与作者结果逐字段相同。
 
 - 过早回收负控制在 226 个探索状态内找到 use-after-free 路径：close → publish cancellation → native queue → reclaim → callback dereference。
 - 加入 native quiescence 与 call lease 的候选在 159 个探索状态内未发现所检查的反例，存在 9 个已回收状态。
@@ -162,16 +149,5 @@ Plan 作者增加 conditional dependencies、selection snapshot、release scope 
 ### 最终门禁复查与收敛
 
 最终复查 validator：`d4e393016bd75de523b78f2df9c989eb417dbc7bdd05ca9f23a1fbefb58888c9`。实际执行确认：真实基线仍通过，ready 为 Research 34、Documentation 32、Delivery 0，accepted contracts 为 0；分别改变依赖实现 source_commit、依赖已接受证据哈希及原生分支选型都会改变下游 subject。输出方向约束与 null identity 检查仍拒绝原反例。正式验收需求已包含准确 OS、architecture 与适用时的 target RID，校验逻辑同时比较这些字段。
-
-| 最终复查文件 | SHA256 |
-| --- | --- |
-| NativeWeave-Design/docs/architecture/candidate-boundaries.md | `7153a79a7284585570f148000e48756a5804035b9bcccaa6e356e3203d272d3f` |
-| NativeWeave-Design/docs/verification/evidence-policy.md | `f6c343fa613a282f837218f913fe5a1b850f82ab37ba40f254943b868f50ff4f` |
-| NativeWeave-Design/docs/contracts/registry.json | `f5b688a59d879bc59a89810523c4291fca8dbccdc23774d6ea58bdf5a4912868` |
-| NativeWeave-Design/templates/code-validation.json | `d73d5f0b6511642e921e7f80f985cfe86f5e09104c25247969ef74912fdb3665` |
-| NativeWeave-Design/templates/research-report.md | `14db0c6d8d55f368f46f68ed3d6a8a4a88d896adb4b421ff1dd156ad4dc173f9` |
-| Plan/research-graph.json | `6e8ae7aed21b976760609fb2d21fb4b9412f0e264ee2fb8d8ccde90502639f06` |
-| Plan/documentation-graph.json | `9488cf8a5075a187ff7eb51d27f706fab4486f81765c2c5092da04b036f1bad4` |
-| Plan/delivery-graph.json | `391bc63d9842d7a08e30d2a3c50f7e41d9cd2abe1a18bcedcd5342375d5ea5df` |
 
 **本次 limited review 发现的具体启动包缺陷已完成局部修订与对应复查；可以继续以 proposed/bootstrap 状态分发研究与文档任务。** 这项结论只限本报告所列文件、状态与反例，不是全面源码审计、产品实现授权、平台认证或最终架构接受。所有实际语言/FFI/AOT/Windows 验证与正式领域研究仍按各自任务执行。

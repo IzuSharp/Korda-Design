@@ -4,7 +4,7 @@ This is the behavior contract for the existing Korda PostgreSQL/SQLite product. 
 
 ## Execution-path refactor contract — DB-Exec-02
 
-The [current target](query-semantics.md#current-execution-path-target-db-exec-02)
+The [current target](query-semantics.md)
 reconstructs the complete implementation path while preserving this public
 business contract. It is a design candidate, not an implemented or accepted
 feature claim. Ordinary Fluent, `.Prepare()`, handwritten descriptors and

@@ -1,8 +1,6 @@
-> **Research asset location correction:** these historical execution identities remain unchanged. Current source is `experiments/native-slices/` and original evidence is `verification/native-slices/original-pr1/` in NativeWeave-Design. See `docs/traceability/research-asset-migration.md` and its per-file mapping. No formal product implementation is authorized in this phase.
-
 # R03/R04/R07/R10 — executed native/managed boundary continuation
 
-Status: **partially evidenced**, author self-review, independent review pending. This adds new executable evidence to the original source research; no existing successful Rust API or database AOT experiment was rerun. Recovery details: [checkpoint](../../../traceability/native-slices-recovery.md).
+Status: **partially evidenced**, author self-review, independent review pending. This adds new executable evidence to the original source research; no existing successful Rust API or database AOT experiment was rerun. Recovery details: checkpoint.
 
 ## Provenance and actual execution
 
@@ -18,11 +16,9 @@ NativeWeave original sources were already saved at `994fbd95da4ebbc51ee2772f04a4
 | Failure handling | Oversized allocation request, invalid mode, prepublication contained panic, invalid ABI capacity, null callback and disposed-wrapper reuse rejected |
 | Physical ownership | After an admitted native call entered, Dispose left native live-count1; completion released the last call lease and live-count returned0 |
 
-Linux native/package/AOT SHA256: `196d80ed98e58c7afbc25470ffdfce4ac162eb644a45224cac0a25d5748a71a9` / `9259fe8adce55509b07833e590cc7addf65f1343cbbdc1c110b115354849ddc8` / `f7ac38599170f7b6662eacc770e488cd96bd7940b8a37c912624ca624fd394ec`.
+Linux native/package/AOT / `9259fe8adce55509b07833e590cc7addf65f1343cbbdc1c110b115354849ddc8` / `f7ac38599170f7b6662eacc770e488cd96bd7940b8a37c912624ca624fd394ec`.
 
-Windows native/package/AOT SHA256: `7c7906046558da6264d8a732bbfa632f19c5d2f77585e9cc4f3a8548b265217a` / `fb1e2b876b8bfd109d6f6001872bee604286321f40728263842a69e304c229c4` / `b7d4d9affe57b8dd289b5b47b4cfaa97cc00ada8c69a7ce6776828bb08b54d62`.
-
-Raw commands/stdout/stderr/results/source hashes and binary digests are preserved under NativeWeave `verification/native-slices/`, with an artifact-to-file manifest. Refer to the exact evidence commit in Plan's current checkpoint, not an assumed floating latest version. Evidence preservation is not another test run. Windows checkout CRLF and Git LF identities are recorded separately.
+Windows native/package/AOT / `fb1e2b876b8bfd109d6f6001872bee604286321f40728263842a69e304c229c4` / `b7d4d9affe57b8dd289b5b47b4cfaa97cc00ada8c69a7ce6776828bb08b54d62`.
 
 ## What Rust1.100 actually contributes here
 

@@ -44,9 +44,7 @@ The Server choice remains open. Kestrel Native AOT is a required research compar
 
 ## Frozen contract and limits
 
-C-SERVER-001 remains **0.2.1-draft / proposed**, with document SHA256:
-
-`9acf2b3bd464815ac0bb66700ee0c5c8791fa3772f7b0fbe54736e59e2f47358`
+C-SERVER-001 remains **0.2.1-draft / proposed**, with document
 
 The exact fixture, documents, source record and four-job workflow hashes are in `manifest.json`. Approval is scoped to those content hashes. The manifest also hashes all 43 retained raw reviewer files; build caches were intentionally excluded.
 

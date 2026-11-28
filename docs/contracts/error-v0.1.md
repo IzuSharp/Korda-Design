@@ -181,17 +181,15 @@ Q08 has an explicit design decision: Result/status for ordinary failures, a fixe
 
 ## 13. Completion review and error evidence for this round (2026-11-13)
 
-[The R11 completion report](../research/topics/R11/report.md) now includes pinned Rust1.100 source and [7 actual isolated subprocesses](../../verification/interop-completion/panic-linux/result.json): catching ordinary unwind and quarantining an unknown payload return normally; payload Drop, hooks, cleanup double panic, extern-C escape and the abort profile each produce the expected non-successful termination. Raw stdout/stderr/exit, source hashes and compiler arguments are retained; these local results are not extrapolated into proof of full Engine poison recovery.
+[The R11 completion report](../research/topics/R11/report.md) now includes pinned Rust1.100 source and 7 actual isolated subprocesses: catching ordinary unwind and quarantining an unknown payload return normally; payload Drop, hooks, cleanup double panic, extern-C escape and the abort profile each produce the expected non-successful termination. Raw stdout/stderr/exit, source hashes and compiler arguments are retained; these local results are not extrapolated into proof of full Engine poison recovery.
 
-[The main probe](../../verification/interop-completion/linux/result.json) actually verifies containment of an ordinary managed-callback exception within the method and finally release after a result-conversion exception; the [invalid UCO probe](../../verification/interop-completion/uco-invalid-linux/result.json) terminates subprocesses with an unhandled InvalidProgramException before entering the method body when native code invokes char/bool callbacks under both normal/AOT execution. The latter shows that catch inside the method cannot correct the signature, without claiming verification of every process-fatal mechanism or outer-catch semantics.
+The main probe actually verifies containment of an ordinary managed-callback exception within the method and finally release after a result-conversion exception; the invalid UCO probe terminates subprocesses with an unhandled InvalidProgramException before entering the method body when native code invokes char/bool callbacks under both normal/AOT execution. The latter shows that catch inside the method cannot correct the signature, without claiming verification of every process-fatal mechanism or outer-catch semantics.
 
 This file remains the sole authority for wire status. Private experimental enums must remain experimental data and must not be written back as new numbers in this contract. Error semantics, isolation costs and cleanup interfaces are sufficient to guide implementation; formal design acceptance awaits independent review, while full ER-01–07 product verification, new Windows fatal cases and long-duration isolation-budget verification remain in their Delivery phase.
 
-
 ### Committed target evidence
 
-The [CI readback](../../verification/interop-completion/ci-evidence-read.json) verifies source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, run `43388468172`: actual Windows/Linux normal and Native AOT main interop execution (10,528/10,529 assertions respectively), Roslyn generation checks and static metadata restrictions. This supports the stated research slice; product conformance remains separately assigned. Supplemental panic/invalid-UCO/generator comparison runs are Linux-only.
-
+The CI readback verifies source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, run `43388468172`: actual Windows/Linux normal and Native AOT main interop execution (10,528/10,529 assertions respectively), Roslyn generation checks and static metadata restrictions. This supports the stated research slice; product conformance remains separately assigned. Supplemental panic/invalid-UCO/generator comparison runs are Linux-only.
 
 ## Public API refinement, revision 0.4.0
 

@@ -65,6 +65,6 @@ Design structure/link/history checks are distinct from compiler, package, databa
 
 ## Historical checks
 
-`python3 tools/verify_db_rename.py` checks the naming overlay and runs unchanged DB-API-01, C++ migration and DB-Scope-01 gates at their frozen inputs. `python3 tools/verify_db_scope_history.py` runs original 21-contract/API/English acceptance and mutations at Design `c62cdb8aee833b6ab1a03e29a3f59f81a1b483f9`. No historical acceptance hash is updated to accept a changed current document.
+Current document checks use [the CI registry](../../eng/ci/README.md). Historical acceptance applies to its original revision; it is not replayed for ordinary document edits and does not establish product execution.
 
-The original stop/clean, Rust workspace, four JIT/AOT consumer cells and merged-main conditions belong to the [immutable DB-Scope-01 matrix](https://github.com/IzuSharp/Korda-Design/blob/8298dc4128b745cf1809bad0c3cf02c45eb7f522/docs/verification/models-and-matrix.md). The frozen `docs/current-scope.json` still records that matrix and its original active-document hashes; it is not this task's current check plan.
+The original stop/clean, Rust workspace, four JIT/AOT consumer cells and merged-main conditions belong to the [immutable DB-Scope-01 matrix](https://github.com/IzuSharp/Korda-Design/blob/8298dc4128b745cf1809bad0c3cf02c45eb7f522/docs/verification/models-and-matrix.md). The concise `docs/current-scope.json` retains the scope decision; exact earlier inputs remain in Git history. It is not the current check plan.

@@ -1,14 +1,8 @@
-> Historical checkpoint. Current product constraints and acceptance boundaries are in [ADR-0003](../decisions/ADR-0003-rust-engine-mandate-and-design-acceptance.md). Any optional Rust Server/Kestrel product-host wording below describes the prior snapshot, not current authorization. Original evidence retains its recorded scope.
+# Historical source-driven integration decisions
 
-# Source-driven integration: recovery, impact and independent-review handoff
-
-Status: proposed amendment in existing Design PR #5. No product-source implementation or automatic final acceptance. Exact source pins/ranges, preserved commands/logs and file hashes are in `docs/research/source-driven-evidence/`. The paired Plan PR must pin the resulting Design commit; the two repositories are not an atomic transaction.
-
-## Recovered versus missing
-
-Recovered the complete baseline archives, pinned source snapshots, corrected SQLx/Actix source identities and successful query feasibility artifact. Reused existing commits/PR and the actual Linux x64/SQLite Native AOT experiment; it was not rerun. The earlier failed SQLx API attempt remains in Actions history. Native asset hash equality, second entity and expected type-error fixture were rechecked from recovered records. Raw logs and source are persisted before temporary artifact expiry.
-
-Six separately attributable completed subagent reports were not found in the currently accessible records. There is no callable subagent interface in the recovery session. No independent review is fabricated. PR2–4 historical reviews apply only to their original bytes. New source inspection, integration, finite model and structural tests are author-side evidence.
+These decisions explain the earlier Rust/Server design; current database scope is
+set by ADR-0005 and ADR-0006. They are historical conclusions, not instructions to
+resume a task or new acceptance of current content.
 
 ## Concrete conflicts, corrections and retained obligations
 
@@ -31,14 +25,8 @@ Retain ownership, callback quiescence, cancellation versus retirement, Unknown C
 
 R25/R27 record selected source call chains and relevant tests. Source tests were read, not executed by this recovery. The original registry-crate Cargo.lock is distinct from inspected Git source pins. The recovered prototype demonstrates real Linux AOT execution and reuse for a second entity, but used explicit RID, handwritten mappings, PATH Rust-denial shims and research-only synchronous JSON/fetch_all/per-call runtime shortcuts. It does not prove clean-machine or RID-free consumer behavior, PostgreSQL execution, Windows, a source generator, production streaming/concurrency, full ORM coverage or performance superiority.
 
-The newly executed two-request admission model finds a response-head-only permit counterexample and no violation in the finite body-and-callback policy model. It is not a Hyper/Tower run, byte/RSS proof, weak-memory model, liveness proof or independent review. Precise counts and command hashes are in the preserved result.
+The newly executed two-request admission model finds a response-head-only permit counterexample and no violation in the finite body-and-callback policy model. It is not a Hyper/Tower run, byte/RSS proof, weak-memory model, liveness proof or independent review. The model was finite and its limits remain explicit.
 
 ## Design answers versus gates
 
 Q11/Q13's universal per-entity Rust build/full-LINQ assumptions are answered negatively for the dynamic profile, with source and finite execution evidence. Independent architectural acceptance, real implementation and production release gates stay separate. Q14 backend semantics, Q15 Server value and Q16 real resource safety remain scoped obligations. Preserve all applicable Windows/Linux AOT, race/property/fuzz/model, fault/soak, compatibility and workload tests in the existing Delivery tasks.
-
-## Independent-review entry and disjoint continuation
-
-Use the existing `IzuSharp/Plan:prompts/independent-review.md`, current R25/R27 packets and D10/D11/D14–D18 packets; record exact Design and Plan commits and packet hashes before reviewing. One independent reviewer should verify dynamic identifiers/AST/parameters, SeaORM's static boundary, missing ORM policies and no-Cargo consumer claims. A second can inspect ForeignService/body/worker affinity, credit/retirement and shutdown traps. A third can check packaging, source/patch maintenance and all graph/contract/packet pins. These are reusable existing task scopes, not claimed active agents or a new coordination graph.
-
-Review every changed contract at its new content hash, retain finite evidence limits, reject unsafe silent backend behavior and identify avoidable translation/runtime layers. Record finding IDs/severity/evidence/fixes and re-read final bytes. Do not approve merely because structural checks pass, reuse old PR approvals, or merge until the actual independent-review requirement and effective repository checks are satisfied. Product implementation remains unauthorized.

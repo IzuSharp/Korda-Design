@@ -66,7 +66,7 @@ Official Rust documentation describes ABI and unwinding separately: panic=abort 
 
 ## 4. A Limited Model Actually Executed
 
-The [experiment description](../../../experiments/async-quiescence/README.md) and [results](../../../experiments/async-quiescence/result.json) record a finite-state model: incorrectly treating "cancellation result published" as "native context may be reclaimed" produces a concrete UAF trace; the candidate barrier eliminated that counterexample within the model's scope.
+The experiment description and results record a finite-state model: incorrectly treating "cancellation result published" as "native context may be reclaimed" produces a concrete UAF trace; the candidate barrier eliminated that counterexample within the model's scope.
 
 The model does not include real GCHandle behavior, FFI, weak memory, thread scheduling, or Windows/Linux AOT; it does not make C-ASYNC/C-LIFETIME accepted. Its purpose is to provide a starting point that can be challenged for R08/R09/R15.
 

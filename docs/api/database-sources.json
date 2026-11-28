@@ -832,37 +832,5 @@
       "limitations": "Only the listed source ranges and specifically named declaration scans were read; no SqlSugar binary, upstream tests or AOT workload was executed. Project version matches the stable NuGet version but build provenance is not independently reproduced."
     }
   ],
-  "reused_native_evidence": [
-    {
-      "path": "docs/research/source-driven-evidence/source-inspection.json",
-      "baseline_commit": "a0f6bca1f55ddf456fe931886da8be19e94a1413",
-      "sha256": "70cb01c8441e414194a0b8c4e298f07eb1ec12284afb5c706b3de04d3e80a44a",
-      "scope": "Reused accepted source/evidence records; read current design conclusions, not rerun native experiments. Exact original source readers/ranges/execution provenance remain in the linked file."
-    },
-    {
-      "path": "verification/database-completion/source-inspection.json",
-      "baseline_commit": "a0f6bca1f55ddf456fe931886da8be19e94a1413",
-      "sha256": "3460b9adf3bb5dbd86e03917f35a759df92eaca94d0d8e99090e5739e03c6622",
-      "scope": "Reused accepted source/evidence records; read current design conclusions, not rerun native experiments. Exact original source readers/ranges/execution provenance remain in the linked file."
-    },
-    {
-      "path": "docs/research/topics/R25/coverage.json",
-      "baseline_commit": "a0f6bca1f55ddf456fe931886da8be19e94a1413",
-      "sha256": "f8fd20c42af411d509db99ca920a6aac17bd3eb3b6232b14b3d78cdfe3814b43",
-      "scope": "Reused accepted source/evidence records; read current design conclusions, not rerun native experiments. Exact original source readers/ranges/execution provenance remain in the linked file."
-    },
-    {
-      "path": "docs/research/topics/R25/source-driven-seaquery.md",
-      "baseline_commit": "a0f6bca1f55ddf456fe931886da8be19e94a1413",
-      "sha256": "d2bd3c03a92debc4e8d935eaf156d848e4ff6d9a13a68d2017bb6ec1f3a8ac7a",
-      "scope": "Reused accepted source/evidence records; read current design conclusions, not rerun native experiments. Exact original source readers/ranges/execution provenance remain in the linked file."
-    },
-    {
-      "path": "docs/database/sqlx-retirement-study.md",
-      "baseline_commit": "a0f6bca1f55ddf456fe931886da8be19e94a1413",
-      "sha256": "b37aac712a8028ad5d985d6ca2a3644c02dc4f11c31ea394b65f7d0d0eb6ae32",
-      "scope": "Reused accepted source/evidence records; read current design conclusions, not rerun native experiments. Exact original source readers/ranges/execution provenance remain in the linked file."
-    }
-  ],
   "execution": "No upstream tests or native database product operations executed in this API research. Root aggregate compile/AOT evidence is separate."
 }

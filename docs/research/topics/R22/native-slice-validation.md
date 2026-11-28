@@ -1,8 +1,6 @@
-> **Research asset location correction:** these historical execution identities remain unchanged. Current source is `experiments/native-slices/` and original evidence is `verification/native-slices/original-pr1/` in NativeWeave-Design. See `docs/traceability/research-asset-migration.md` and its per-file mapping. No formal product implementation is authorized in this phase.
-
 # R22/R25 — actual fallible native binder and SQLite semantics
 
-Status: partially evidenced; author-side implementation/tests, not independent review or production ORM. Uses the original pinned SeaQuery1.0.2/SQLx0.9.0/Tokio1.54.1 routes, no C# SQL implementation. NativeWeave PR1 contains the executable fixture at `experiments/database/`.
+Status: partially evidenced; author-side implementation/tests, not independent review or production ORM. Uses the original pinned SeaQuery1.0.2/SQLx0.9.0/Tokio1.54.1 routes, no C# SQL implementation. NativeWeave PR1 contains the executable fixture at the historical research fixture.
 
 ## Executed chain and correction
 
@@ -25,4 +23,4 @@ Keep upstream native query/dialect/driver code. A small fallible native codec is
 
 The preflight function bounds its conversion inputs **after caller-created Value/AST allocations**; it is not a whole-native-memory bound. No C# domain FFI, source generator, PostgreSQL server execution, Unknown COMMIT fault injection, async stream shutdown, native allocator failure, full relation ORM or performance is demonstrated. Those remain in B02/B05/B06/B09–B14/B22/B23. Existing earlier C# SQLite AOT second-entity evidence is complementary, not silently rerun or expanded into this test's scope.
 
-Evidence is persisted in NativeWeave `verification/native-slices/database-*` and the two `database-first-failure-*` directories; use the exact commit in Plan's checkpoint. Rust1.100 compiles this locked feature subset, not every feature of all ecosystem crates. R22/R25 and D14/D16 should retain explicit type/capability/ownership checks and no per-entity Cargo; no production task is marked accepted from six finite tests.
+Evidence is persisted in NativeWeave the historical research fixture and the two `database-first-failure-*` directories; use the exact commit in Plan's checkpoint. Rust1.100 compiles this locked feature subset, not every feature of all ecosystem crates. R22/R25 and D14/D16 should retain explicit type/capability/ownership checks and no per-entity Cargo; no production task is marked accepted from six finite tests.

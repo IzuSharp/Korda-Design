@@ -16,11 +16,11 @@ Use the adapter's explicit Rust C exports as representation authority, a narrow 
 | Interoptopus `c6774879…` | Real C# inventory mapping, Task model and source-tree structure | Viable high-level alternative; its generic surface alone is not evidence of D04/D06 conformance |
 | Diplomat `f8259ad0…` | Real .NET backend, ownership comments, callback disabled code, raw templates | Important current alternative, but callback and cross-thread disposal profile does not satisfy NativeWeave unchanged |
 
-Full SHAs/paths/ranges are in [source-inspection](../../../../verification/interop-completion/source-inspection.json). Branch snapshots for alternatives are research snapshots, not release dependencies. Names or README claims are not treated as proof that a backend is absent or safe.
+Full SHAs/paths/ranges are in source-inspection. Branch snapshots for alternatives are research snapshots, not release dependencies. Names or README claims are not treated as proof that a backend is absent or safe.
 
 ## Actual generator experiment
 
-The pinned csbindgen1.9.8 crate was fetched as exact Git blobs, checked against GitHub identities and built using Rust1.100 with a saved Cargo.lock. The same `nw_ic_validate_extent(u64,u64,u64)->u32` export is consumed through csbindgen-generated DllImport and framework LibraryImport. Sixty boundary combinations agree in normal mode and sixty in an actually published Linux Native AOT executable. Source, generated code, dependency lock, raw build/run output and native/AOT binary hashes are preserved under `verification/interop-completion/binding-linux`.
+The pinned csbindgen1.9.8 crate was fetched as exact Git blobs, checked against GitHub identities and built using Rust1.100 with a saved Cargo.lock. The same `nw_ic_validate_extent(u64,u64,u64)->u32` export is consumed through csbindgen-generated DllImport and framework LibraryImport. Sixty boundary combinations agree in normal mode and sixty in an actually published Linux Native AOT executable. Source, generated code, dependency lock, raw build/run output and native/AOT binary hashes are preserved under the historical research fixture.
 
 A parser-only Rust input deliberately contains an unsupported tuple parameter. csbindgen exits successfully, prints an unsupported-type message and omits that function from generated C#. The probe observes the absence and records that the required-export inventory must reject it. A tool's successful process exit is therefore insufficient as the binding build gate. This experiment is intentionally narrow; it does not execute every backend, arbitrary upstream type shape or a product wrapper generator.
 

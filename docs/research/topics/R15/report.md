@@ -10,7 +10,7 @@ The distinction matters: missing registration drain does not automatically imply
 
 ## New mailbox model
 
-`experiments/interop-completion/mailbox_model.py` models one worker and one extra wake with a single pre-reserved completion slot. The negative coordinator reads dirty, then clears scheduled in a later step; a notification between those steps leaves dirty work with no scheduled worker. The candidate rechecks dirty and clears scheduled atomically. Breadth-first exploration records state/transition counts, the exact negative trace and at least one completed two-notification state. Actual output is `verification/interop-completion/mailbox-model.json`.
+The historical research fixture models one worker and one extra wake with a single pre-reserved completion slot. The negative coordinator reads dirty, then clears scheduled in a later step; a notification between those steps leaves dirty work with no scheduled worker. The candidate rechecks dirty and clears scheduled atomically. Breadth-first exploration records state/transition counts, the exact negative trace and at least one completed two-notification state.
 
 Each transition is atomic and sequentially consistent; the model does not include the CLR, Rust atomics, OS scheduling, allocation failure or network I/O. It is a compact explanation and future implementation oracle, not a new global planning graph or product executor.
 

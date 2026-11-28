@@ -24,4 +24,4 @@ Migration generation consumes explicit model snapshots and yields SQL for review
 
 Exact compiled public signatures, XML and API-reference compatibility remain in Korda. This document specifies behavior and prospective additions; it is not proof of implementation or publication. Follow the [Plan handoff](https://github.com/IzuSharp/Plan/blob/task/DB-API-01-linux/ledger/evidence/batches/DB-API-01/handoff-linux.md), record actual checks and scoped non-author review, then merge normally and inspect merged-main and triggered release results.
 
-Run `python3 tools/verify_fluent_orm.py`. It validates this overlay and runs the unchanged DB-CPP-01 Design gate at `de1f4796dc199250b405ea99f2129d611f17b1f6`. The unchanged earlier history gate remains required. Old accepted hashes, evidence, the 21-contract registry and prior task claims are not rewritten. Stop after this authorized experience batch and its observed delivery.
+Current document checks use [the CI registry](../../eng/ci/README.md). Historical acceptance applies to its original revision; it is not replayed for ordinary document edits and does not establish product execution.

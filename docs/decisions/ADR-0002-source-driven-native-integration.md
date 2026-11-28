@@ -18,7 +18,7 @@ The user's clarified requirement is a C# Native AOT application surface backed b
 
 ## Evidence
 
-[R25 source study](../research/topics/R25/source-driven-seaquery.md), [R27 Server study](../research/topics/R27/source-driven-server.md), the [recovered Linux Native AOT experiment](../research/source-driven-evidence/README.md) and the new finite response-body admission model. Native binary reuse for a second entity is actually demonstrated within the prototype's bounds; it is not just a language-level conjecture. No complete production ORM, server bridge, Windows build or performance superiority is established.
+[R25 source study](../research/topics/R25/source-driven-seaquery.md), [R27 Server study](../research/topics/R27/source-driven-server.md), the recovered Linux Native AOT experiment and the new finite response-body admission model. Native binary reuse for a second entity is actually demonstrated within the prototype's bounds; it is not just a language-level conjecture. No complete production ORM, server bridge, Windows build or performance superiority is established.
 
 ## Alternatives and consequences
 

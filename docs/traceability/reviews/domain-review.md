@@ -158,14 +158,4 @@
 
 ### 复核图快照
 
-| 图 | SHA-256 |
-| --- | --- |
-| research-graph.json | `5aa0143bb1b386b0b05c0a004af23fc7336bf26b21daa8ad4264a7a376fedb2c` |
-| documentation-graph.json | `d7584042f2bee3544a234d48af1542f285ba9b21aab83807c562305b9ded4881` |
-| delivery-graph.json | `60e4cc3c1ded31280f13e7f25052fc7d7dfba228f88d09d70e17e807f6965d96` |
-
 本次关闭的是新会话定位启动输入的缺口，不是技术契约接受、实现授权或产品验收。
-
-
-
-

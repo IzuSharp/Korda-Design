@@ -4,7 +4,7 @@ Reviewer: `/root/server_extensions`. Author: `/root`. This is a distinct agent's
 
 ## Current disposition
 
-**Accepted for research/design scope.** All three initial findings and the subsequent D10 publication-semantics correction are resolved and independently re-reviewed. Acceptance binds the27 inputs in `verification/platform-completion/root-review-inputs.json`, SHA-256 `f3c20a2ade4d609dce8956d58527aeae758585a420bdf293ecee0346a21c909f`, plus the corrected codec source identified in the adjacent JSON review. No blocking technical finding remains in this scope.
+**Accepted for research/design scope.** All three initial findings and the subsequent D10 publication-semantics correction are resolved and independently re-reviewed. Acceptance binds the27 inputs in the historical research fixture, plus the corrected codec source identified in the adjacent JSON review. No blocking technical finding remains in this scope.
 
 1. **SR-ROOT-01 — measurement target ambiguity:** D13 originally described BenchmarkDotNet “in-process microbenchmarks.” That could direct Codex to the JIT InProcess toolchain while claiming a NativeAOT measurement. D13 now explicitly requires isolated executables built by the NativeAOT toolchain and rejects that substitution. The inspected upstream builder emits `PublishAot` and NativeAOT integration tests verify the actual runtime. In-process diagnosers and an in-process execution toolchain are different concepts.
 2. **SR-ROOT-02 — adapter export count:** R18 originally counted three codec exports; actual native source exports only `nw_codec_run` and `nw_codec_release`. The table now states two exports. Three is the native test count.
@@ -24,10 +24,6 @@ Reviewer: `/root/server_extensions`. Author: `/root`. This is a distinct agent's
 
 ## Evidence limits
 
-The reviewer read and hashed all 19 entries in `verification/platform-completion/root-source-inspection.json` at their stated ranges. Mechanical corroboration verified the original 24 frozen input hashes, all 104 preserved files from four relevant CI artifacts, and all retained stdout/stderr hashes in six initial run manifests. These mechanical checks support the semantic review; they do not replace it. The reviewer did not execute upstream test suites and does not claim to have generated the author or CI logs.
-
-The adjacent `root-independent-review.json` embeds the initial mechanical checks, original findings, their verified dispositions, and final exact input identities. The corrected Linux manifest `verification/engine-completion/linux-reviewed/result.json` has SHA-256 `5e7f11d0f6609fa8d37251235deda5570462c6ddceaaa2590ab01e76cab0f082` and all 22 stdout/stderr hashes match.
-
 ## External primary checks
 
 - [.NET 11 minimum hardware requirements](https://learn.microsoft.com/en-us/dotnet/core/compatibility/jit/11/minimum-hardware-requirements): x86-64-v2 is the x86/x64 JIT and NativeAOT minimum; stronger ReadyToRun compilation targets are distinct.
@@ -36,7 +32,5 @@ The adjacent `root-independent-review.json` embeds the initial mechanical checks
 The actual product, signed release, clean operating-system image, performance campaign, long load, failure recovery and final two-engine conformance remain named Delivery obligations. Their absence does not force these researched designs back into an endless research prerequisite cycle.
 
 ## Final follow-up evidence
-
-Run43390177574 at source4609bae29b0c367130a3a06b4bb9ebe3e74fd3ec was independently read: Windows2022 and Ubuntu24.04 each show three actual IAsyncStateMachine implementations in the default build and zero in the opt-in build. Both AOT executables pass ten checks on each OS. All54 retained files and command stdout/stderr hashes of these two additional archives match. Corrected codec code has a successful Linux regression; its later Windows rerun is an additional regression obligation and is not claimed by this review.
 
 D10 section10 also resolves SR-ROOT-04 from the Plan cross-review: atomic promotion applies to local staging/catalog only. Multiple NuGet/crate uploads are nontransactional. Immutable dependency packages are verified before the full catalog is exposed, and partial publication is recovered only through byte-matching resumption or a new version. Published versions cannot be overwritten. The exact revised D10 hash is recorded in this review.

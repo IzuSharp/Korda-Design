@@ -4,7 +4,7 @@ Status: **source-inspected; finite two-platform Native AOT experiment executed; 
 
 ## 1. Exact evidence and actual result
 
-Executed Design commit **28f6cf7e6e4e80b9f32a92ad587a528d82911bd0**, Actions **43373306474**. Windows2022 x64 and Ubuntu24.04 x64 each passed ordinary .NET and actual Native AOT execution: **653 assertions, three groups and64 controlled gate/Dispose rounds per invocation**. The negative control was observed on both platforms; the candidate rejected post-close calls and retained existing calls. A managed exception after reference acquisition returned its lease in finally. Logs are in `verification/logical-admission/43373306474/`; source/native/AOT hashes and artifact ZIP identities are in `verification/logical-admission/primary-results.json`. This experiment rebuilds the unchanged native fixture for new managed scenarios; it does not rerun the old native test suites or rewrite migrated evidence.
+Executed Design commit **28f6cf7e6e4e80b9f32a92ad587a528d82911bd0**, Actions **43373306474**. Windows2022 x64 and Ubuntu24.04 x64 each passed ordinary .NET and actual Native AOT execution: **653 assertions, three groups and64 controlled gate/Dispose rounds per invocation**. The negative control was observed on both platforms; the candidate rejected post-close calls and retained existing calls. A managed exception after reference acquisition returned its lease in finally. json`. This experiment rebuilds the unchanged native fixture for new managed scenarios; it does not rerun the old native test suites or rewrite migrated evidence.
 
 Source reviewed: dotnet/runtime **deae2e32bf0e018e09d64597b7c59b62b73bb3ce**, `src/libraries/System.Private.CoreLib/src/System/Runtime/InteropServices/SafeHandle.cs`, actual inspected range130–265, blob **2d1f9313b485c57afab1f187e00a180df7fad3ba**. The complete265-line file was preserved and blob-verified. `DangerousAddRef` checks Closed; `InternalRelease` records Disposed separately and closes on final reference release. This proves the scope of SafeHandle's guarantee, not a defect in SafeHandle.
 
@@ -14,7 +14,7 @@ The negative control uses the original static LibraryImport/SafeHandle facade. A
 
 **LA-01 decision: retain a private SafeHandle plus a short logical admission gate.** The admitted call must check Open and acquire its reference atomically under one synchronization protocol. Then it leaves the gate before FFI. Dispose transitions Open→Closing under that gate and releases its owning reference outside. The admitted operation's finally releases exactly its reference, whether native work succeeds or the managed adapter throws. A non-inheritable public facade must not expose its owning SafeHandle or raw pointer as an ordinary bypass route.
 
-The compiled implementation is `experiments/logical-admission/Program.cs`, class GatedBuffer. Its exact research signatures are `ulong Sum(bool held = false, bool injectAfterLease = false)` and `void Dispose()`. The two Boolean arguments are fixture instrumentation, not proposed public API. The production generator emits the equivalent per-operation admission/reference/finally structure around each exact C ABI signature; it does not ship these test toggles.
+The compiled implementation is the historical research fixture, class GatedBuffer. Its exact research signatures are `ulong Sum(bool held = false, bool injectAfterLease = false)` and `void Dispose()`. The two Boolean arguments are fixture instrumentation, not proposed public API. The production generator emits the equivalent per-operation admission/reference/finally structure around each exact C ABI signature; it does not ship these test toggles.
 
 | Transition | Linearization point | Required result |
 |---|---|---|
@@ -61,7 +61,7 @@ Keep three separate resource counters where applicable: admitted requests/live s
 
 ## 6. Rust1.100 allocation, poisoning and safety boundary
 
-The stable channel was freshly observed during migration on2026-11-13UTC/2026-11-12Los_Angeles and still identified Rust1.100.0; exact manifest and observed CLI identities are preserved under `verification/native-slices/`. Existing R01's detailed stable/unstable experiments are reused, not rerun. New language/library features do not remove admission, mutation or retirement requirements.
+The stable channel was freshly observed during migration on2026-11-13UTC/2026-11-12Los_Angeles and still identified Rust1.100.0; exact manifest and observed CLI identities are preserved under the historical research fixture. Existing R01's detailed stable/unstable experiments are reused, not rerun. New language/library features do not remove admission, mutation or retirement requirements.
 
 Re-read Rust **0ef1bc386059596dada8fb65b50425aab2ea637a**, `library/std/src/sync/poison/mutex.rs`, lines1–110, blob **42c5fcf3e27c02adf3d2143e30b5c77d2bf05491**. Its documentation explicitly treats poisoning as advisory and warns unsafe code not to depend on it for soundness. NativeWeave's D08 Engine poison state is a semantic fail-closed policy, not a proof that a partially moved raw allocation remains valid. Use memory-safe owned state and guard-based access regardless of whether poison detection fires; never automatically recover an unknown invariant with into_inner merely to keep serving.
 

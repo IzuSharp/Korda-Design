@@ -2,7 +2,7 @@
 
 Status: catalog of research entry points; 2026-11-12; not a dependency list. **P0/P1/P2 are reading priorities and do not create artificial start dependencies on one another.** Each topic may proactively expand its sources, but must explain the specific problem that each added project addresses.
 
-The pinned SHAs and limited line ranges actually read in this round are recorded in [Interop evidence](interop/evidence.json), [domain sources](domains/sources.json), and [v11 supplementary checks](domains/v11-evidence.json). Official toolchain facts are in [toolchain](toolchain/evidence.json). The other paths/symbols in the tables below are entry points still to be located or investigated in depth, not completed coverage.
+The pinned SHAs and limited line ranges actually read in this round are recorded in [Interop evidence](interop/evidence.json), [domain sources](domains/sources.json), and v11 supplementary checks. Official toolchain facts are in [toolchain](toolchain/evidence.json). The other paths/symbols in the tables below are entry points still to be located or investigated in depth, not completed coverage.
 
 ## P0: Sources That Determine Fundamental Safety and Feasibility
 
@@ -61,7 +61,6 @@ The old launchbadge URL for SQLx resolved to transact-rs/sqlx in this round; ref
 Pin the full SHA; record specific files, symbols, and line ranges; cover the studied mechanism completely through public API→implementation→error→release→tests. Label the evidence as README/documentation only, directory located, retrieved but unread, limited source reading, or confirmed by execution. This catalog marks only work actually performed as read.
 
 Each new candidate requires its license, maintenance status, target support, and replacement cost to be added; popularity or modernity alone must not lead directly to adoption. Formal reuse requires reviewing the LICENSE and provenance at the exact version; GitHub's automatic license label is not a complete legal conclusion.
-
 
 ## Source-driven amendment / 2026-11-12
 

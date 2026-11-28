@@ -1,18 +1,17 @@
 # D14 — Rust Database Engine and precompiled application boundary
 
-Contract: **C-DB-001@0.4.0**. Status: design candidate; the registry records exact-content independent review and acceptance; product implementation/release gates remain in Delivery. Supersedes DB-D004/DB-D005/DB-D006's ordinary SeaORM model-build assumptions, not the historical source facts. Evidence: [R25](../research/topics/R25/source-driven-seaquery.md), [recovered prototype](../research/source-driven-evidence/README.md), existing R19–R22. Transaction safety remains [D15](transactions-and-pooling.md).
+Contract: **C-DB-001@0.4.0**. Status: design candidate; the registry records exact-content independent review and acceptance; product implementation/release gates remain in Delivery. Supersedes DB-D004/DB-D005/DB-D006's ordinary SeaORM model-build assumptions, not the historical source facts. Evidence: [R25](../research/topics/R25/source-driven-seaquery.md), recovered prototype, existing R19–R22. Transaction safety remains [D15](transactions-and-pooling.md).
 
 ## Public API refinement 0.4.0
 
 The exact public declarations and complete native operation inventory are now
 [Database/ORM API 0.4.0](../api/database.md), its
 [coverage matrix](../api/database-coverage.json), and
-[Database.cs](../../experiments/public-api/NativeWeave.Api.Design/Database.cs).
+[historical declaration catalog](../api/public-api.json).
 They replace earlier provisional signature spellings; the lifecycle, native-source
 findings and historical experiment identities below remain normative within that
 explicit scope. Native AOT fixture compilation is separate from product execution.
 Fresh exact-content review is required; prior accepted versions remain immutable.
-
 
 ## 1. Architecture and selection
 
@@ -58,22 +57,18 @@ Metadata hashes identify runtime table/column/projection declarations and cache 
 ### 4.1 db-wire/1 result and parameter transport
 
 The public API refinement fixes the scalar bytes, NULL/nullable bits, payload/profile
-IDs, parameter names and shape hashes in [API section9.1.2](../api/database.md#912-exact-db-wire-scalar-and-identity-encoding).
+IDs, parameter names and shape hashes in [API section9.1.2](https://github.com/IzuSharp/Korda-Design/blob/c62cdb8aee833b6ab1a03e29a3f59f81a1b483f9/docs/api/database.md#912-exact-db-wire-scalar-and-identity-encoding).
 Those rules specialize the retained container below; B01/B07 must generate and
 round-trip the same canonical bytes independently on both sides. They do not freeze
 a general query-operation IR: query operations remain the typed native builder calls.
-
 
 The following is a field serialization format, **not C struct memory layout**; integers are little-endian, with no implicit padding. B01 generates codecs for both sides, and D07 owns the outer bytes. The fixed header is 96 bytes: magic `NWDB`(4), version u16, payload_kind u16, header_bytes u32, flags u32, total_bytes u64, metadata_hash[32], record_count u32, descriptor_count u32, entity_id u32, query_id u32, projection_id u32, semantic_profile_id u32, descriptor_offset u64, payload_offset u64. All reserved flags are 0; unknown required versions are rejected. descriptor_offset must be 96 (8-byte aligned); the descriptor table immediately follows the header.
 
 Ordinary parameter/row-batch payloads use a row-major cell table. `cell_table_offset = descriptor_offset + 16*descriptor_count`, `cell_count = record_count*descriptor_count`, and the cell table occupies `24*cell_count` contiguous bytes; `payload_offset = cell_table_offset + 24*cell_count`. All these values are checked and 8-byte aligned. The header, descriptor table and cell table are each contiguous and mutually non-overlapping; cell data may appear only at or beyond the payload start, and total_bytes must not be less than payload_offset. A column descriptor is 16 bytes: column_or_parameter_id u32, logical_tag u16, flags u16, codec_id u32, reserved u32. Each cell is 24 bytes: logical_tag u16, flags u16, codec_id u32, absolute_data_offset u64, byte_length u64; with the NULL flag, offset/length must be 0. Fixed-width value lengths must match the codec exactly; UTF-8 is strictly validated, and variable payloads must not point into the header/descriptor/cell tables. cell_count=`record_count*descriptor_count`, table lengths, offset+length and alignment are all checked. Every nonempty cell-data range is non-overlapping; aliases into the header/descriptor/cell tables or another nonempty cell are rejected. Payloads may be tightly packed without natural alignment per value; codecs read bytes rather than dereference unaligned typed pointers. Row-batch column IDs/shape must match the generated projection. Static parameters use record_count=1; with no parameters, descriptor_count=0.
 
-
-
 This retained header is the versioned value/result transport refined by API section9.1.2, not a general query-operation protocol. Its metadata_hash meaning supersedes compiled-entity inventory semantics and requires explicit compatibility versioning. Native builders may use direct typed ABI methods instead. Reject unknown required versions/tags, oversized allocation, overlapping payload regions, malformed UTF-8 and profile mismatch before submission. B09 compares representations without reimplementing SQL semantics.
 
 ## 5. Type semantics and Rust database codecs
-
 
 C# codecs convert only between CLR values and db-wire values; Rust metadata/drivers determine the interpretation of database SQL types, parameter types and rows→explicit result projections. Corresponding mismatches fail before sending or on the first result-shape validation; there is no fallback to `object[]`, reflection setters or automatic string conversion.
 
@@ -118,15 +113,11 @@ Ordinary cancellation is a request rather than an early Task.Canceled result; th
 
 SessionExecutor retains the connection until the stream and transaction actually end; reuse requires explicit absence of unconsumed results/in-flight cancellation, a terminated transaction and restored session state. SQLx's return-to-pool ping may flush pending rollback; known deferred cleanup differs from unknown protocol damage. Unknown damage is removed through public PoolConnection::close/close_on_drop; close_on_drop only schedules the action, and cleanup completion still requires tracking. `detach` releases the pool permit and must not conceal connections still being cleaned up or exceed the total budget. See D15 for complete states.
 
-
-
 ## 9. Migration, precompiled packages and compatibility
 
 The Engine manifest binds ABI, capability/codec profile, RID, toolchain, locked dependencies and native asset hash. Application metadata, query shape and migration history are separately versioned; see D10. Ordinary entity changes require at most static C# metadata/DTO regeneration, never default Cargo. Registry crates and source commits retain separate provenance until checked.
 
 Migrations are explicit Rust administrative operations, not speculative startup schema-sync. Immutable ID/content hash/provider/from-to version/transaction mode enter the ledger. PostgreSQL advisory locking or SQLite explicit writer/deployment admission serializes migration owners. Transactional DDL and ledger commit together; nontransactional DDL uses staged resumable checks. Same ID/different hash, missing migration, inadequate permission and incompatible schema fail explicitly. Destructive down-migration is not the production default.
-
-
 
 An atomic SQLite migration batch must use SQLx's public `Connection::begin_with("BEGIN IMMEDIATE")` to create a tracked `Transaction`, then call `Migrator::run(&mut *tx)`. First reject unsupported nontransactional entries using `migrator.iter().any(|m| m.no_tx)`, then admit the operation and acquire the writer lock. On success, only `tx.commit().await` ends the outer batch; on migration error, explicitly call `tx.rollback().await`, and isolate and close the dedicated connection if rollback fails. Do not first call `query("BEGIN IMMEDIATE").execute(&mut conn)`: raw SQL does not update SQLx transaction depth, so a subsequent BEGIN inside Migrator will fail.
 
@@ -147,7 +138,7 @@ match migrator.run(&mut *tx).await {
 }
 ```
 
-The independent reviewer actually ran three Linux Rust regressions: the raw BEGIN counterexample, tracked outer rollback/commit, and whole-batch rollback after the second migration fails. Schema and migration ledger are rolled back together, and inner savepoints do not commit the outer transaction. See [independent three-case regression](../../verification/interop-completion/db-review-migration/result.json). This proves the public call chain and finite atomicity, without replacing B08's cross-process contention, Windows, crash/restart and product AOT verification; the example error names and map_migration_failure illustrate domain mapping and are not released APIs. That mapping must preserve both the original migration error and rollback error and require isolation/closure of a connection that has not been safely cleaned up.
+The independent reviewer actually ran three Linux Rust regressions: the raw BEGIN counterexample, tracked outer rollback/commit, and whole-batch rollback after the second migration fails. Schema and migration ledger are rolled back together, and inner savepoints do not commit the outer transaction. See independent three-case regression. This proves the public call chain and finite atomicity, without replacing B08's cross-process contention, Windows, crash/restart and product AOT verification; the example error names and map_migration_failure illustrate domain mapping and are not released APIs. That mapping must preserve both the original migration error and rollback error and require isolation/closure of a connection that has not been safely cleaned up.
 
 ## 10. Source-driven failure gates and acceptance
 
@@ -225,8 +216,8 @@ all processes. Nontransactional maintenance is a separate explicit admin capabil
 
 ## 13. Research-design acceptance versus product verification
 
-[R19–R25](../research/topics/R25/report.md), the exact [source manifest](../../verification/database-completion/source-inspection.json),
-and the [finite native fixture](../../experiments/database-completion/README.md)
+[R19–R25](../research/topics/R25/report.md), the exact source manifest,
+and the finite native fixture
 resolve the ordinary no-per-entity-Cargo architecture and expose concrete error cases.
 Independent acceptance can approve these interfaces and constraints before Codex
 implements them. B01–B14/B22–B24 still must pass their actual C# AOT, Windows/Linux,
@@ -235,7 +226,6 @@ No successful native-only experiment is relabeled as completed product validatio
 
 ### Published research CI evidence
 
-The [database CI confirmation](../../verification/database-completion/ci-confirmation.json) binds source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80` and run `43388468172` to actual Windows/Linux metadata/SQLite results (5/5 on each) and Linux PostgreSQL 18.0 results (6/6). Archived inputs/logs were checked byte-for-byte; Windows CRLF inputs remain separately identified. This confirms the finite native research oracles and leaves the specified C# product, TLS, concurrency, long-load and independent design-review obligations distinct.
-
+The database CI confirmation binds source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80` and run `43388468172` to actual Windows/Linux metadata/SQLite results (5/5 on each) and Linux PostgreSQL 18.0 results (6/6). Archived inputs/logs were checked byte-for-byte; Windows CRLF inputs remain separately identified. This confirms the finite native research oracles and leaves the specified C# product, TLS, concurrency, long-load and independent design-review obligations distinct.
 
 The optional SeaORM profile can inspect actual provider shape through public `QueryResult::try_as_pg_row` / `try_as_sqlite_row`, then SQLx `Row::columns` / `Column::type_info`. These borrowed views remain inside the row owner lifetime; no private field or fork is needed. Validate provider type compatibility rather than assuming a declared nullable field proves the result column exists; SQLite NULL/dynamic affinity still follows the explicit codec/null policy. The missing-column negative control remains part of the research fixture.

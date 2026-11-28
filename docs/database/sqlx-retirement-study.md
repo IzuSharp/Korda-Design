@@ -34,7 +34,7 @@ The research crate retains SeaQuery 1.0.2, SQLx 0.9.0 and Tokio 1.54.1 and pins
 Rust 1.100.0. Its complete Cargo.lock starts from the migrated fixture's resolved
 closure; the root package is renamed, without resolving newer dependency versions.
 
-[source-inspection.json](../../experiments/database-retirement/source-inspection.json)
+source-inspection.json
 records the exact Git blob and SHA256, inspected ranges/symbols, package checksum
 and comparison result. All six selected Git files match the actual downloaded
 registry files byte-for-byte. Five downloaded `.crate` archives—sqlx, sqlx-core,
@@ -184,9 +184,6 @@ Equivalent benchmarks compare pure native calls and C# -> ABI calls through the
 through SeaORM simply because an older task assumed that choice.
 
 ## 6. New executable verification
-
-Entry point: [experiments/database-retirement](../../experiments/database-retirement/README.md).
-The execution summary and raw command/source evidence are retained there.
 
 | Test | Observable oracle | Scope limit |
 | --- | --- | --- |

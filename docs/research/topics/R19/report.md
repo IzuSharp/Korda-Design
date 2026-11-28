@@ -1,7 +1,6 @@
 # R19 — PostgreSQL native execution, recovery and managed comparison
 
-Research consolidation: 2026-11-12 (America/Los_Angeles); author `/root/database_research`. Baselines Design `ba21ecb5c2299b303584b120f2e6bd1c6d74783a`, Plan `5b346ebb5acdb387077d0faae16b00bbc77cb299`. **Independent acceptance review pending; no product implementation or performance acceptance claimed.** Current evidence and explicit stage obligations are in [evidence.json](evidence.json), [coverage.json](coverage.json), and [completion record](../../../../verification/database-completion/task-status.json).
-
+Research consolidation: 2026-11-12 (America/Los_Angeles); author `/root/database_research`. Baselines Design `ba21ecb5c2299b303584b120f2e6bd1c6d74783a`, Plan `5b346ebb5acdb387077d0faae16b00bbc77cb299`. **Independent acceptance review pending; no product implementation or performance acceptance claimed.** Current evidence and explicit stage obligations are in evidence.json, coverage.json, and completion record.
 
 ## Current conclusion
 
@@ -11,7 +10,7 @@ C# supplies typed API, static metadata/DTO mapping and business code. An ordinar
 
 ## Source to behavior
 
-The additional fixed-source inspection is in [the ten-file source manifest](../../../../verification/database-completion/source-inspection.json). SQLx PG `run` checks the parameter count with `u16::try_from`, prepares/binds native arguments, sends Execute with `limit: 0`, closes the unnamed portal and waits through ReadyForQuery. Its connection tracks pending ReadyForQuery messages and updates server transaction status. Dropping a row stream stops application consumption; it does not itself prove that unread protocol bytes or server work vanished. Native cleanup must finish protocol synchronization or discard the connection before reuse.
+The additional fixed-source inspection is in the ten-file source manifest. SQLx PG `run` checks the parameter count with `u16::try_from`, prepares/binds native arguments, sends Execute with `limit: 0`, closes the unnamed portal and waits through ReadyForQuery. Its connection tracks pending ReadyForQuery messages and updates server transaction status. Dropping a row stream stops application consumption; it does not itself prove that unread protocol bytes or server work vanished. Native cleanup must finish protocol synchronization or discard the connection before reuse.
 
 `limit: 0` means the provider asks the server to execute the complete query. A bounded NativeWeave row batch is not a PostgreSQL portal fetch-size limit. SQL/result limits, large-field policy and admission bounds remain explicit. Whole RSS and server working memory cannot be guaranteed by counting exported batches. SQLx owns protocol implementation; NativeWeave must not create a second PostgreSQL wire driver.
 
@@ -25,7 +24,7 @@ Unknown types, incompatible result shapes, oversized parameter sets, encoding er
 
 ## Concrete research and remaining implementation obligations
 
-The new [fixture](../../../../experiments/database-completion/README.md) contains real PG timeout→failed transaction→rollback recovery, partial-row-stream drain, decimal/UUID/time boundary, COMMIT-response-loss, concurrent conflict-snapshot and migration-lock probes. Actual runs and source hashes are recorded separately in `verification/database-completion`; an ignored PG test is not a run. Prior Npgsql source findings remain comparative, not SQLx execution evidence.
+The new fixture contains real PG timeout→failed transaction→rollback recovery, partial-row-stream drain, decimal/UUID/time boundary, COMMIT-response-loss, concurrent conflict-snapshot and migration-lock probes. Actual runs and source hashes are recorded separately in the historical research fixture; an ignored PG test is not a run. Prior Npgsql source findings remain comparative, not SQLx execution evidence.
 
 B02 implements this native provider contract, TLS validation and actual Windows/Linux C# AOT consumption. B05 implements outcome/cleanup state and B06 the bounded output policy. B23 supplies like-for-like measured Npgsql/SQLx/native-versus-FFI workloads; this research does not claim Rust is faster. These product obligations do not reopen the fixed Rust ownership decision.
 
@@ -53,4 +52,4 @@ The following original source observations are retained with their original read
 
 ## CI confirmation at the published fixture commit
 
-GitHub run `43388468172`, source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, independently executed the same five metadata/SQLite cases on Windows and Linux and all six PostgreSQL cases on Linux PostgreSQL 18.0. The author read raw suite logs and verified every archived file, input snapshot and stream hash; the [confirmation](../../../../verification/database-completion/ci-confirmation.json) records exact artifact identities, image digest and CRLF/LF differences. These are 11 unique native research cases with 16 CI executions, not new product/AOT tests or a second technical reviewer. This task claims only its mapped cases above.
+Historical CI corroborated the mapped native research cases on their stated platforms. This was not new product/AOT acceptance or an additional technical review.

@@ -47,7 +47,6 @@
   "new_orm_features_authorized": false,
   "public_database_release_authorized": false,
   "historical_scope_manifest": "docs/current-scope.json",
-  "historical_scope_gate": "tools/verify_db_scope.py",
   "current_documents": [
     "AGENTS.md",
     "CURRENT-PHASE.md",

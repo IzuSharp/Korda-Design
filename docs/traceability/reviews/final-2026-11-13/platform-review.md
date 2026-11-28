@@ -6,7 +6,7 @@ Reviewer: `/root/database_review`; observed 2026-11-13T13:02:45.522675+00:00. Au
 
 **Recommend research/design acceptance** for R01, R02, R13, R14, R17, R18 and D01, D10, D11, D13, D25, D26, D31, and the four exact 0.3.0 contracts below. No unresolved blocking finding remains in this scope. Delivery stays `planned_candidate` with no product implementation authorization.
 
-The starting remote checkpoints are Design `5bb128424259f3d9cf594b4e50d7688ad5b6541e` and Plan `7359060f88f94591b0dc41178e35701eefc8eb6d`. The decision covers the recovered working bytes and author corrections identified individually in [platform-review.json](platform-review.json), not an uncommitted future source or mutable unspecified HEAD. Root performs final acceptance/commit propagation.
+The starting remote checkpoints are Design `5bb128424259f3d9cf594b4e50d7688ad5b6541e` and Plan `7359060f88f94591b0dc41178e35701eefc8eb6d`. The decision covers the recovered working bytes and author corrections identified individually in platform-review.json, not an uncommitted future source or mutable unspecified HEAD. Root performs final acceptance/commit propagation.
 
 ## Per-task disposition
 
@@ -48,13 +48,6 @@ Author corrected that one current task-reference field to A14/A15/A16; report/De
 
 ## Contract bytes
 
-| Contract | Version | Specification | SHA-256 |
-| --- | --- | --- | --- |
-| C-PLATFORM-001 | 0.3.0 | `docs/platforms/support-and-aot.md` | `e84e0b449c90340f396505d61504d41a7a3305fb6a02f0e3d7b540aef2adc470` |
-| C-BUILD-001 | 0.3.0 | `docs/platforms/build-package-release.md` | `06313b143b922d62a9b73ee4af2f1bc66287ef0085cb4d7ad4d82e4ef838efb0` |
-| C-ENGINE-001 | 0.3.0 | `docs/extension/engine-integration.md` | `2668b398c0812bbb2c5d4f1affb4a308247abfd2940949512ed74107328d22d4` |
-| C-PERF-001 | 0.3.0 | `docs/performance/methodology.md` | `61014a12b683c74b7a7f66894357b878cfe7293a4c5e1c75f1d5d97f31bac1e0` |
-
 These recommendations accept the technical rules and future test obligations. They do not assert that a production package, pristine consumer, release signature, complete Rust/C# product implementation or long-running load test exists.
 
 ## NuGet and release semantics
@@ -80,7 +73,7 @@ For the platform/codec run set, 12 saved manifests bind **208 stdout/stderr file
 
 The corrected Runtime Async runs at CI `43390177574` source `4609bae29b0c367130a3a06b4bb9ebe3e74fd3ec` use isolated projects. Windows and Linux default assemblies contain three IAsyncStateMachine implementations; opt-in assemblies contain none, and each actual AOT executable passes ten checks. The 49,152-byte escaping-union versus zero tagged-struct observation is confined to that fixture and excludes preallocated arrays. Neither observation is a product performance result.
 
-The codec CI `43388468147` source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80` runs three native tests, sixteen ordinary NuGet consumer checks and seventeen actual AOT checks on each OS. Those artifacts precede the managed-wrapper cleanup correction. `verification/engine-completion/linux-reviewed/result.json` (`5e7f11d0f6609fa8d37251235deda5570462c6ddceaaa2590ab01e76cab0f082`) is the corrected Linux regression; Windows post-fix execution and deterministic failure injection are not asserted. A17 now owns the exact two-platform product test. The code guard was inspected: after native success, failed `new Owner` releases the raw owner, while a successful wrapper owns the sole release path; its constructor has no throwing work after SetHandle.
+The codec CI `43388468147` source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80` runs three native tests, sixteen ordinary NuGet consumer checks and seventeen actual AOT checks on each OS. Those artifacts precede the managed-wrapper cleanup correction. the historical research fixture is the corrected Linux regression; Windows post-fix execution and deterministic failure injection are not asserted. A17 now owns the exact two-platform product test. The code guard was inspected: after native success, failed `new Owner` releases the raw owner, while a successful wrapper owns the sole release path; its constructor has no throwing work after SetHandle.
 
 The R02 restrictions fixture uses source-generated static JSON, explicit closed generic instantiations and reflection fallback rejection. CI `43388468172` saved logs show four normal and six Native AOT restrictions checks on each OS. The main native-thread callback fixture reports 10,528 normal/10,529 AOT assertions and 32 controlled rounds. Linux-only invalid char/bool UCO child processes fail with InvalidProgramException before the callback-body marker. The latter is a distinct negative, not a Windows result or proof about every invalid signature.
 

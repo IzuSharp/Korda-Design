@@ -10,7 +10,7 @@ No full IQueryable provider, runtime expression compilation, Reflection.Emit, dy
 
 ## 2. What is generated and what is not
 
-The current [DB-Exec-02 target](../database/query-semantics.md#current-execution-path-target-db-exec-02)
+The current [DB-Exec-02 target](../database/query-semantics.md)
 selects one validated result layout and direct typed row access, using the actual
 Dapper.AOT benchmark-generated command factory/reader as the comparison input.
 Candidate B introduced the validated layout; the current

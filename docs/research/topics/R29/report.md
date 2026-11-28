@@ -1,6 +1,6 @@
 # R29 — Byte Budgets, Backpressure, Cancellation, and Graceful Shutdown
 
-Historical research began on 2026-11-12, with supplementary evidence through 2026-11-13. See [evidence.json](evidence.json) for the current task packet and pinned input hashes. The finite Python model, actual Bytes/Tokio/Body/permit Windows/Linux experiments, and added native protocol/network/TLS probes each have actual records; the complete product bridge and long workloads have not been implemented. Research design awaits independent review. The design is recorded in [D18](../../../server/hosting-and-streaming.md); Q16 is recommended for closure as design-resolved after independent review.
+Historical research began on 2026-11-12, with supplementary evidence through 2026-11-13. See the research conclusions and limits in this report. The finite Python model, actual Bytes/Tokio/Body/permit Windows/Linux experiments, and added native protocol/network/TLS probes each have actual records; the complete product bridge and long workloads have not been implemented. Research design awaits independent review. The design is recorded in [D18](https://github.com/IzuSharp/Korda-Design/blob/c62cdb8aee833b6ab1a03e29a3f59f81a1b483f9/docs/server/hosting-and-streaming.md); Q16 is recommended for closure as design-resolved after independent review.
 
 ## 1. Guarantees to Establish
 
@@ -17,7 +17,7 @@ Non-goals: proving arbitrary real scheduling through a finite model; equating ca
 | Kestrel11 `TransportManager.cs`119–193 | unbind/accept-loop exit→close→abort fallback→dispose | Listener, handler, native callback, and buffer have different endpoints |
 | Hyper1.12 HTTP1 conn125–149 | Graceful shutdown requires continued polling | A total drain deadline and completion observation are required |
 
-SHAs/URLs/blobs are all in evidence; only these ranges were read in this round. Kestrel HTTP2/3, kernel sockets, TLS, and actual allocators were not fully researched; see [coverage](coverage.json). Pinned licenses were identified as MIT; no upstream implementation was copied.
+SHAs/URLs/blobs are all in evidence; only these ranges were read in this round. Kestrel HTTP2/3, kernel sockets, TLS, and actual allocators were not fully researched; see coverage. Pinned licenses were identified as MIT; no upstream implementation was copied.
 
 ## 3. Selected Resource Algorithm
 
@@ -31,9 +31,7 @@ Pull provides backpressure: consumers request only the maximum bytes for which c
 
 ## 4. Actual Finite-Model Results
 
-[credit_model.py](credit_model.py) is an original, independently runnable logical model from this round. It has three producers of sizes 1/2/2, global credit 3, queue capacity 1, and one consumer, with waiting/reserved/materialized/queued/consuming/done states; canceling in-flight work only records intent, and only consumer release returns credit.
-
-Reproduction command: `python docs/research/topics/R29/credit_model.py > docs/research/topics/R29/experiment-result.json`, exit 0, empty stderr. Environment: Python3.12.14, Linux6.18.57 x64/glibc2.41. To fully record D12 requirements, the final result was rerun through an instrumented wrapper; actual argv, UTC start/end times, and raw-stream hashes are in [run-manifest.json](run-manifest.json), without fabricating the first run's timing. Script and stdout SHA256 values are in evidence's run_manifest; the [raw results](experiment-result.json) retain complete versions and limitations.
+credit_model.py is an original, independently runnable logical model from this round. It has three producers of sizes 1/2/2, global credit 3, queue capacity 1, and one consumer, with waiting/reserved/materialized/queued/consuming/done states; canceling in-flight work only records intent, and only consumer release returns credit.
 
 Actual enumeration found 282 reachable states, 895 transitions, and 8 terminal states. Every state satisfies `allocated <= reserved <= 3`, queue<=1, and consumer<=1; canceling an item being consumed does not lose its credit. Every state has some path to completion. The counterexample also shows that with capacity1 and chunk4, one queued item plus 3 waiting producers with materialized payloads retain 16 units, although capacity×chunk is only 4.
 
@@ -60,7 +58,6 @@ Every credit lease/canceled waiter has metadata costs that should be reserved or
 
 Cross-Review: R12 checks pins/owners and byte credit; R07/R08 check retirement; R26/R27 verify transport-completion semantics; database R21 checks Unknown. Product implementation status remains not-run; executed research probes retain their actual scope. Design choices need not await every product test to be established.
 
-
 ## Current completion and architecture correction (2026-11-12)
 
 The latest user mission requires a Rust Server engine. Kestrel is solely the comparator.
@@ -73,7 +70,7 @@ architecture decisions, while their scoped source/evidence identities remain his
 
 D18 now defines the native Handler/Body bridge and retirement protocol; D19 binds
 Tonic/rmcp/rustls to that same host. New actual protocol/network/TLS evidence is in
-`verification/server-completion/`, with exact commands/source hashes and retained prior
+the historical research fixture, with exact commands/source hashes and retained prior
 attempts. Native HTTP1/HTTP2 loopback and bounded TLS tests are real executions, but
 not a C# Server product, equivalent-load benchmark or production soak. The existing
 Body/Bytes/permit and finite credit models are reused without inflating their coverage.
@@ -83,14 +80,13 @@ B16/B17/B20/B22/B23 implementation, complete cross-language transport and long-l
 acceptance remain explicit obligations. Independent review and graph integration
 must bind this exact revised content before acceptance.
 
-
 ### Verified Windows/Linux research CI
 
 CI run [43388468172](https://github.com/IzuSharp/NativeWeave-Design/actions/runs/43388468172)
 tested source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`. Protocol13/13 and
 Kestrel Native AOT5/5 passed on both Windows2022 and Ubuntu24.04. Their actual
 run manifests, stdout/stderr and source snapshots are retained under
-`verification/completion-ci/43388468172/`; author checks of each raw log/input hash and
+the historical research fixture; author checks of each raw log/input hash and
 exact Windows LF-to-CRLF conversion are recorded in
-`verification/server-completion/ci-verification.json`. This extends platform coverage
+the historical research fixture. This extends platform coverage
 for these same distinct cases, not their product/FFI/soak scope or independent review.

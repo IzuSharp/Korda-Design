@@ -1,7 +1,7 @@
 # Transactions, connection pooling and uncertain-outcome recovery
 
 - Task: D15; contract: C-TX-001@0.4.0; author: database_design / source-lifecycle continuation; 2026-11-12.
-- Historical input packet: revision0.1.1, SHA-256 `cce4d00e3cc7983c2808cf7a5d47e4a08707885973c497ba5a929a78c5bd554c`, which matched the Plan graph at that time; see [database-completion](../../verification/database-completion/task-status.json) for the current revised inputs and hashes.
+- Historical input packet: revision0.1.1, which matched the Plan graph at that time; see database-completion for the current revised inputs and hashes.
 - Historical baseline: Design `1f7d89aa754647a6a530fa34a49acc4b0f5d9997`; Plan `da9e4a6337a5af0ec3d5e40a4695a2760d6ac5f5`.
 - Status: **0.4.0 design candidate; the registry records exact-content independent review and acceptance, while product implementation/release acceptance remains in Delivery**; acceptance is determined by the matching content hash and independent Review in the registry. Contract code examples remain design-draft and uncompiled; full production adapters and C# AOT verification are not complete. See section 12 for historical finite Rust/SQLite reclamation experiments and section 13 for this round's actual PostgreSQL response-loss, protocol-recovery and migration-lock experiments.
 - Inputs: [R19](../research/topics/R19/report.md), [R20](../research/topics/R20/report.md), [R21](../research/topics/R21/report.md); shares DataSource/DataSession naming with the [driver specification](drivers.md).
@@ -11,12 +11,11 @@
 The exact public declarations and complete native operation inventory are now
 [Database/ORM API 0.4.0](../api/database.md), its
 [coverage matrix](../api/database-coverage.json), and
-[Database.cs](../../experiments/public-api/NativeWeave.Api.Design/Database.cs).
+[historical declaration catalog](../api/public-api.json).
 They replace earlier provisional signature spellings; the lifecycle, native-source
 findings and historical experiment identities below remain normative within that
 explicit scope. Native AOT fixture compilation is separate from product execution.
 Fresh exact-content review is required; prior accepted versions remain immutable.
-
 
 > Old packets and Reviews provide historical provenance for the original versions only; they cannot accept this round's new content hashes.
 
@@ -180,7 +179,7 @@ Inject actual-database faults through a controlled proxy cutting the COMMIT-resp
 
 ## 12. Added finite SQLite reclamation and cancellation evidence
 
-[The R20/R21/R25 continuation study](sqlx-retirement-study.md) and [actual research fixture](../../experiments/database-retirement/README.md) use pinned SQLx0.9, SeaQuery1.0.2, Tokio1.54.1 and Rust1.100. Six local Linux tests were executed: reuse of the same physical connection after transaction Drop, early stream termination, acquire cancellation without losing permits, dropping a Future after COMMIT dispatch but before ack delivery, progress-handler state isolation, and pool closure waiting for leased owners. Inputs and raw logs for each success/failure are preserved separately, with Windows/CI recorded through their actual executions.
+[The R20/R21/R25 continuation study](sqlx-retirement-study.md) and actual research fixture use pinned SQLx0.9, SeaQuery1.0.2, Tokio1.54.1 and Rust1.100. Six local Linux tests were executed: reuse of the same physical connection after transaction Drop, early stream termination, acquire cancellation without losing permits, dropping a Future after COMMIT dispatch but before ack delivery, progress-handler state isolation, and pool closure waiting for leased owners. The outcomes retain their original platform scope; raw execution material is omitted from this tree.
 
 The COMMIT test pauses in a controlled manner inside SQLite's native commit hook, drops the application's waiting Future, then releases the pause and ultimately observes committed rows. This counterexample supports TX-D002/TX-D003: stopping the wait cannot report RolledBack; unknown commit effects and local cleanup remain separately recorded. The fault-injection hook deliberately blocks for research only and must not be copied into production callbacks/finalizers.
 
@@ -226,8 +225,7 @@ match migrator.run(&mut *tx).await {
 }
 ```
 
-The independent reviewer actually ran three Linux Rust regressions: the raw BEGIN counterexample, tracked outer rollback/commit, and whole-batch rollback after the second migration fails. Schema and migration ledger are rolled back together, and inner savepoints do not commit the outer transaction. See [independent three-case regression](../../verification/interop-completion/db-review-migration/result.json). This proves the public call chain and finite atomicity, without replacing B08's cross-process contention, Windows, crash/restart and product AOT verification; the example error names and map_migration_failure illustrate domain mapping and are not released APIs. That mapping must preserve both the original migration error and rollback error and require isolation/closure of a connection that has not been safely cleaned up.
-
+The independent reviewer actually ran three Linux Rust regressions: the raw BEGIN counterexample, tracked outer rollback/commit, and whole-batch rollback after the second migration fails. Schema and migration ledger are rolled back together, and inner savepoints do not commit the outer transaction. See independent three-case regression. This proves the public call chain and finite atomicity, without replacing B08's cross-process contention, Windows, crash/restart and product AOT verification; the example error names and map_migration_failure illustrate domain mapping and are not released APIs. That mapping must preserve both the original migration error and rollback error and require isolation/closure of a connection that has not been safely cleaned up.
 
 These facts refine B05/B08/B22: distinct outcome/cleanup observables, zero advisory
 locks after successful retirement, no pool reentry after unknown admin state, and
@@ -235,4 +233,4 @@ explicit finite deadlines that never free still-used native owners.
 
 ### Published research CI evidence
 
-The [database CI confirmation](../../verification/database-completion/ci-confirmation.json) binds source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80` and run `43388468172` to actual Windows/Linux metadata/SQLite results (5/5 on each) and Linux PostgreSQL 18.0 results (6/6). Archived inputs/logs were checked byte-for-byte; Windows CRLF inputs remain separately identified. This confirms the finite native research oracles and leaves the specified C# product, TLS, concurrency, long-load and independent design-review obligations distinct.
+The database CI confirmation binds source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80` and run `43388468172` to actual Windows/Linux metadata/SQLite results (5/5 on each) and Linux PostgreSQL 18.0 results (6/6). Archived inputs/logs were checked byte-for-byte; Windows CRLF inputs remain separately identified. This confirms the finite native research oracles and leaves the specified C# product, TLS, concurrency, long-load and independent design-review obligations distinct.

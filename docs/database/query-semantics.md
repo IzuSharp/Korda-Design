@@ -1,42 +1,20 @@
-# Current execution-path target — DB-Exec-02
+# Current execution-path design
 
-The [implemented 17da execution path](execution-path-17da.md) is the current
-driver-to-Fluent review: it identifies actual public entries, reuse/rewrite/delete
-decisions, retained costs, fixed upstream/generated sources and contract tests.
-CursorPull, typed command completion and fixed-key Find are implemented in that
-source. Both independent provider packages completed their recorded
-correctness/AOT gates, and the [final local evidence](https://github.com/IzuSharp/Plan/blob/adcdc9172bf47a0df8fe5fcb8259357625526280/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-8/README.md)
-now records four complete serial 1,800-second cells with source/owner checks.
-Normal merges, main CI and public publication/consumption remain pending.
-The 35 diagnostic SQL text differences per provider, framework-only 0 B and
-remaining cost limits are explicit in that evidence; final measurement completion
-is not parity or optimality. The rejected 92b close-dispatch experiment does not
-replace the formal 17da path. Earlier implementation-pending tables below retain
-their historical checkpoint meaning.
+Korda's [implemented 17da execution path](execution-path-17da.md) records the
+CursorPull, typed command-completion and fixed-key Find architecture at source
+`17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa`. The public Fluent API, Native AOT,
+C++ libpq/sqlite3 execution and independent provider packages remain unchanged.
 
-## Current integrated candidate
+Plan's [final report](https://github.com/IzuSharp/Plan/blob/main/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-8/final-report.md)
+owns the earlier four-cell campaign, final delivery observations and limitations.
+Its SQL-description differences, remaining Dapper.AOT gaps and lack of proof of
+framework-only zero allocation remain explicit. Later retained/rejected short
+experiments are consolidated in [the execution parity decision](execution-parity-01.md).
+They do not authorize restarting cancelled long measurements.
 
-The fixed-key Find path and PostgreSQL commit-state proof below are implemented
-in public [`17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa`](https://github.com/IzuSharp/Korda/commit/17da07e391ba867bbf195baa2e9fdc0bdc0cc0aa),
-tree `bc9087d843d8d741d83d44f53d0b2c5af26dcffc`. The Find implementation's
-independent review and finite correctness results are recorded in
-[the Find review](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-7/find-path-review.md).
-The preceding public `cb233a7` passed both independent native gates but failed
-actual package export admission because the packer's extension inventory omitted
-the Find descriptor. The successor includes bit29 in that exact export audit;
-it does not relax the audit. Public package consumption and current-candidate
-performance evidence are tracked separately in Plan. Earlier statuses and
-measurements below are explicitly historical, not acceptance of this successor.
+## Fixed-key Find and pre-COMMIT state proof
 
-## Recovered continuation and selected fixed-key path
-
-The 2026-11-26 continuation starts from public
-[`47fe650dfed5d7bba1c4d74c4a127c5d08b66082`](https://github.com/IzuSharp/Korda/commit/47fe650dfed5d7bba1c4d74c4a127c5d08b66082).
-One-shot command completion is implemented there and existing CI passed. The
-earlier completion proposal and candidate-specific measurements below retain
-their original meaning. New final performance acceptance is still pending.
-
-For `FindAsync`, select a Source-owned immutable fixed-key shape compiled once
+For `FindAsync`, the implemented 17da path uses a Source-owned immutable fixed-key shape compiled once
 from the model's ordered primary keys, with the existing terminal3 SQL and
 Int64 LIMIT2. Reuse the C++ renderer, NativePlan parameter/projection validation,
 lazy CursorPull channel, TypedStream single-or-default consumption and exact
@@ -78,58 +56,12 @@ shapes. Neither check may relax the
 old Fluent node, parameter, byte or source-identity limits. The extra factory
 output is a scalar in the same cold call, not another record or hot FFI call.
 
-The isolated PostgreSQL commit-proof proposal is also selected for verification:
+The PostgreSQL pre-COMMIT proof permits this narrower fast path:
 an already confirmed, healthy, nonblocking, non-pipeline physical connection in
 PQTRANS_INTRANS, with no live statement and no savepoint, can supply the existing
 pre-COMMIT state proof without SELECT1. Failure/unknown state retains the prior
 probe/error path. Both post-COMMIT and safe-reuse confirmation obligations remain.
-Source inspection alone does not establish the performance of either candidate.
-
-The [continuation plan](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/execution-refactor/continuation-7/plan.md)
-owns implementation, exact package tests, source-bound local measurements and
-the four final serial1800-second runs. No benchmark is added to CI.
-
-## Prior selected target and evidence at its original checkpoint
-
-Status: **cursor pull and direct final close measured; one-shot command
-completion selected, with its implementation and final performance acceptance pending**. The owner resumed the complete database execution-path refactor on
-2026-11-26 (Asia/Shanghai), continuing [Korda #37](https://github.com/IzuSharp/Korda/pull/37),
-[Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and
-[Plan #34](https://github.com/IzuSharp/Plan/pull/34). This continuation starts from
-[ada28311a384ad149fdc3f9db3b14473aedf0061](https://github.com/IzuSharp/Korda/commit/ada28311a384ad149fdc3f9db3b14473aedf0061).
-The [actual cursor-path record](cursor-pull-execution.md) now binds public
-[`933d16bf673dff5310db37cc444ba5019842d81d`](https://github.com/IzuSharp/Korda/commit/933d16bf673dff5310db37cc444ba5019842d81d),
-including the accepted-cancellation correction, narrow request scheduling,
-deleted unused retirement bridge, buffered row scope and primary-error
-preservation. Its existing correctness/package CI passed. The current short
-measurements bind the earlier public `31693e3` packages; they are not performance
-credit for `933d16b` or an unbuilt successor. Final 1800-second credit remains
-**0/4**. Earlier `0f3816c` and `bc6ba1a` evidence retains its original identities,
-including the real cancellation failure at `bc6ba1a`.
-
-The [one-shot command target](command-completion-execution.md) extends this
-chain to Count/Any, nonreturning CRUD and transaction/savepoint controls. Current
-`933d16b` still uses generic operations for those calls. Ordinary single-case
-transaction tails and separate ABI counts select the new detached completion
-work; a row-query-only zero-generic result does not establish this path is done.
-
-The pre-refactor baseline remains
-[f0078da720e07031bc56464995af6791c41aaae8](https://github.com/IzuSharp/Korda/commit/f0078da720e07031bc56464995af6791c41aaae8).
-The earlier local candidate a27ff31 is publicly tree-identical to [c2df05ff01e90a92aa70884827735d7dfa1dbc3d](https://github.com/IzuSharp/Korda/commit/c2df05ff01e90a92aa70884827735d7dfa1dbc3d); its native
-producer source dc82792 is publicly tree-identical to [1f93c5addeae962fee692f5d2a533c596efaa16c](https://github.com/IzuSharp/Korda/commit/1f93c5addeae962fee692f5d2a533c596efaa16c).
-The intervening commits only fix a reference-consumer setup call and remove an
-unused managed encoder wrapper; they do not change native producer inputs.
-The [execution plan](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/execution-refactor/README.md)
-owns exact before/candidate inputs, source review, measurements, deletion inventory
-and completion gates. The earlier NWQC decision and final measurements below
-remain historical; they do not constrain this task to keeping its Host internals.
-
-Preserve developer Fluent usage, public validation/error/ownership behavior,
-Native AOT, C++ execution and independent PostgreSQL/SQLite packages. Host layout,
-command and parameter formats, ABI call granularity, batch production and managed
-reading may change. The target is the lowest measured latency, CPU and memory for
-the same SQL, typed parameters and complete business result. Source reuse must
-follow a compatible responsibility and lifetime boundary.
+The performance of these paths requires actual measurements.
 
 ## Target from driver to Fluent
 
@@ -500,25 +432,11 @@ basis. The source review and this target alone accept none of those outcomes.
 
 ---
 
-## Historical candidate decision — DB-Perf-01 at f0078da7
+## Historical complete-command candidate — DB-Perf-01
 
-The following describes the preceding candidate and its original stopping
-instruction. It is preserved for comparison; DB-Exec-02 above governs the newly
-authorized execution-path refactor.
-
-# Current C++ query decision — DB-Perf-01
-
-Status: implementation candidate and local correctness checkpoint for the resumed
-Linux x64 task, continued in [Korda #37](https://github.com/IzuSharp/Korda/pull/37),
-[Design #20](https://github.com/IzuSharp/Korda-Design/pull/20) and
-[Plan #34](https://github.com/IzuSharp/Plan/pull/34). Preserve the existing C# Fluent
-API and C++20/libpq/sqlite3 execution. This section governs the current work; the
-original D16 Rust/SeaQuery text below remains historical.
-[ADR-0006](../decisions/ADR-0006-database-cpp-native.md) already changed the native
-implementation language. This decision separates candidate behavior from remaining
-work; it does not claim final performance acceptance, merge or release. Plan owns
-exact candidate identities, executed checks, priorities and the
-[continuation record](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/handoff-linux.md).
+The following sections preserve the earlier complete-command design and its
+measured limitations. They explain the architecture that the later execution
+refactor inherited; they are not current task or merge instructions.
 
 ## Observed starting behavior
 
@@ -703,14 +621,13 @@ The NWQC frame, dense scalar origin ordinals, typed sidecar, limits, source chec
 and lifetime/error behavior are unchanged by this slice. Native code and callback
 timing are unchanged. Local differential cases cover 4096/4097-byte boundaries,
 private/shared command-byte parity, captured-owner lifetime and quota recovery;
-they do not measure the final comparison. This implementation follows the
-[published first SQLite observation](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/query-optimization/phase-sqlite-r0-034b40ea/README.md)
-and preceding selection. The [implementation checkpoint](https://github.com/IzuSharp/Plan/blob/task/DB-Perf-01-query-optimization/ledger/evidence/batches/DB-Perf-01/query-optimization/serializer-f0078da7/README.md)
-binds source, local correctness and ordinary CI; the [final comparison record](https://github.com/IzuSharp/Plan/blob/bfe4aa3f074789dfac046412eff37fe6ba58b0f7/ledger/evidence/batches/DB-Perf-01/query-optimization/final-f0078da7/README.md)
-owns measured outcomes. Across 18 phase processes, ordinary Fluent allocation
-remains approximately 25.31% above recovered on both providers. Lower allocation
-relative to the earliest baseline is a cumulative observation, not isolated proof
-of this slice. Short-load memory/GC and Dapper.AOT gaps remain. All four final local 1800-second cells are validated, as is the unchanged 16-app/926-file post-run freeze. Candidate allocation is 4.7813×/5.2268× Dapper.AOT on SQLite/PostgreSQL, throughput is 3.5762%/12.4863%, and p99 is 44.8×/8.6244×. The final full archive remains local-only after upload rejection; public Plan summaries do not claim to expose all final histograms or traces. Record these gaps and stop without merging, as instructed by the owner.
+they do not measure the final comparison. The original ordinary-Fluent comparison still allocated about 25.31% more than
+its recovered baseline. In that historical candidate, allocation was
+4.7813×/5.2268× Dapper.AOT on SQLite/PostgreSQL, throughput was
+3.5762%/12.4863%, and p99 was 44.8×/8.6244×. These cumulative observations do not
+isolate this serializer's causal effect or establish parity. The earlier
+comparison and its limits remain historical; later decisions use their own inputs.
+
 Static entity/DTO metadata is generated. Arbitrary build-time Fluent SQL and
 connection-level physical statement reuse remain unimplemented; neither follows
 from the complete-command contract.
@@ -755,20 +672,12 @@ The SqlSugar inspection observed blobs
 `e5e42a4c9419415b03ab9c9ecd9950245a2af7dc`, respectively. Moving branch links
 above are navigation, not immutable reproduction identities.
 
-| Priority | Work and completion criterion |
-| --- | --- |
-| P0 | Establish identical-SQL/parameter/result/connection local comparisons for ordinary Fluent, warmed `.Prepare()` and the same Host's parameterized SQL. Split construction, first row, remaining read and release. |
-| P1 candidate | Complete-command composition/replay, early SQL and parameter-metadata compilation, and scalar-origin ownership are implemented for review; retain native/managed negative, lifetime and real-provider evidence before acceptance. |
-| P1 candidate / gap | Cache locking is narrowed to internal LRU bookkeeping with local concurrent checks. Physical statement reuse remains a gap requiring hit, invalidation, cancellation and cleanup evidence. |
-| P2 | Optimize batch conversion and mapper temporaries where measured costs remain; preserve bounded memory and complete-result correctness. |
-| P2 | Consider optional generated fixed-query templates after the command contract is stable; ordinary Fluent remains fully supported without them. |
-| Acceptance | Retest both real providers and actual Native AOT consumers, then run final candidate and Dapper.AOT local 30-minute mixed segments per provider; record remaining gaps and stopping reasons in Plan. |
-
-Normal CI uses the existing module planner and independent provider package jobs.
-All performance experiments and long segments run locally on Linux. No benchmark
-workflow, CI job or automatic PR/push benchmark action is added. The
-[current methodology](../performance/methodology.md) defines measurement and
-attribution. Documentation checks do not establish product execution.
+This historical sequence prioritized equivalent complete-result comparisons,
+complete-command compilation, bounded cache locking and measured conversion costs.
+Optional generated fixed templates and physical statement caching remained separate
+proposals. Later fresh-metadata decisions supersede a generic caching suggestion.
+Product correctness and package checks belong to Korda; comparisons run locally
+under [the measurement methodology](../performance/methodology.md).
 
 ## Historical D16 research contract
 
@@ -780,19 +689,18 @@ Fluent contract. Historical accepted hashes refer to their unchanged snapshots.
 
 # D16 — Native query semantics and typed Fluent contract
 
-Contract: **C-QUERY-001@0.4.0**; design candidate. The registry records exact-content independent review and acceptance; product implementation/release gates remain in Delivery. Evidence: [R25](../research/topics/R25/source-driven-seaquery.md), [recovered AOT probe](../research/source-driven-evidence/README.md), existing R22/R24/R25 reports. This replaces full declaration-only LINQ capture, generic C# predicate compensation and required schema-specific SeaORM generation as the ordinary route. Historical SQL counterexamples remain valid; no arbitrary IQueryable compatibility is promised.
+Contract: **C-QUERY-001@0.4.0**; design candidate. The registry records exact-content independent review and acceptance; product implementation/release gates remain in Delivery. Evidence: [R25](../research/topics/R25/source-driven-seaquery.md), recovered AOT probe, existing R22/R24/R25 reports. This replaces full declaration-only LINQ capture, generic C# predicate compensation and required schema-specific SeaORM generation as the ordinary route. Historical SQL counterexamples remain valid; no arbitrary IQueryable compatibility is promised.
 
 ## Public API refinement 0.4.0
 
 The exact public declarations and complete native operation inventory are now
 [Database/ORM API 0.4.0](../api/database.md), its
 [coverage matrix](../api/database-coverage.json), and
-[Database.cs](../../experiments/public-api/NativeWeave.Api.Design/Database.cs).
+[historical declaration catalog](../api/public-api.json).
 They replace earlier provisional signature spellings; the lifecycle, native-source
 findings and historical experiment identities below remain normative within that
 explicit scope. Native AOT fixture compilation is separate from product execution.
 Fresh exact-content review is required; prior accepted versions remain immutable.
-
 
 ## 1. Semantic owner and scope
 
@@ -912,4 +820,4 @@ transaction Unknown remains unchanged.
 
 ### Published research CI evidence
 
-The [database CI confirmation](../../verification/database-completion/ci-confirmation.json) binds source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80` and run `43388468172` to actual Windows/Linux metadata/SQLite results (5/5 on each) and Linux PostgreSQL 18.0 results (6/6). Archived inputs/logs were checked byte-for-byte; Windows CRLF inputs remain separately identified. This confirms the finite native research oracles and leaves the specified C# product, TLS, concurrency, long-load and independent design-review obligations distinct.
+The database CI confirmation binds source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80` and run `43388468172` to actual Windows/Linux metadata/SQLite results (5/5 on each) and Linux PostgreSQL 18.0 results (6/6). Archived inputs/logs were checked byte-for-byte; Windows CRLF inputs remain separately identified. This confirms the finite native research oracles and leaves the specified C# product, TLS, concurrency, long-load and independent design-review obligations distinct.

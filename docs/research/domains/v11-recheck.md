@@ -35,7 +35,6 @@ This result cannot be extended to claim that Kestrel v10/v11 are identical overa
 
 ## 3. Evidence and Unfinished Work
 
-Machine-readable records are in [v11-evidence.json](v11-evidence.json). This round adds two pinned versions and reads of three specific files; the historical research remains the original 7 projects / 20 files or excerpts. Combined counts should distinguish "distinct paths" from "reads by version."
+Machine-readable records are in v11-evidence.json. This round adds two pinned versions and reads of three specific files; the historical research remains the original 7 projects / 20 files or excerpts. Combined counts should distinguish "distinct paths" from "reads by version."
 
 The next step should use the verified .NET 11 toolchain for minimal Native AOT publication of provider/ORM/server examples and actual execution on Windows/Linux. Guards and experimental annotations in source code only help identify risks; they cannot replace that execution evidence.
-

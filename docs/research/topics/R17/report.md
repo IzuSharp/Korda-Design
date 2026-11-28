@@ -14,7 +14,7 @@ At dotnet/diagnostics `dde6f56c8701d40b93b191e2c840e26f535c09d5`, CounterMonitor
 
 ## Executed counterexample
 
-[omission.py](../../../../experiments/performance-completion/omission.py) is a deterministic finite accounting model: 100 arrivals scheduled one synthetic millisecond apart, first service takes100ms and the remaining99 take1ms each. Service-time p99 is1ms; scheduled-arrival p99 is100ms. An expected-interval fill yields199 observations with p99=99ms. The log explicitly labels these model quantities. This catches a materially wrong latency reporting method without pretending to have implemented the final server/load harness.
+omission.py is a deterministic finite accounting model: 100 arrivals scheduled one synthetic millisecond apart, first service takes100ms and the remaining99 take1ms each. Service-time p99 is1ms; scheduled-arrival p99 is100ms. An expected-interval fill yields199 observations with p99=99ms. The log explicitly labels these model quantities. This catches a materially wrong latency reporting method without pretending to have implemented the final server/load harness.
 
 The C#15 union experiment separately measures a narrow allocation fact; it is not reused as an end-to-end performance claim. Native Engine functional probes, CI duration and test throughput are not benchmark cells. No fabricated throughput advantage or universal percentage regression threshold is introduced.
 

@@ -87,7 +87,6 @@ A17/A18 must exercise two genuinely different real engines, not two wrappers aro
 
 Production acceptance requires real Windows/Linux AOT consumer execution, compatible old/new binaries, wrong RID/ABI/feature negatives, overflow and malformed descriptor fuzzing, callback/close races, native sanitizers/model tools as applicable, long load/failure recovery and resource accounting. The recovered Linux SQLite example establishes a bounded database slice. R18 adds the real synchronous miniz_oxide codec with independent NuGet ordinary/AOT consumers, and R27–R29 add real asynchronous native HTTP/body/HTTP2/TLS evidence. These are heterogeneous integration evidence, not completed A17/A18/B17 products. An independent review must check source fidelity and whether added adaptation is smaller and safer than the avoided reimplementation.
 
-
 ## Rust 1.100 simplification boundaries
 
 Use std::mem::DropGuard instead of duplicate local synchronous rollback guard types when equivalent, with non-panicking/non-blocking actions. It does not retire callbacks or await I/O. Allocator/Vec/Box APIs can retain a per-resource owner; all allocator operations and allocator Drop must not unwind. Preserve the original allocator and layout through raw transfers and native destruction. Outer custom Vec allocation does not account for nested upstream allocations or whole RSS.
@@ -133,7 +132,6 @@ advertising interruptibility. Async close admits no new work, requests cancellat
 native and managed retirement and only then releases callback roots. Timeout reports incomplete
 cleanup while preserving safety; it does not force-free live owners. All diagnostics and benchmarks
 state their observation scope and count copies, retained allocations and adaptation code honestly.
-
 
 ## 14. Public API and Engine author contract (2026-11-14)
 
