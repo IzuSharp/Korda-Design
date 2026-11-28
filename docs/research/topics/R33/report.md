@@ -14,7 +14,7 @@ Microsoft documentation snapshot `c3377f5f732f604c8f9bffc14d814dd35c99f3c0`:
 `docs/core/deploying/native-aot/index.md:177–231` and
 `docs/core/compatibility/maui/11/mobile-code-generation.md:9–91`.
 Winit's fixed iOS/Android lifecycle reads are shared with R32. Digests and scopes are
-in [source-inspection.json](../../../../verification/server-completion/source-inspection.json).
+in source-inspection.json.
 
 ## Platform facts that must not be conflated
 

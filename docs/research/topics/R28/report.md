@@ -18,7 +18,7 @@ MCP Rust SDK `rmcp-v3.10.0` resolves to
 `crates/rmcp/src/handler/server.rs:81–96,213–255,382–414,550–618,664–686,737–746`,
 `transport/streamable_http_server/tower.rs:219–350,357–425,1473–1574,1734–1778,1955–1985,2050–2105,2220–2255,2398–2412,2571–2612`
 and the tool-schema dispatch checks. Exact source digests and the additional inspected
-model declarations are in [source-inspection.json](../../../../verification/server-completion/source-inspection.json).
+model declarations are in source-inspection.json.
 
 rustls stays at the previously pinned 0.23.46,
 `f04804fa13341a9b1dc02b5d1dd8a746f2c4b7fb`. Existing source inspection covers fatal
@@ -97,15 +97,13 @@ Linux deployment acceptance; the local test trust anchor is never a production d
 
 ## Actual new experiment and limits
 
-[protocol fixture](../../../../experiments/server-completion/protocol/src/lib.rs) and
-[runner](../../../../experiments/server-completion/run.py) compile pinned Rust engines.
+protocol fixture and
+runner compile pinned Rust engines.
 The retained run manifests identify the exact tests: byte-preserving unary/empty
 messages; oversized/truncated/invalid-compression rejection before Handler invocation;
 server-streaming frames/trailers; MCP method, Host/Origin and body caps; real loopback
 HTTP1 and HTTP2; rustls handshake/ALPN/close-notify and certificate rejection. The final
 run additionally exercises two runtime MCP tool names with the same compiled Handler.
-See `verification/server-completion/protocol-local-*`; earlier input snapshots and
-failures remain distinct, never counted as added coverage.
 
 This is not a C# gRPC/MCP product bridge, TLS-over-HTTP end-to-end suite, mobile test,
 performance result or production security certification. Core callback/AOT feasibility
@@ -114,7 +112,7 @@ with that bridge, generated serializers, deadlines and bounded streaming, then e
 Windows/Linux AOT interoperability and negative cases. That remaining implementation
 work does not reopen the resolved native-engine architecture.
 
-Detailed interface, capability and acceptance rules are in [D19](../../../server/protocols-and-observability.md).
+Detailed interface, capability and acceptance rules are in [D19](https://github.com/IzuSharp/Korda-Design/blob/c62cdb8aee833b6ab1a03e29a3f59f81a1b483f9/docs/server/protocols-and-observability.md).
 Independent review and registry integration are required before formal design acceptance.
 
 ## Deadline seam found during final source review
@@ -142,8 +140,8 @@ Review found a concrete counterexample to the initial D19 assertion: Tonic's
 the latter drains and discards all remaining messages. An unrestricted byte Decoder
 therefore permits two messages on a unary request and invokes the Handler with only
 the first. This is source-confirmed at the ranges above and reproduced by an independent
-five-case fixture under `experiments/database-completion/server-review/`, with actual
-logs in `verification/database-completion/server-review-cardinality/`.
+five-case fixture under the historical research fixture, with actual
+logs in the historical research fixture.
 
 The corrected Adapter uses a fresh Decoder for each request, allowing one inbound
 message for unary and server-streaming method kinds. A second complete message fails
@@ -153,13 +151,12 @@ mode and finite stream quotas; their multiple messages must not be rejected by a
 single-request counter. This is a small public Codec policy, not another parser or fork.
 
 The author's corrected locked fixture executed **19 tests** on Linux in
-`verification/server-completion/protocol-reviewed-local/`: the original 13 cases plus
+the historical research fixture: the original 13 cases plus
 default-permissive counterexample, strict unary, strict server-streaming, zero-versus-empty,
 per-request counter reset and client-streaming multiple-message cases. The earlier
 13-case Windows/Linux CI remains unchanged historical evidence; new source identities
 and any subsequent two-OS run are recorded separately. Full streaming deadlines,
 aggregate quotas and C# callback integration remain B18/B22 product obligations.
-
 
 ### Verified Windows/Linux research CI
 
@@ -167,11 +164,11 @@ CI run [43388468172](https://github.com/IzuSharp/NativeWeave-Design/actions/runs
 tested source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`. Protocol13/13 and
 Kestrel Native AOT5/5 passed on both Windows2022 and Ubuntu24.04. Their actual
 run manifests, stdout/stderr and source snapshots are retained under
-`verification/completion-ci/43388468172/`; author checks of each raw log/input hash and
+the historical research fixture; author checks of each raw log/input hash and
 exact Windows LF-to-CRLF conversion are recorded in
-`verification/server-completion/ci-verification.json`. This extends platform coverage
+the historical research fixture. This extends platform coverage
 for these same distinct cases, not their product/FFI/soak scope or independent review.
 
 ## Final MCP parse-allocation boundary
 
-The independently inspected fixed rmcp `expect_json` path collects capped wire bytes before `serde_json::from_slice::<ClientJsonRpcMessage>` and precedes tool/managed validation. See `verification/server-completion/rmcp-json-admission-source.json` for the actual source identity and excerpt. A 1MiB wire cap cannot alone prove a 4MiB decoded-tree/bridge peak. D19 specifies a budgeted native Tower preflight using the mature serde parser, bounded structure counters and a reviewed conservative peak reservation before invoking public StreamableHttpService. No private helper call, new JSON grammar or per-tool Rust recompilation is required. B19 owns the corresponding adversarial parse/overlap fixtures; no product execution is claimed by this source review.
+The independently inspected fixed rmcp `expect_json` path collects capped wire bytes before `serde_json::from_slice::<ClientJsonRpcMessage>` and precedes tool/managed validation.  A 1MiB wire cap cannot alone prove a 4MiB decoded-tree/bridge peak. D19 specifies a budgeted native Tower preflight using the mature serde parser, bounded structure counters and a reviewed conservative peak reservation before invoking public StreamableHttpService. No private helper call, new JSON grammar or per-tool Rust recompilation is required. B19 owns the corresponding adversarial parse/overlap fixtures; no product execution is claimed by this source review.

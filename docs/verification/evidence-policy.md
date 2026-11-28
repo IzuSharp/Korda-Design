@@ -15,15 +15,18 @@ Status: proposed; version 0.1.0; independently defined according to NativeWeave'
 
 Code examples have separate states: design-draft, static-reviewed, compiled, executed, native-aot-executed, independently-verified. Each promotion includes evidence; automatic linear progression is not assumed. source_confirmed must record the resolved full commit SHA; a release tag may be displayed alongside it but cannot replace the SHA. Passing a model check only adds a model_checked record and does not promote the example to AOT.
 
-## 2. Minimum fields for each item of evidence
+## 2. Durable result summaries
 
-evidence_id, claim, classification, repository_url, full commit_sha (a tag is only a display locator), file, symbol, line_range, read_coverage, limitations, collector, collected_at, related_requirements/contracts/tasks. Execution evidence additionally requires:
+Record the claim, classification, source revision, relevant interface or workload,
+platform/toolchain, final expected/observed result, limitations and related
+contracts/tasks. Include material failures and their actual disposition; a later
+pass does not turn an earlier failed attempt into a pass. State whether the Native
+AOT executable actually ran; compilation alone is not execution.
 
-- Source and artifact SHA256, toolchain and dependency locks, OS/architecture/CPU/ABI/linker.
-- Complete commands, exit codes, stdout/stderr locations and content hashes, and start/end times.
-- Expected and observed results, test counts, failures/skips/timeouts, inputs and random seeds.
-- Evidence that the Native AOT publish artifact was actually launched; compiler logs alone are insufficient.
-- Analyzer warnings and their disposition; globally suppressing unexplained warnings to fabricate a pass is prohibited.
+Raw commands, stdout/stderr, per-second samples, screenshots, binaries, archives,
+and interruption state stay on the execution machine outside this repository.
+Do not commit or upload these materials as Actions artifacts. Regenerate them if
+needed. Reviewable design and final conclusions are submitted through Git/PRs.
 
 ## 3. Selecting correctness-verification methods
 
@@ -44,7 +47,7 @@ TLA+, Loom, Miri, Kani, fuzzing and Sanitizer are candidate tools; using all of 
 
 The initial plan must include native-target builds and execution for win-x64 and linux-x64. First establish a capability matrix for Arm64, musl, other desktop targets and mobile targets; actual requirements and experiments determine when they become formally supported. Study layout differences on 32-bit targets without declaring support merely because a differences table exists.
 
-“Windows/Linux passed” must correspond to the actual host, target and artifact for each platform. Linux evidence from a container must state the container/host-kernel conditions and cannot substitute for evidence from the user's dedicated MCP host or Windows. At present, only local Linux execution and GitHub tools have been discovered; no dedicated Windows/Linux MCP acceptance tools have been discovered.
+“Windows/Linux passed” must correspond to the actual host, target and artifact for each platform. Linux evidence from a container must state the container/host-kernel conditions and cannot substitute for evidence from the user's dedicated MCP host or Windows. Actual support claims must identify the platforms that were tested.
 
 ## 5. Performance methodology
 

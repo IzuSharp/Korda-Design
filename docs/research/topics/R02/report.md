@@ -1,6 +1,6 @@
 # R02 — Native AOT, trimming and supported application mechanisms
 
-Research decision ready for independent review. This fills the missing canonical report; it reuses the successful Windows/Linux native-slice and logical-admission studies instead of relabeling them as new runs. The new `interop-completion` study adds actual Linux Native AOT callback, static serialization and negative dynamic-code experiments. Exact identities and limitations are in [evidence](evidence.json) and [coverage](coverage.json).
+Research decision ready for independent review. This fills the missing canonical report; it reuses the successful Windows/Linux native-slice and logical-admission studies instead of relabeling them as new runs. The new `interop-completion` study adds actual Linux Native AOT callback, static serialization and negative dynamic-code experiments. Exact identities and limitations are in evidence and coverage.
 
 ## Decision
 
@@ -35,12 +35,10 @@ Handwritten static metadata and optional SG metadata have identical runtime sema
 
 D01/D03 specify the platform/build rules and pipeline. A10/A12/A14/A15/A16 must extend the research into all public imports, diagnostics and clean consumers; B10/B12 own optional metadata and typed result materialization. Those product obligations are not unresolved architecture questions. Current Windows replication of newly added negative cases is claimed only if a corresponding immutable CI result is present; Linux does not substitute for it.
 
-
 ## Supplemental invalid-UCO execution (2026-11-13)
 
-The [isolated manifest](../../../../verification/interop-completion/uco-invalid-linux/result.json) records actual .NET11 normal and Native AOT publication followed by native invocation of an intentionally invalid char/bool `UnmanagedCallersOnly` callback with runtime marshalling enabled. Both child processes exited -6 with unhandled `InvalidProgramException`; `INVALID_CALLBACK_BODY_ENTERED` never appeared. This demonstrates that callback-body catch cannot repair an invalid signature. It does not establish all fail-fast variants or behavior of an outer managed catch. The normal blittable callback succeeds in the main fixture. Invalid-pointer fuzzing was not performed.
-
+The isolated manifest records actual .NET11 normal and Native AOT publication followed by native invocation of an intentionally invalid char/bool `UnmanagedCallersOnly` callback with runtime marshalling enabled. Both child processes exited -6 with unhandled `InvalidProgramException`; `INVALID_CALLBACK_BODY_ENTERED` never appeared. This demonstrates that callback-body catch cannot repair an invalid signature. It does not establish all fail-fast variants or behavior of an outer managed catch. The normal blittable callback succeeds in the main fixture. Invalid-pointer fuzzing was not performed.
 
 ## Committed Windows/Linux completion execution
 
-[CI evidence readback](../../../../verification/interop-completion/ci-evidence-read.json) verifies actual GitHub run `43388468172` at source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`: Windows x64 MSVC and Linux x64 GNU each executed normal 10,528 assertions and Native AOT 10,529, 32 controlled callback rounds per mode, nine Roslyn checks and static metadata/AOT restriction checks. All command exits and source hashes were verified; Windows checkout CRLF accounts for its distinct input hashes. This extends the main fixture only. Linux-only generator-comparison/panic/invalid-UCO supplemental studies are not mislabeled as Windows results. Deliberate reflection fallback negative cases retain their IL2026/IL3050 diagnostics. Product package/full-protocol/long-load obligations remain separate.
+CI evidence readback verifies actual GitHub run `43388468172` at source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`: Windows x64 MSVC and Linux x64 GNU each executed normal 10,528 assertions and Native AOT 10,529, 32 controlled callback rounds per mode, nine Roslyn checks and static metadata/AOT restriction checks. All command exits and source hashes were verified; Windows checkout CRLF accounts for its distinct input hashes. This extends the main fixture only. Linux-only generator-comparison/panic/invalid-UCO supplemental studies are not mislabeled as Windows results. Deliberate reflection fallback negative cases retain their IL2026/IL3050 diagnostics. Product package/full-protocol/long-load obligations remain separate.

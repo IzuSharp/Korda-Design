@@ -10,7 +10,7 @@ and Handler surface; B17 is the required native host. There is no Kestrel produc
 
 This task was incorrectly still `planned` in Plan. Its existing report, evidence and
 coverage already contained detailed source analysis, and that analysis is reused.
-The source claims in [evidence.json](evidence.json) retain their original identities:
+The source claims in evidence.json retain their original identities:
 ASP.NET Core v11.0.0 at `1def4cdc07dc10fc267136060e3ef5c1a96d4a99`, including
 `KestrelServerImpl.StopAsync` (240–291), `TransportManager.StopTransportsAsync`
 (119–193), `KestrelServerLimits`, `HttpResponsePipeWriter` and its tests, and the
@@ -20,14 +20,14 @@ the original evidence; no fictitious path is reinstated.
 
 ## New actual experiment
 
-[KestrelComparator](../../../../experiments/server-completion/kestrel/Program.cs)
+KestrelComparator
 uses the .NET 11.0.100 SDK, `CreateSlimBuilder`, statically registered handlers,
 bounded Kestrel connection/request-body limits, and a real loopback HTTP/1 connection.
 It publishes with `PublishAot=true`, warnings as errors, and no root-all trimming
 directive. The published native executable passes five behavioral cases: health,
 binary echo including all byte values, 413 for a body above the configured limit,
 client-disconnect cancellation of an active streaming Handler, and bounded shutdown.
-The Linux execution is [recorded here](../../../../verification/server-completion/kestrel-local-2/run.json).
+The Linux execution is recorded here.
 The source, command, exits and binary SHA-256 are recorded; the first compile failure
 (ambiguous BadHttpRequestException) and its exact source inputs remain in `kestrel-local-1`.
 It was fixed with a fully qualified type. Dynamic localhost port binding was also
@@ -38,7 +38,7 @@ obligation. It does not supply a performance ranking, HTTP/2/TLS Kestrel equival
 production endpoints or a soak test. The same frozen source subsequently passed
 actual Windows2022 and Ubuntu24.04 Native AOT CI (run43388468172, source
 `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`); each platform has its own publish/run
-logs and binary hash. See [CI verification](../../../../verification/server-completion/ci-verification.json).
+logs and binary hash. See CI verification.
 The Windows source/log hashes were checked directly, including exact LF-to-CRLF
 checkout conversion; no platform result is inferred from the other.
 

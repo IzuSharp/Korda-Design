@@ -12,7 +12,7 @@ Maintainer-side csbindgen is suitable for primitive raw Rust-to-C# declaration e
 
 Do not adopt a large universal generator/runtime simply to obtain callbacks. Current Diplomat really has a .NET backend, but its actual pinned templates use DllImport despite a guide saying LibraryImport; its callback lowering is disabled/incomplete and its ownership profile requires application synchronization of call/Dispose. Those constraints do not satisfy D04/D05 automatically. Interoptopus has real first-class C# inventory/model support; its high-level Task shape alone does not establish NativeWeave retirement and admission semantics. UniFFI's poll/store/wake implementation is valuable source evidence, while its C# bindings are maintained as a third-party backend, not an official language generator. Their future adoption is a replaceable maintainer implementation choice subject to conformance, not a new application dependency or reason to defer the ABI.
 
-Exact upstream commits, files, ranges and limitations are in [source-inspection](../../verification/interop-completion/source-inspection.json) and [R05](../research/topics/R05/report.md). The same research export is compared through csbindgen DllImport and LibraryImport in `experiments/interop-completion/binding_probe.py`; inspect its actual result before claiming execution on a platform.
+Exact upstream commits, files, ranges and limitations are in source-inspection and [R05](../research/topics/R05/report.md). The same research export is compared through csbindgen DllImport and LibraryImport in the historical research fixture; inspect its actual result before claiming execution on a platform.
 
 ## 2. Binding description contents
 
@@ -99,11 +99,9 @@ Required product tests: missing/duplicate symbols; unsupported type omitted by u
 
 The research/design question is resolved by the explicit, independently reviewable pipeline and actual primitive-binding/SG/AOT probes. Product completeness, full schema code generation, every diagnostic, IDE distribution, two-OS package conformance and long-term compatibility are future Delivery obligations. Those obligations must not be treated as prerequisites to accepting the design that specifies them.
 
-
 ### Committed target evidence
 
-The [CI readback](../../verification/interop-completion/ci-evidence-read.json) verifies source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, run `43388468172`: actual Windows/Linux normal and Native AOT main interop execution (10,528/10,529 assertions respectively), Roslyn generation checks and static metadata restrictions. This supports the stated research slice; product conformance remains separately assigned. Supplemental panic/invalid-UCO/generator comparison runs are Linux-only.
-
+The CI readback verifies source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, run `43388468172`: actual Windows/Linux normal and Native AOT main interop execution (10,528/10,529 assertions respectively), Roslyn generation checks and static metadata restrictions. This supports the stated research slice; product conformance remains separately assigned. Supplemental panic/invalid-UCO/generator comparison runs are Linux-only.
 
 ## 9. Public signatures, XML reference and API compatibility (2026-11-14)
 
@@ -136,6 +134,6 @@ Compiler/IDE-host compatibility is verified separately from the application's ta
 Do not rely on default analyzer asset propagation or duplicate the same generator in both automatic
 analyzer assets and an explicit Analyzer item. An independent consumer installs only the facade,
 then adds Entity/DTO/Handler source and verifies regenerated static metadata with unchanged native
-asset hashes. [The design packaging probe](../../experiments/public-api/packaging-probe/README.md)
+asset hashes. [historical declaration catalog](../api/public-api.json)
 exercises this asset-flow mechanism with a deliberately limited experimental generator; it does
 not implement B10/B12/B15 or certify the production generator.

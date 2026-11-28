@@ -1,1 +1,0 @@
-use std::{sync::Arc,alloc::Global}; fn main(){let _=Arc::new_in(3,Global);}

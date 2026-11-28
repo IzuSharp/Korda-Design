@@ -8,15 +8,6 @@
 
 恢复入口是 Design `5bb128424259f3d9cf594b4e50d7688ad5b6541e`、Plan `7359060f88f94591b0dc41178e35701eefc8eb6d`。它们是远程恢复基线，不能代替本轮已修文件的身份。本报告在 `2026-11-13T13:00:53.014486+00:00` 固定当前逐文件 SHA-256；完整研究输出、24 份相关任务 packet、fragment 和支持证据列表见同目录 `server-review.json`。共享 graph/registry 尚将由整合者写入正式接受记录，不把它们的整文件临时哈希当作固定审查主体。
 
-| 任务 | 当前规范/细化输出 | SHA-256 |
-| --- | --- | --- |
-| D18 | `docs/server/hosting-and-streaming.md` | `1b2aee53926004b11535167ef44a1c7ca7bc1a148a8f676b182add5aa2344d1d` |
-| D19 | `docs/server/protocols-and-observability.md` | `baf35e49784995322d5c25a65767ee7340678c0411d235c01ea53a84c6aeffeb` |
-| D20 | `docs/verification/reference-application.md` | `c6c7cefa5645a17a2d0bd19973969f6f46b4c0e6fb0556a99032e96a93db02be` |
-| D21 | `docs/extension/future-platforms.md` | `fa41359b578e998feb9479d7e3ab47a400f69aca141967a75200ed3fa4febd54` |
-| D29 | `fragments/server.json` | `9b81edbf25672b020011b808e3b716c752388b210c808e7eb636a4a0f015e5a1` |
-| D30 | `fragments/end-to-end.json` | `217c78e4e6d1d7fe380025d8ef32c2406464900c4e2ffd71d17417973fd71160` |
-
 审查读取了两个仓库 AGENTS、R26–R33 的报告/来源/覆盖记录、四份规范、Body 退休补充、相应 R/D packets、B15–B24 packets 与两个 fragments。图引用依赖的 R34、R17/R18/R21、D12/D13 及 Core/Database 全域验收仍由其他明确分工的独立审查覆盖；本报告不冒充其完整审查。
 
 ## 2. 逐项实质结论
@@ -50,7 +41,7 @@
 
 D19/B19 修正使用公共 `StreamableHttpService` 外层的 native Tower admission：一个计费的有界 wire buffer、成熟 serde `Deserializer`/`DeserializeSeed`/`Visitor` 结构预扫、深度/节点/成员/字符串/解析工作上界与预留 scratch；不构建临时 `Value` 树、不调用私有 helper、不手写 JSON grammar。按固定 SDK/parser profile 的布局和容量增长计算并预留 wire、SDK 再收集、native tree、UTF-8 桥与 managed DTO 的重叠峰值；两侧预算分开。不具备可证明界限的 profile 不能启用，不合预算的请求在 SDK parse/Handler 前拒绝。
 
-B19 负例明确许多细小元素、深层嵌套、长转义字符串、全局/单请求边界和取消，要求准入失败时 SDK parse/Handler 计数为零、lease 恰好释放一次。以上是可实施且可检验的设计，不声称未来实现或具体数值公式已验证。已独立核对保存的源码摘录哈希及 R28 新来源绑定后关闭。源码记录见 `verification/server-completion/rmcp-json-admission-source.json`。
+B19 负例明确许多细小元素、深层嵌套、长转义字符串、全局/单请求边界和取消，要求准入失败时 SDK parse/Handler 计数为零、lease 恰好释放一次。以上是可实施且可检验的设计，不声称未来实现或具体数值公式已验证。已独立核对保存的源码摘录哈希及 R28 新来源绑定后关闭。源码记录见 the historical research fixture。
 
 ### SR-FINAL-03 — R27 optional-Rust 旧措辞，Low，已关闭
 
@@ -82,7 +73,7 @@ D18/D07 的物理 owner、业务准入、Body 终止和 callback 退休分别建
 
 另实际查询 run `43401371232` 的全部 11 个研究 job 均成功；这里只作为平台 CI 状态，不用 success 元数据替代未独立下载的最新 protocol stdout。证据主体仍使用各已保存 manifest 明确列出的源码/案例/平台。
 
-对 R31/D20 的数据库接缝，当前独立执行者 `/root/database_review` 实际读 PostgreSQL fixture、原始 stdout 与输入哈希，确认 COMMIT proxy 读到完成/idle 后吞回复、另一连接观察 durable 效果，以及竞争 CTE 由 `pg_locks` 同步后旧 snapshot 查不到、新 statement 查到的反例。其固定 manifest 为 `verification/completion-ci/43388468172/completion-postgres-ubuntu-24.04/postgres/manifest.json`，SHA-256 `2657a79ccf8c11b351fafe23bd3f928c7b597d23cad7d22d89caa4a88cbf239e`。这属于明确归属的交叉审查输入，未伪称本执行者新运行 PG。
+对 R31/D20 的数据库接缝，当前独立执行者 `/root/database_review` 实际读 PostgreSQL fixture、原始 stdout 与输入哈希，确认 COMMIT proxy 读到完成/idle 后吞回复、另一连接观察 durable 效果，以及竞争 CTE 由 `pg_locks` 同步后旧 snapshot 查不到、新 statement 查到的反例。其固定 manifest 为 the historical research fixture，。这属于明确归属的交叉审查输入，未伪称本执行者新运行 PG。
 
 ## 6. B15–B24 的可执行规划检查
 

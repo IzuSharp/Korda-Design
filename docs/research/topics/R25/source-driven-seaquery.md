@@ -1,4 +1,4 @@
-> Historical scoped investigation retained. Current selection, new SeaORM execution and shape/migration findings are consolidated in [report.md](report.md) and the [completion record](../../../../verification/database-completion/task-status.json). Historical statements of what was not yet executed refer to that original snapshot.
+> Historical scoped investigation retained. Current selection, new SeaORM execution and shape/migration findings are consolidated in [report.md](report.md) and the completion record. Historical statements of what was not yet executed refer to that original snapshot.
 
 # R19–R25 follow-up — source-driven SeaQuery integration
 
@@ -6,7 +6,7 @@ Date: 2026-11-12. Status: source-inspected, recovered finite experiment executed
 
 ## 1. Fixed evidence and coverage
 
-SeaQuery **1.0.2 / f2d5e04d30919c342da1f8845ff1fde46e3308fc**; SeaORM **2.0.4 / db40a19a7bde7be8e1c4b346b1b70d72e87f0245**; SQLx **0.9.0 / 75bc0487eb661da811bb7a3c5d158f1bd463fef4**, canonical repository `transact-rs/sqlx`. Paths/ranges and file hashes are in [source index](../../source-driven-evidence/source-inspection.json). The source snapshots were recovered, then selected mechanisms re-read in the recovery session. Upstream tests below were **read, not executed here**. Executed registry crates are identified separately by the recovered Cargo.lock; Git/crate byte identity has not been verified.
+SeaQuery **1.0.2 / f2d5e04d30919c342da1f8845ff1fde46e3308fc**; SeaORM **2.0.4 / db40a19a7bde7be8e1c4b346b1b70d72e87f0245**; SQLx **0.9.0 / 75bc0487eb661da811bb7a3c5d158f1bd463fef4**, canonical repository `transact-rs/sqlx`. Paths/ranges and file hashes are in source index. The source snapshots were recovered, then selected mechanisms re-read in the recovery session. Upstream tests below were **read, not executed here**. Executed registry crates are identified separately by the recovered Cargo.lock; Git/crate byte identity has not been verified.
 
 | Mechanism | Inspected source | Observed behavior / relevance |
 |---|---|---|
@@ -25,7 +25,7 @@ Relevant tests read: `tests/error.rs:1–19` (column/value shape); PostgreSQL qu
 
 **Yes within the dynamic metadata and enabled native capability profile.** A SELECT/INSERT/UPDATE/DELETE statement already accepts runtime identifiers, values and composition in native data structures. The adapter is compiled once against SeaQuery; it receives application-specific names/types/parameters through its stable boundary. Adding a Student or User with existing scalar codecs changes C# metadata/DTO code and the database schema, not the native engine's Rust generic type inventory.
 
-This is supported both by the inspected dynamic structures and by the recovered Linux x64 experiment: local NuGet consumption, actual Native AOT SQLite queries, a second C# entity, native asset hash unchanged, and a wrong-entity column compile rejection. See [raw evidence and limits](../../source-driven-evidence/README.md). This does not mean an unknown Rust Value variant, new SQL operator, provider, aggregate extension or native algorithm can be created without updating the Engine.
+This is supported both by the inspected dynamic structures and by the recovered Linux x64 experiment: local NuGet consumption, actual Native AOT SQLite queries, a second C# entity, native asset hash unchanged, and a wrong-entity column compile rejection. See raw evidence and limits. This does not mean an unknown Rust Value variant, new SQL operator, provider, aggregate extension or native algorithm can be created without updating the Engine.
 
 C# compile-time types protect ordinary application composition; the native boundary must still validate metadata, shape, backend capability, sizes and ownership. Quoting an identifier prevents syntax confusion, not unauthorized access to another table. Tenant/security policy must not trust unvalidated table identifiers supplied by untrusted input.
 

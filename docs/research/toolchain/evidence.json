@@ -3,9 +3,6 @@
   "report_id": "NW-TOOLCHAIN-2026-11-12",
   "status": "official_documentation_verified_not_runtime_verified",
   "as_of_utc": "2026-11-12T12:23:11Z",
-  "user_timezone": "America/Los_Angeles",
-  "as_of_local": "2026-11-12T04:23:11-08:00",
-  "author_role": "toolchain_verification",
   "independent_review_status": "not_reviewed",
   "version_observations": [
     {
@@ -72,20 +69,6 @@
       "installed_or_executed": false
     }
   ],
-  "release_metadata_excerpt": {
-    "source": "TC-S03",
-    "excerpt_kind": "selected exact top-level JSON fields, not full document",
-    "fields": {
-      "channel-version": "11.0",
-      "latest-release": "11.0.0",
-      "latest-release-date": "2026-11-10",
-      "latest-runtime": "11.0.0",
-      "latest-sdk": "11.0.100",
-      "support-phase": "active",
-      "release-type": "sts",
-      "eol-date": "2028-11-14"
-    }
-  },
   "claims": [
     {
       "id": "TC-C01",
@@ -186,81 +169,6 @@
         "TC-S13",
         "TC-S14"
       ]
-    }
-  ],
-  "retrieval_gaps": [
-    {
-      "url": "https://static.rust-lang.org/dist/channel-rust-stable.toml",
-      "result": "not_accessible_via_web_tool",
-      "effect": "No manifest-level confirmation; official release announcement verified separately."
-    },
-    {
-      "url": "https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/11.0/releases.json",
-      "result": "not_accessible_via_web_tool",
-      "effect": "Canonical builds.dotnet.microsoft.com metadata succeeded."
-    },
-    {
-      "url": "https://blog.rust-lang.org/releases/1.99.1/",
-      "result": "not_accessible_via_web_tool",
-      "effect": "Release-index link to canonical date URL succeeded."
-    }
-  ],
-  "local_environment_probe": {
-    "status": "executed",
-    "method": "Python shutil.which and subprocess --version, not filesystem-wide search",
-    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
-    "available": {
-      "cc": "GCC 14.2.0 (Debian 14.2.0-19)",
-      "git": "2.52.0",
-      "python3": "3.12.14"
-    },
-    "not_on_path": [
-      "dotnet",
-      "rustc",
-      "cargo",
-      "clang"
-    ]
-  },
-  "experiments": [
-    {
-      "id": "TC-V01",
-      "status": "not_run"
-    },
-    {
-      "id": "TC-V02",
-      "status": "not_run"
-    },
-    {
-      "id": "TC-V03",
-      "status": "not_run"
-    },
-    {
-      "id": "TC-V04",
-      "status": "not_run"
-    },
-    {
-      "id": "TC-V05",
-      "status": "not_run"
-    },
-    {
-      "id": "TC-V06",
-      "status": "not_run"
-    },
-    {
-      "id": "TC-V07",
-      "status": "not_run"
-    },
-    {
-      "id": "TC-V08",
-      "status": "not_run"
-    },
-    {
-      "id": "TC-V09",
-      "status": "not_run"
-    },
-    {
-      "id": "TC-V10",
-      "status": "not_run"
     }
   ],
   "source_code_review": {

@@ -6,7 +6,7 @@ Reviewer: `/root/database_research`; author: `/root/interop_research`. This is a
 
 Accept the exact 13 Research outputs (R02–R12, R15, R16) and 9 Documentation outputs (D02–D09, D12) for research/design closure at contract version 0.3.0. No remaining blocking finding. Product implementation, package release, production load and future platform conformance remain the explicitly assigned Delivery obligations.
 
-The self-contained JSON records all 48 output hashes, 123 verified embedded evidence references, 21 independently read upstream source files/ranges, fixture source hashes, actual CI results and per-task future obligations. Final author assessment SHA256: `49893dbeff42033b4867efeb53e8ca1f0aaeec2ba29bc9efdff5fb5c67d59f08`.
+The self-contained JSON records all 48 output hashes, 123 verified embedded evidence references, 21 independently read upstream source files/ranges, fixture source hashes, actual CI results and per-task future obligations. Final author assessment.
 
 ## Findings resolved and re-read
 

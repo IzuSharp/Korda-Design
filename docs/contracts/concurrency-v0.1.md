@@ -93,11 +93,9 @@ Windows/Linux initially require real native worker, close/cancel, ordinary app a
 
 The protocol and source-derived selection are eligible for acceptance as a research/design contract after independent review. Full production executor implementation, OS-wide thread counts, long soak and performance evidence remain future Delivery obligations; the present prototype does not erase them.
 
-
 ### Committed target evidence
 
-The [CI readback](../../verification/interop-completion/ci-evidence-read.json) verifies source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, run `43388468172`: actual Windows/Linux normal and Native AOT main interop execution (10,528/10,529 assertions respectively), Roslyn generation checks and static metadata restrictions. This supports the stated research slice; product conformance remains separately assigned. Supplemental panic/invalid-UCO/generator comparison runs are Linux-only.
-
+The CI readback verifies source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, run `43388468172`: actual Windows/Linux normal and Native AOT main interop execution (10,528/10,529 assertions respectively), Roslyn generation checks and static metadata restrictions. This supports the stated research slice; product conformance remains separately assigned. Supplemental panic/invalid-UCO/generator comparison runs are Linux-only.
 
 ## Public API refinement, revision 0.4.0
 

@@ -1,6 +1,6 @@
 # R30 — Cross-Language Diagnostics, Low-Overhead Paths, and Bounded Exporters
 
-Historical research began on 2026-11-12, with supplementary evidence through 2026-11-13; see [evidence.json](evidence.json) for the current task packet and input baseline/hash. This round adds reading of tracing 0.1.44 async span/subscriber boundaries and actually executes an independent diagnostic Native AOT probe; research/design acceptance still awaits independent review. Not all metric/exporter implementations were read, and future product performance acceptance was not executed. The design is synchronized with [D19](../../../server/protocols-and-observability.md).
+Historical research began on 2026-11-12, with supplementary evidence through 2026-11-13; See the research conclusions and limits in this report. This round adds reading of tracing 0.1.44 async span/subscriber boundaries and actually executes an independent diagnostic Native AOT probe; research/design acceptance still awaits independent review. Not all metric/exporter implementations were read, and future product performance acceptance was not executed. The design is synchronized with [D19](https://github.com/IzuSharp/Korda-Design/blob/c62cdb8aee833b6ab1a03e29a3f59f81a1b483f9/docs/server/protocols-and-observability.md).
 
 ## 1. Selected Boundaries
 
@@ -16,7 +16,7 @@ Non-goals: enabling full payload/SQL logging by default, arbitrary high-cardinal
 | opentelemetry-dotnet core-1.21.0 | `51c6db11dadde6ed5019af4f42332860f1a5d8da` | BatchExportProcessor.cs99–203; BatchExportActivityProcessorTests.cs28–53, 117–260, 300–322 |
 | W3C TraceContext1 | Pinned URL of the 2021-11-23 Recommendation | §3.2.2 fields, §3.2.4 version rules |
 
-Exact URLs/blobs are in evidence; [coverage](coverage.json) does not treat test source as execution results. The pinned runtime license is MIT, and the pinned OpenTelemetry license is Apache2. W3C specifications support trace-field semantics; D19's 32-byte binary adapter layout is NativeWeave's own choice, not a W3C-prescribed ABI.
+Exact URLs/blobs are in evidence; coverage does not treat test source as execution results. The pinned runtime license is MIT, and the pinned OpenTelemetry license is Apache2. W3C specifications support trace-field semantics; D19's 32-byte binary adapter layout is NativeWeave's own choice, not a W3C-prescribed ABI.
 
 ## 3. Activity from Public Entry Point to Allocation Path
 
@@ -66,7 +66,6 @@ The fields/offsets of 32-byte TraceContextV1 are in D19: size/version/flags/rese
 
 Q17 diagnostic boundaries have reviewable design decisions; actual low overhead, absence of leaks, and cross-platform AOT are these implementation obligations. Independent Review interfaces: R08 checks callback hot paths and lifetimes; R29 checks budgets beyond counts alone; R34 checks that incoming traces cannot become identities or leak secrets; R28 checks protocol error/Unknown-to-trace mappings.
 
-
 ## Current completion and architecture correction (2026-11-12)
 
 The latest user mission requires a Rust Server engine. Kestrel is solely the comparator.
@@ -79,7 +78,7 @@ architecture decisions, while their scoped source/evidence identities remain his
 
 D18 now defines the native Handler/Body bridge and retirement protocol; D19 binds
 Tonic/rmcp/rustls to that same host. New actual protocol/network/TLS evidence is in
-`verification/server-completion/`, with exact commands/source hashes and retained prior
+the historical research fixture, with exact commands/source hashes and retained prior
 attempts. Native HTTP1/HTTP2 loopback and bounded TLS tests are real executions, but
 not a C# Server product, equivalent-load benchmark or production soak. The existing
 Body/Bytes/permit and finite credit models are reused without inflating their coverage.
@@ -89,14 +88,13 @@ B16/B17/B20/B22/B23 implementation, complete cross-language transport and long-l
 acceptance remain explicit obligations. Independent review and graph integration
 must bind this exact revised content before acceptance.
 
-
 ## 7. Completed tracing source and actual Native AOT diagnostics probe
 
 New source identity: tracing0.1.44, crate VCS commit
 `2d55f6faf9be83e7e4634129fb96813241aac2b8` in `tokio-rs/tracing`.
 Read `tracing/src/span.rs:596–641,780–790`, `instrument.rs:176–231,277–324,378–389`
 and `subscriber.rs:1–63`; source hashes and crate provenance are in
-[source-inspection.json](../../../../verification/server-completion/source-inspection.json).
+source-inspection.json.
 `Instrumented<Future>::poll` enters/exits the span per poll; `WithDispatch::poll`
 sets the captured dispatcher per poll. A Span::enter guard held across await leaves
 unrelated work inside the wrong span. A thread-local subscriber is not automatically
@@ -104,9 +102,9 @@ propagated to another worker; library code must not seize the process-global sub
 The Server adapter uses an explicitly owned dispatcher plus instrumented futures,
 with value context carried in operations; callback scheduling restores managed context.
 
-[DiagnosticsProbe](../../../../experiments/server-completion/diagnostics/Program.cs)
+DiagnosticsProbe
 was published and executed as Linux x64 .NET11 Native AOT with warnings as errors.
-The exact run is `verification/server-completion/diagnostics-local-2/run.json`.
+The exact run is the historical research fixture.
 Eleven assertions cover the 32-byte C# layout, disabled listener state, null Activity
 creation, no steady-loop current-thread allocation, avoiding tag construction,
 explicit remote parent, managed await/Task parent propagation and listener disposal.
@@ -116,7 +114,7 @@ measurement. It is the required disabled-observer cost witness. The initial fail
 compile attempt is retained separately; no failed run is presented as success.
 
 A separate Rust1.100 layout witness also executed successfully in
-`verification/server-completion/diagnostics-rust-layout/run.json`. These probes do not
+the historical research fixture. These probes do not
 include native callback-to-managed trace propagation, exporter saturation or arbitrary
 OS targets. They close the bounded design questions and leave concrete integration/
 load obligations with B20/B22/B23, not a blanket requirement to redo the architecture.
@@ -125,7 +123,7 @@ load obligations with B20/B22/B23, not a blanket requirement to redo the archite
 
 The first Windows diagnostics CI at run43390177287 passed the layout/listener/null
 checks but failed its zero-allocation assertion. Its raw stdout/stderr and run manifest
-remain under `verification/completion-ci/43390177287/diagnostics-windows-2022/`.
+remain under the historical research fixture.
 That version included the first clock calls inside the allocation measurement and
 printed the numerical observation only after the assertion, so the failed run does
 not preserve an allocation count and cannot attribute the extra allocation to
@@ -134,7 +132,7 @@ ActivitySource alone. It is not reported as a successful Windows observation.
 The corrected source warms clock/counter setup outside the measurement and places
 only the `StartActivity` loop inside the allocation counter window; its numerical
 observation is printed before either assertion. The Linux NativeAOT rerun at
-`verification/server-completion/diagnostics-reviewed-local/run.json` passed all eleven
+the historical research fixture passed all eleven
 checks and observed 200000 null returns, zero current-thread allocated bytes and
 12.437 ns/call. This is another scoped observation, not a promise of a universal
 zero-allocation or timing result. At that checkpoint Windows still required its corrected run; the threshold was not raised to mask its failure. The later retrieved run below closes this finite platform-evidence gap.
@@ -143,7 +141,7 @@ zero-allocation or timing result. At that checkpoint Windows still required its 
 
 Existing Actions run43401371233 at source `5bb128424259f3d9cf594b4e50d7688ad5b6541e`
 has now been retrieved, not rerun. The exact source/CRLF transformation, archives,
-logs and binary hashes are recorded in `verification/server-completion/diagnostics-final-ci.json`.
+logs and binary hashes are recorded in the historical research fixture.
 Both Release Native AOT executions passed all11 assertions and observed200000 null
 returns and0 current-thread allocated bytes in the StartActivity-only warm loop.
 Windows observed16.634 ns/call; Linux20.468 ns/call. These single-run timings do not

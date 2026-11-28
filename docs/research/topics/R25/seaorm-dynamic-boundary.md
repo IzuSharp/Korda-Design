@@ -1,4 +1,4 @@
-> Historical scoped investigation retained. Current selection, new SeaORM execution and shape/migration findings are consolidated in [report.md](report.md) and the [completion record](../../../../verification/database-completion/task-status.json). Historical statements of what was not yet executed refer to that original snapshot.
+> Historical scoped investigation retained. Current selection, new SeaORM execution and shape/migration findings are consolidated in [report.md](report.md) and the completion record. Historical statements of what was not yet executed refer to that original snapshot.
 
 # R25 addendum — SeaORM's real dynamic boundary
 

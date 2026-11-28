@@ -61,7 +61,7 @@ rather than selecting only successful service times. Preserve transaction outcom
 complete result oracles and eventual owner drain. One provider or one source version
 cannot supply another's missing correctness or performance result.
 
-Plan owns raw result references, comparison conditions, retained/rejected changes,
+Plan owns final comparison conditions, retained/rejected changes,
 remaining gaps and stopping reasons. A lower allocation total alone does not prove
 lower CPU or p99. Stop optional optimization when measured residual costs and the
 tradeoffs are recorded; do not erase a regression or broaden the campaign merely
@@ -126,7 +126,7 @@ scheduled arrival; separately report queue delay, service time and client-side g
 If the generator falls behind or saturates, invalidate the intended offered-rate cell.
 
 Closed-loop throughput is useful but labelled as such. It cannot establish tail latency at a fixed
-offered load. The executable [finite omission counterexample](../../experiments/performance-completion/omission.py)
+offered load. The executable finite omission counterexample
 shows service-only p99 of 1 synthetic ms while scheduled-arrival p99 is 100 ms. These are model
 values, not measured NativeWeave performance. HdrHistogram expected-interval correction fills
 missing samples, but must not be applied twice or confused with actually observed arrival latency.
@@ -195,7 +195,6 @@ B23 consumes actual AOT reference applications and direct native/managed compara
 fault/soak oracles, B24 binds final release profiles. Store immutable input/run/artifact hashes and
 independent analysis in the existing ledger. D13 can be design-accepted before these products exist.
 No throughput, superiority, whole-memory bound or production long-load result is asserted here.
-
 
 ## Public API refinement, revision 0.4.0
 

@@ -131,7 +131,6 @@ No current Windows/Linux task waits on an unimplemented mobile/GPU product. This
 contract can be accepted as an extension design after R18/R32/R33 and independent
 review, while future device/product evidence remains a release obligation.
 
-
 ## Public API refinement, revision 0.4.0
 
 The [C# Public API and Documentation Standard](../standards/csharp-public-api-and-documentation.md), [exact API declarations and reference](../api/README.md), and the domain specification are normative consumers of this contract. This revision adds public surface and documentation obligations; it does not change the v1 C wire representation merely because the document version increments. Historical 0.3.0 acceptance remains bound to its original bytes and review. Current acceptance requires the new exact content and independent review.

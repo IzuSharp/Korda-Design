@@ -1,6 +1,0 @@
-.work/
-artifacts/
-**/target/
-**/bin/
-**/obj/
-__pycache__/

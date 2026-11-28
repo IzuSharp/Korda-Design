@@ -1,1 +1,0 @@
-pub extern "custom" fn x() {} fn main(){}

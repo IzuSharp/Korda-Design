@@ -15,7 +15,7 @@ Date: 2026-11-12. Status: selected source paths inspected; new finite admission 
 | rustls | 0.23.46 / `f04804fa13341a9b1dc02b5d1dd8a746f2c4b7fb` | Fatal TLS processing errors and write-side buffer limits |
 | Pingora | 0.9.1 / `f86ffda5d3ae5c3baf5125682138b33b26c01b08` | ProxyHttp upstream-peer and request-filter hooks; limited alternative study |
 
-See [source index](../../source-driven-evidence/source-inspection.json) for precise file ranges/hashes. These are not whole-repository audits. hyper-util's snapshot is available but not treated as comprehensively reviewed. The existing R26 Kestrel baseline remains the managed comparator; no fresh full Kestrel performance run or unchanged-feature equivalence is implied.
+See source index for precise file ranges/hashes. These are not whole-repository audits. hyper-util's snapshot is available but not treated as comprehensively reviewed. The existing R26 Kestrel baseline remains the managed comparator; no fresh full Kestrel performance run or unchanged-feature equivalence is implied.
 
 ## 2. Public API → engine → adapter opportunity
 
@@ -66,7 +66,6 @@ Public Hyper/Tower/Axum adaptation is the selected initial **design composition*
 
 D18/B17 must specify callback registration/generation, exactly-once completion, body/stream/byte leases, TLS/connection drain and runtime ownership. B16/B20/B22 retain slow-consumer, disconnect, cancel/close races, oversized chunk/header/queue limits, aborted body/trailers, callback reentrancy, unknown database commit and observability-budget tests. R17/B23 compare same protocol/TLS/serialization/DB workload and hardware across pure native, native+C# AOT and Kestrel AOT; include idle/peak RSS, threads, CPU, throughput, P95/P99 and long soak. No numeric winner or production memory budget is invented.
 
-
 ## Current completion and architecture correction (2026-11-12)
 
 The latest user mission requires a Rust Server engine. Kestrel is solely the comparator.
@@ -79,7 +78,7 @@ architecture decisions, while their scoped source/evidence identities remain his
 
 D18 now defines the native Handler/Body bridge and retirement protocol; D19 binds
 Tonic/rmcp/rustls to that same host. New actual protocol/network/TLS evidence is in
-`verification/server-completion/`, with exact commands/source hashes and retained prior
+the historical research fixture, with exact commands/source hashes and retained prior
 attempts. Native HTTP1/HTTP2 loopback and bounded TLS tests are real executions, but
 not a C# Server product, equivalent-load benchmark or production soak. The existing
 Body/Bytes/permit and finite credit models are reused without inflating their coverage.

@@ -19,4 +19,4 @@ Exact declarations and XML are generated and checked in Korda. These links selec
 
 Generated references must be regenerated from compiled source/XML, not edited into agreement by hand. API baselines, Roslyn matching, diagnostics and reverse scaffolding use the same current names. Full examples live beside the implementation and are tested with actual candidate packages.
 
-The earlier pre-pruning reference remains an [immutable historical snapshot](https://github.com/IzuSharp/NativeWeave/tree/ea5fa528035d025bd7a28698ee7c71194432236c). Its old names and URLs identify historical evidence; they are not current copyable API instructions. Current Design preserves the frozen compatibility JSON and acceptance hashes.
+The earlier pre-pruning reference remains an [immutable historical snapshot](https://github.com/IzuSharp/NativeWeave/tree/ea5fa528035d025bd7a28698ee7c71194432236c). Its old names and URLs identify historical evidence; they are not current copyable API instructions. Current Design retains one historical declaration catalog for its design meaning, without replaying old acceptance gates.

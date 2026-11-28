@@ -6,7 +6,7 @@ Date: 2026-11-12. Author: interop_design. Status: **partially_evidenced; design 
 
 ## 1. Pinned Inputs and Questions
 
-Design baseline `1f7d89aa754647a6a530fa34a49acc4b0f5d9997`; Plan baseline `da9e4a6337a5af0ec3d5e40a4695a2760d6ac5f5`. R08 revision `0.1.1`, task packet SHA256 `690b702013f788e3c99144467a6c8157f313b1f5a5bdd398b87fad44c927d36a`; D05 revision `0.1.1`, hash `e493b0ba781d216860587eb6f8e46bc809bba78549733b92e9439c79d349cdbb`. All agree with the pinned remote graph and actual task packet bytes.
+Design baseline `1f7d89aa754647a6a530fa34a49acc4b0f5d9997`; Plan baseline `da9e4a6337a5af0ec3d5e40a4695a2760d6ac5f5`. R08 revision `0.1.1`, task packet; D05 revision `0.1.1`, hash `e493b0ba781d216860587eb6f8e46bc809bba78549733b92e9439c79d349cdbb`. All agree with the pinned remote graph and actual task packet bytes.
 
 The following must hold simultaneously: foreign native threads can notify managed code; an immediate synchronous callback after registration is safe; Dispose can be called inside a callback; stopping does not lose callbacks already in flight; a late callback cannot interpret a cookie as a different object; and all ordinary exceptions stop within language boundaries. Non-goals are recovering arbitrary forged pointers through managed validation, or forcing GUI, TLS decisions, and ordinary notifications into the same threading model.
 
@@ -20,7 +20,7 @@ The following must hold simultaneously: foreign native threads can notify manage
 | YAHA | `c386c1cc48d2e56711c15286cf2769353fdccf07` | C# callbacks, RequestContext, SafeHandle, Rust begin/body/complete/abort, TLS lifetime tests |
 | .NET runtime v11 | `deae2e32bf0e018e09d64597b7c59b62b73bb3ce` | CancellationTokenRegistration unregister/drain and its tests |
 
-Paths, symbols, read line ranges, and blob SHAs are in [evidence.json](evidence.json); unread Godot signal-dispatch internals and Qt for Python are listed in [coverage.json](coverage.json). The added .NET source verifies managed cancellation-callback quiescence, directly relevant to this topic. All upstream tests were read but not executed.
+Paths, symbols, read line ranges, and blob SHAs are in evidence.json; unread Godot signal-dispatch internals and Qt for Python are listed in coverage.json. The added .NET source verifies managed cancellation-callback quiescence, directly relevant to this topic. All upstream tests were read but not executed.
 
 ## 3. Godot Call Chain: Strong Roots, One-Shot Behavior, and Copying Before Return
 
@@ -50,7 +50,7 @@ Successful native try_retire therefore cannot replace managed cancellation-regis
 
 Late-cookie counterexample: T1 registers handle H; T2 requests stop and immediately calls Free(H); T3 allocates a new context reusing H; an old native callback already queued arrives, and `GCHandle.FromIntPtr(H).Target` obtains the new object. Nonzero or non-null checks cannot distinguish identity and may even invoke a different certificate validator. The fix is not comparing objects after dereference; it is ensuring H always belongs to the original context whenever a callback may arrive, and releasing it only after new callbacks are permanently prohibited and all in-flight callbacks have exited. [R08-D01]
 
-The second counterexample comes from the [actually executed R09 model](../R09/retirement-result.json): synchronous terminal notification has returned and native try_retire succeeds, but the start entry point has not returned. If the start-return lease is omitted, native start still accesses the operation after managed code releases it, producing access_after_free in the model. A third counterexample omits the ordinary control lease and also produces access after release. The model does not simulate malicious native code, incorrect retirement, actual GC, or memory barriers. [R08-M01]
+The second counterexample comes from the actually executed R09 model: synchronous terminal notification has returned and native try_retire succeeds, but the start entry point has not returned. If the start-return lease is omitted, native start still accesses the operation after managed code releases it, producing access_after_free in the model. A third counterexample omits the ordinary control lease and also produces access after release. The model does not simulate malicious native code, incorrect retirement, actual GC, or memory barriers. [R08-M01]
 
 | Action | Linearization point and guarantee |
 | --- | --- |
@@ -85,7 +85,7 @@ Qt for Python and deep Godot dispatcher internals are unread, so the report over
 
 ## Current completion review — real reverse callback and managed registration drain
 
-The original callback/source report and finite model are preserved. The new interop-completion fixture now actually invokes static managed UCO from a Rust-created native thread, holds a controlled callback barrier, requests retirement/cancellation concurrently and forces GC. Retirement stays pending while the callback is active; after permanent native completion and all test calls return, the cookie is freed. An ordinary callback mapping exception is caught and recorded before returning across FFI. Thirty-two rounds execute in normal and actual Linux Native AOT modes; raw evidence and precise source/binary hashes are in `verification/interop-completion/linux`.
+The original callback/source report and finite model are preserved. The new interop-completion fixture now actually invokes static managed UCO from a Rust-created native thread, holds a controlled callback barrier, requests retirement/cancellation concurrently and forces GC. Retirement stays pending while the callback is active; after permanent native completion and all test calls return, the cookie is freed. An ordinary callback mapping exception is caught and recorded before returning across FFI. Thirty-two rounds execute in normal and actual Linux Native AOT modes; raw evidence and precise source/binary hashes are in the historical research fixture.
 
 The same fixture observes an already-cancelled token's UnsafeRegister callback before registration publication and verifies DisposeAsync remains incomplete while another callback runs, then completes after that callback exits. This closes the previously source-only registration-order experiment. It does not claim arbitrary invalid-cookie probing is safe or that a test barrier is appropriate production callback behavior; production callbacks remain short/nonblocking.
 
@@ -93,7 +93,6 @@ New UniFFI scheduler source at `482095c1ba1b76a1393b582e0589e2fdc9c64b14` invoke
 
 D05/D06/D09 provide stable cookie, source closure, native quiet, managed start/control/callback/registration drain and bounded dispatcher rules. Existing Godot/YAHA evidence already suffices to compare ownership hazards; Qt is not an adopted runtime dependency and its broader source audit is outside this selected C# ABI design. Product notification subscriptions, many concurrent operations, allocator failure and two-OS long-load tests remain A06/A07/A20/B17 implementation obligations. Research/design acceptance awaits independent review of this new scope, not completion of the product.
 
-
 ## Committed Windows/Linux completion execution
 
-[CI evidence readback](../../../../verification/interop-completion/ci-evidence-read.json) verifies actual GitHub run `43388468172` at source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`: Windows x64 MSVC and Linux x64 GNU each executed normal 10,528 assertions and Native AOT 10,529, 32 controlled callback rounds per mode, nine Roslyn checks and static metadata/AOT restriction checks. All command exits and source hashes were verified; Windows checkout CRLF accounts for its distinct input hashes. This extends the main fixture only. Linux-only generator-comparison/panic/invalid-UCO supplemental studies are not mislabeled as Windows results. Deliberate reflection fallback negative cases retain their IL2026/IL3050 diagnostics. Product package/full-protocol/long-load obligations remain separate.
+CI evidence readback verifies actual GitHub run `43388468172` at source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`: Windows x64 MSVC and Linux x64 GNU each executed normal 10,528 assertions and Native AOT 10,529, 32 controlled callback rounds per mode, nine Roslyn checks and static metadata/AOT restriction checks. All command exits and source hashes were verified; Windows checkout CRLF accounts for its distinct input hashes. This extends the main fixture only. Linux-only generator-comparison/panic/invalid-UCO supplemental studies are not mislabeled as Windows results. Deliberate reflection fallback negative cases retain their IL2026/IL3050 diagnostics. Product package/full-protocol/long-load obligations remain separate.

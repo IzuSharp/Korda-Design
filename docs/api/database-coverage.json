@@ -35,7 +35,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Independent provider leaf packages, no ADO.NET inheritance or managed-provider fallback; no connections/schema creation at construction.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B01",
         "B02",
@@ -49,11 +48,7 @@
         "DBSRC-07",
         "DBSRC-20"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-002",
@@ -76,18 +71,13 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Single-use builder, options snapshotted once; no hot reload of existing native pools.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B01",
         "B04"
       ],
       "implementation_status": "not_implemented_design_only",
       "reference_source_ids": [],
-      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification."
     },
     {
       "id": "DB-003",
@@ -110,7 +100,6 @@
       "cost": "One singleton per source; standard DI resolution costs, no second scope system.",
       "limitations": "Optional DI package; singleton source only; sessions explicitly opened; duplicate keys reject.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B01",
         "B04",
@@ -118,11 +107,7 @@
       ],
       "implementation_status": "not_implemented_design_only",
       "reference_source_ids": [],
-      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification."
     },
     {
       "id": "DB-004",
@@ -143,7 +128,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Bounded SQLx pool/waiters, one physical connection lease; no global Core runtime.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B02",
         "B03",
@@ -153,11 +137,7 @@
       "reference_source_ids": [
         "DBSRC-20"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-005",
@@ -179,7 +159,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Connectivity false only; configuration, cancellation and ABI failures throw; no schema bootstrap.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B02",
         "B03",
@@ -187,11 +166,7 @@
       ],
       "implementation_status": "not_implemented_design_only",
       "reference_source_ids": [],
-      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification."
     },
     {
       "id": "DB-006",
@@ -216,7 +191,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Bounded waiting and actual local safety are distinct; pending native work stays rooted/charged.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B04",
         "B05"
@@ -226,11 +200,7 @@
         "DBSRC-01",
         "DBSRC-20"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-007",
@@ -254,7 +224,6 @@
       "cost": "Bounded startup metadata/delegates; one native registration per source/schema hash.",
       "limitations": "Entity classes/record classes; DTO projections may be structs. First use auto-registers generated immutable descriptor; no per-entity Cargo. Default store names preserve CLR property names/casing; WeaveColumn explicitly overrides them and generated member names remain unchanged.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B01",
         "B10",
@@ -264,11 +233,7 @@
       "reference_source_ids": [
         "DBSRC-09"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-008",
@@ -293,7 +258,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Supported codec set only; NRT metadata plus independent native shape checks.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B01",
         "B07",
@@ -303,11 +267,7 @@
       "reference_source_ids": [
         "DBSRC-06"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-009",
@@ -332,7 +292,6 @@
       "cost": "Direct constructor calls and necessary owned string/bytes copies; no object-array typed path.",
       "limitations": "Explicit static mappings use same native engine as generated form; no reflection setters.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B01",
         "B12"
@@ -342,11 +301,7 @@
         "DBSRC-04",
         "DBSRC-16"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-010",
@@ -372,7 +327,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Trusted SQL template, typed parameters, native placeholder rewriting; no arbitrary SQL sanitization promise.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B01",
         "B02",
@@ -385,11 +339,7 @@
         "DBSRC-06",
         "DBSRC-15"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-011",
@@ -410,7 +360,6 @@
       "cost": "Explicit FormattableString object array/boxing plus native value snapshot; typed SqlParameters path avoids boxing.",
       "limitations": "Values only, reject alignment/format specifiers and untyped null; identifiers never holes.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B01",
         "B07"
@@ -419,11 +368,7 @@
       "reference_source_ids": [
         "DBSRC-11"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-012",
@@ -445,7 +390,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Int64 affected rows; query-result commands reject, no silently discarded rows.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B02",
         "B03",
@@ -456,11 +400,7 @@
         "DBSRC-02",
         "DBSRC-16"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-013",
@@ -485,7 +425,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Exactly one row/column; explicit nullable codec; not untyped object conversion.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B02",
         "B03",
@@ -496,11 +435,7 @@
         "DBSRC-02",
         "DBSRC-16"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-014",
@@ -528,7 +463,6 @@
       "cost": "O(rows) owned DTO/list or array memory plus bounded native batches; simultaneous native/wire/managed bytes counted.",
       "limitations": "Finite rows/bytes, owned DTOs; exceeding limits fails rather than unbounded fetch_all.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B06",
         "B12",
@@ -539,11 +473,7 @@
         "DBSRC-10",
         "DBSRC-16"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-015",
@@ -571,7 +501,6 @@
       "cost": "One bounded current batch; DTO allocations remain; no hidden sync deferred reader.",
       "limitations": "One-shot sequence, one active MoveNext, no prefetch; early break joins cleanup.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B06",
         "B12",
@@ -584,11 +513,7 @@
         "DBSRC-16",
         "DBSRC-17"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-016",
@@ -612,7 +537,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "First observes one row, Single at most two then cleanup; empty/multiple required cardinality throws.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B06",
         "B13"
@@ -621,11 +545,7 @@
       "reference_source_ids": [
         "DBSRC-10"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-017",
@@ -649,7 +569,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Unconstrained T? follows C# annotation behavior: value types yield default(T), not automatic Nullable<T>.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B06",
         "B13"
@@ -658,11 +577,7 @@
       "reference_source_ids": [
         "DBSRC-10"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-018",
@@ -685,7 +600,6 @@
       "cost": "One bounded native query construction per key component plus execute/fetch operations; no identity map or cache and no separate Mutation.KeyQuery entry.",
       "limitations": "No identity-map/cache return; complete key including explicit tenant components.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B01",
         "B14"
@@ -694,11 +608,7 @@
       "reference_source_ids": [
         "DBSRC-09"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-019",
@@ -722,7 +632,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Immediate native insert; generated columns omitted; returned DTO explicit, input entity not mutated.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B07",
         "B11",
@@ -733,11 +642,7 @@
         "DBSRC-08",
         "DBSRC-09"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-020",
@@ -761,7 +666,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Unset differs from SQL NULL; no hidden change tracking or managed SQL AST.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B07",
         "B14"
@@ -770,11 +674,7 @@
       "reference_source_ids": [
         "DBSRC-08"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-021",
@@ -795,7 +695,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Immediate parameterized key delete with affected count; no graph cascade policy beyond database constraints.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B14"
       ],
@@ -803,11 +702,7 @@
       "reference_source_ids": [
         "DBSRC-09"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-022",
@@ -833,7 +728,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Key/token comparison and mutation in same statement; explicit version update, no retry or read-before-write.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B05",
         "B14"
@@ -842,11 +736,7 @@
       "reference_source_ids": [
         "DBSRC-08"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-023",
@@ -871,7 +761,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "WHERE required in v1; unsupported join/group/window mutation shapes reject; concurrency token explicit.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13",
@@ -881,11 +770,7 @@
       "reference_source_ids": [
         "DBSRC-10"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-024",
@@ -913,7 +798,6 @@
       "cost": "Bounded input/batch pull; multirow native inserts; provider parameter limits constrain batch size.",
       "limitations": "All atomic default; PerBatch explicitly partial; caller-owned transaction not committed; no COPY claim. Failed/canceled operations expose immutable progress without replacing Unknown or cancellation exception categories. All inside a caller transaction owns an internal savepoint; failures roll back that savepoint or mark the outer transaction Failed and prohibit Commit.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B06",
         "B07",
@@ -924,11 +808,7 @@
         "DBSRC-05",
         "DBSRC-16"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-025",
@@ -950,7 +830,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "ON CONFLICT target explicit; named constraints PG-only; not SeaORM save/exists-based upsert.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B14"
@@ -959,11 +838,7 @@
       "reference_source_ids": [
         "DBSRC-10"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-026",
@@ -986,7 +861,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "null provider default, PG RC/RR/Serializable; SQLite Serializable plus separate begin mode; unsupported levels reject.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B05"
       ],
@@ -995,11 +869,7 @@
         "DBSRC-01",
         "DBSRC-03"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-027",
@@ -1023,7 +893,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Cancellation controls pre-send admission only; possible send with no confirmation is Unknown and never auto-retried.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B05",
         "B22"
@@ -1033,11 +902,7 @@
         "DBSRC-03",
         "DBSRC-12"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-028",
@@ -1062,7 +927,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Unconfirmed rollback is distinct from Unknown commit; cleanup cannot overwrite prior remote outcome.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B05",
         "B22"
@@ -1072,11 +936,7 @@
         "DBSRC-03",
         "DBSRC-12"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-029",
@@ -1102,7 +962,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Generated identifiers, generation-bound LIFO scopes, no implicit outer commit.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B05"
       ],
@@ -1111,11 +970,7 @@
         "DBSRC-03",
         "DBSRC-12"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-030",
@@ -1141,7 +996,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Native cancellation is cooperative; no blanket PG CancelRequest or SQLite hard-preemption guarantee; local retirement distinct.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B02",
         "B03",
@@ -1153,11 +1007,7 @@
         "DBSRC-02",
         "DBSRC-15"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-031",
@@ -1181,7 +1031,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Provider code/correlation preserved; IsTransient is not retry permission; no credentials/parameter logging.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B01",
         "B07"
@@ -1190,11 +1039,7 @@
       "reference_source_ids": [
         "DBSRC-08"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-032",
@@ -1218,7 +1063,6 @@
       "cost": "Direct fluent entry native AST allocation; optional delegate/closure allocation explicit.",
       "limitations": "Builder delegate runs now over proxies; not Func<TEntity,bool> translation or IQueryable provider.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B09",
         "B11",
@@ -1228,11 +1072,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-033",
@@ -1257,7 +1097,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "SQL three-valued logic; no CLR Boolean compensation.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -1266,11 +1105,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-034",
@@ -1297,7 +1132,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Ordinary equality with NULL yields UNKNOWN; NullSafeEqual codec/collation capability-bound. Explicit one-way lift retains codec/configuration/owner and emits no SQL conversion or sentinel; nullable-to-non-null projection remains invalid.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B07",
         "B09",
@@ -1306,11 +1140,7 @@
       ],
       "implementation_status": "not_implemented_design_only",
       "reference_source_ids": [],
-      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification."
     },
     {
       "id": "DB-035",
@@ -1332,7 +1162,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Empty sets deliberate FALSE/TRUE; NULL-containing sets retain SQL UNKNOWN; spans snapshotted before return.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -1341,11 +1170,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-036",
@@ -1369,7 +1194,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "INumber generic constraint; provider arithmetic/overflow remains explicit, decimal-text math rejected. Nullable value/expression overloads preserve SQL NULL propagation and numeric generic constraints.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B07",
         "B11",
@@ -1379,11 +1203,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-037",
@@ -1410,7 +1230,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "SQL collation not .NET culture/UTF16 ordinal; literal helpers escape wildcard characters; nullable operations named explicitly.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -1419,11 +1238,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-038",
@@ -1449,7 +1264,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Static constructors, explicit selected expressions, exact shape; arbitrary class reflection unsupported.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B10",
         "B12",
@@ -1460,11 +1274,7 @@
         "DBSRC-21",
         "DBSRC-16"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-039",
@@ -1492,7 +1302,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Explicit typed alias/ON; cross-owner tokens reject; self joins retain separate aliases. ON preserves declared FK nullability; explicit key lift keeps SQL UNKNOWN for NULL FK, including when a parent key is zero.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -1501,11 +1310,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-040",
@@ -1536,7 +1341,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Right-side projected scalars nullable; match marker distinct from null data; ON not moved to WHERE. ON preserves declared FK nullability; explicit key lift keeps SQL UNKNOWN for NULL FK, including when a parent key is zero.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -1545,11 +1349,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-041",
@@ -1567,7 +1367,6 @@
       "cost": "No v1 API allocation/performance claim.",
       "limitations": "No stable v1 fluent method; both-side null-lifting and provider parity must be designed/verified before adding; explicit trusted SQL alternative.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B11",
         "B13"
@@ -1576,11 +1375,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-042",
@@ -1607,7 +1402,6 @@
       "cost": "One source-local immutable relation registration on cache miss; one child SELECT with ordered key parameters, then bounded cursor batches and owned child DTOs; both-model/projection leases retained until quiescence.",
       "limitations": "Independent post-Build relation identity leaves both table hashes unchanged; complete ordered non-null parent PK, exact child codec/configuration/collation and declared nullable FK flags; no parent-existence query, implicit ordering/tenant filters, recursive Include, identity fix-up or hidden N+1. Source generation/cache budgets/retention are explicit in database.md section9.2.1.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B01",
         "B07",
@@ -1618,11 +1412,7 @@
       "reference_source_ids": [
         "DBSRC-10"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-043",
@@ -1639,7 +1429,6 @@
       "cost": "Must bound key/result/group bytes before claiming support.",
       "limitations": "Needs native runtime-metadata generalization of source-inspected SeaORM loader algorithm; static ModelTrait bounds are not ordinary runtime entity support.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B14"
       ],
@@ -1647,11 +1436,7 @@
       "reference_source_ids": [
         "DBSRC-10"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-044",
@@ -1674,7 +1459,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Native grouping keys/aggregates; no materialized IGrouping or arbitrary C# group delegates.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -1683,11 +1467,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-045",
@@ -1714,7 +1494,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Int64 count; honors query distinct/group/paging through native subquery as needed; no client enumeration.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -1723,11 +1502,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-046",
@@ -1750,7 +1525,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Declared int/long/decimal/double overloads; empty SUM/AVG nullable, checked provider result conversion, no implicit CLR empty zero. Nullable overloads are explicit; empty/all-NULL results stay nullable; integer AVG returns Double with documented rounding.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B07",
         "B11",
@@ -1760,11 +1534,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-047",
@@ -1789,7 +1559,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Nullable empty results; SQL collation for text, provider comparison domain required.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B07",
         "B11",
@@ -1799,11 +1568,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-048",
@@ -1829,7 +1594,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "OrderBy replaces and ThenBy appends; explicit null ordering, paging needs unique tie-breaker.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -1838,11 +1602,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-049",
@@ -1865,7 +1625,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Nonnegative finite bounds; offset requires unique ordered result; Take without ordering explicitly nondeterministic.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -1874,11 +1633,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-050",
@@ -1900,7 +1655,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Single nonnull unique ascending key only; no opaque client cursor signing/snapshot guarantee; composite/descending cursor convenience planned.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -1909,11 +1663,7 @@
       "reference_source_ids": [
         "DBSRC-10"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-051",
@@ -1940,7 +1690,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Same source/exact projected codec shape; SQL duplicate/NULL semantics, native cloning charged.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -1949,11 +1698,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-052",
@@ -1976,7 +1721,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "One compatible scalar for IN; same source and bounded shape; explicit native composition.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -1985,11 +1729,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-053",
@@ -2013,7 +1753,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Explicit declared shape, validated anchor/member; SEARCH/CYCLE not promised; malformed native renderer inputs rejected.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -2022,11 +1761,7 @@
       "reference_source_ids": [
         "DBSRC-11"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-054",
@@ -2053,7 +1788,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Inline ROWS unbounded/current boundaries; no arbitrary named-window list/RANGE/GROUPS/offset frames.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -2062,11 +1796,7 @@
       "reference_source_ids": [
         "DBSRC-11"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-055",
@@ -2090,7 +1820,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Explicit native CASE/COALESCE with compatible codecs; no arbitrary C# expression rewriting.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -2099,11 +1828,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-056",
@@ -2127,7 +1852,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "PG active transaction only; SQLite rejects rather than ignored lock SQL; no hidden emulation.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B05",
         "B11",
@@ -2138,11 +1862,7 @@
         "DBSRC-03",
         "DBSRC-11"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-057",
@@ -2168,7 +1888,6 @@
       "cost": "Bounded shape cache + per-execution values; reuse across separate sessions, explicit native clones.",
       "limitations": "Immutable source-bound native shape; per-connection SQLx prepared caches distinct; no dynamic IL.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B09",
         "B11",
@@ -2180,11 +1899,7 @@
         "DBSRC-05",
         "DBSRC-20"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-058",
@@ -2208,7 +1923,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Only registered allowed column+codec IDs; no arbitrary property-name reflection, untrusted identifiers or runtime generic types.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B01",
         "B11",
@@ -2218,11 +1932,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-059",
@@ -2243,7 +1953,6 @@
       "cost": "O(query shape/SQL text) native render and managed UTF-8 decode; not zero-cost logging.",
       "limitations": "Native render clone, placeholders only, no parameter values; bounded diagnostic allocation.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -2252,11 +1961,7 @@
       "reference_source_ids": [
         "DBSRC-11"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-060",
@@ -2286,7 +1991,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Checked widths/strict UTF8; SQLite boolean0/1; owned strings/arrays.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B07",
         "B12"
@@ -2295,11 +1999,7 @@
       "reference_source_ids": [
         "DBSRC-04"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-061",
@@ -2328,7 +2028,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "RFC4122 GUID byte order, microsecond precision, explicit SQLite representations, checked range/loss. DateTime defaults to explicit UTC-only semantics: Kind=Utc required, no local timezone inference; DateTimeOffset is normalized to UTC.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B07",
         "B12"
@@ -2337,11 +2036,7 @@
       "reference_source_ids": [
         "DBSRC-04"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-062",
@@ -2367,7 +2062,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "PG numeric precision/scale explicit; SQLite text roundtrip not numeric ordering; fixed-scale Int64 separate profile.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B07"
       ],
@@ -2376,11 +2070,7 @@
         "DBSRC-04",
         "DBSRC-06"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-063",
@@ -2405,7 +2095,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "SQL NULL flag differs from missing field/default value; enum backing checked Int32, undefined values remain application policy.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B07",
         "B10"
@@ -2414,11 +2103,7 @@
       "reference_source_ids": [
         "DBSRC-04"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-064",
@@ -2441,7 +2126,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Explicit JsonTypeInfo and enabled native JSON profile; no reflection JSON fallback/automatic arbitrary-type JSON query engine.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B07",
         "B10",
@@ -2449,11 +2133,7 @@
       ],
       "implementation_status": "not_implemented_design_only",
       "reference_source_ids": [],
-      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification."
     },
     {
       "id": "DB-065",
@@ -2479,7 +2159,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Explicit immutable provider SQL bundles; dedicated connection; SQLx ledger/checksum/locking; no automatic startup migration.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B08"
       ],
@@ -2487,11 +2166,7 @@
       "reference_source_ids": [
         "DBSRC-14"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-066",
@@ -2512,7 +2187,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Ledger/checksum/dirty validation only, not model/schema diff; AOT static bundle path.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B08"
       ],
@@ -2520,11 +2194,7 @@
       "reference_source_ids": [
         "DBSRC-14"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-067",
@@ -2548,7 +2218,6 @@
       "cost": "One thin managed call and native operation; input UTF-8/value copies and owned result allocations are counted.",
       "limitations": "Bounded tables/columns/key/nullability catalog; no arbitrary ADO metadata collections, DataTable or designer.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B08"
       ],
@@ -2557,11 +2226,7 @@
         "DBSRC-01",
         "DBSRC-04"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-068",
@@ -2582,7 +2247,6 @@
       "cost": "No identity-map/change-snapshot allocation; DTO construction still costs.",
       "limitations": "All query DTOs untracked; absence of tracking is default, no redundant AsNoTracking call.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B12",
         "B14"
@@ -2591,11 +2255,7 @@
       "reference_source_ids": [
         "DBSRC-10"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-069",
@@ -2613,7 +2273,6 @@
       "cost": "No v1 implementation or performance claim; documented alternative only.",
       "limitations": "No DbConnection subclass/provider registration; Dapper cannot consume DataSession directly. Dapper-inspired convenience exists without duplicating ADO.NET architecture.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B01"
       ],
@@ -2623,11 +2282,7 @@
         "DBSRC-07",
         "DBSRC-20"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-070",
@@ -2646,7 +2301,6 @@
       "cost": "No v1 implementation or performance claim; documented alternative only.",
       "limitations": "Disconnected mutable tables, designer adapters and object-valued row model add allocations/runtime surface outside this typed native design.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B01",
         "B12"
@@ -2655,11 +2309,7 @@
       "reference_source_ids": [
         "DBSRC-04"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-071",
@@ -2677,7 +2327,6 @@
       "cost": "No v1 implementation or performance claim; documented alternative only.",
       "limitations": "No sync-over-async/public blocking query facade; sync metadata/native builder calls remain available.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B04",
         "B06"
@@ -2687,11 +2336,7 @@
         "DBSRC-01",
         "DBSRC-02"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-072",
@@ -2709,7 +2354,6 @@
       "cost": "No v1 implementation or performance claim; documented alternative only.",
       "limitations": "No distributed coordinator/ambient transaction propagation; explicit single native session transactions only.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B05"
       ],
@@ -2717,11 +2361,7 @@
       "reference_source_ids": [
         "DBSRC-01"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-073",
@@ -2738,7 +2378,6 @@
       "cost": "No v1 implementation or performance claim; documented alternative only.",
       "limitations": "One active physical-session operation; separate sessions provide concurrency.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B04",
         "B06"
@@ -2747,11 +2386,7 @@
       "reference_source_ids": [
         "DBSRC-04"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-074",
@@ -2768,18 +2403,13 @@
       "cost": "No v1 implementation or performance claim; documented alternative only.",
       "limitations": "Unknown effects cannot be replayed safely without application idempotency; framework exposes outcome and recovery identity.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B05",
         "B21"
       ],
       "implementation_status": "not_implemented_design_only",
       "reference_source_ids": [],
-      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification."
     },
     {
       "id": "DB-075",
@@ -2797,7 +2427,6 @@
       "cost": "No v1 implementation or performance claim; documented alternative only.",
       "limitations": "Explicit native CRUD/changesets/CAS; no C# state manager, graph traversal or hidden identity map.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B14"
       ],
@@ -2806,11 +2435,7 @@
         "DBSRC-08",
         "DBSRC-10"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-076",
@@ -2827,17 +2452,12 @@
       "cost": "No v1 implementation or performance claim; documented alternative only.",
       "limitations": "Hidden queries and runtime proxies conflict with explicit bounded operations/AOT.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B14"
       ],
       "implementation_status": "not_implemented_design_only",
       "reference_source_ids": [],
-      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification."
     },
     {
       "id": "DB-077",
@@ -2855,7 +2475,6 @@
       "cost": "No v1 implementation or performance claim; documented alternative only.",
       "limitations": "No complete managed LINQ provider, method-body interception or client evaluation; normal proxy builder lambdas only.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B09",
         "B13"
@@ -2865,11 +2484,7 @@
         "DBSRC-09",
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-078",
@@ -2887,7 +2502,6 @@
       "cost": "No v1 implementation or performance claim; documented alternative only.",
       "limitations": "SQL collation/operator semantics are native; arbitrary CLR comparer cannot be pushed to Rust/database faithfully.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B11",
         "B13"
@@ -2896,11 +2510,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-079",
@@ -2918,7 +2528,6 @@
       "cost": "No v1 implementation or performance claim; documented alternative only.",
       "limitations": "No automatic schema diff/synchronization/destructive downgrade; reviewed SQL bundles are explicit.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B08"
       ],
@@ -2926,11 +2535,7 @@
       "reference_source_ids": [
         "DBSRC-14"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-080",
@@ -2948,18 +2553,13 @@
       "cost": "No v1 implementation or performance claim; documented alternative only.",
       "limitations": "Static DTO factories/closed generics/JsonTypeInfo only for ordinary AOT.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B10",
         "B12"
       ],
       "implementation_status": "not_implemented_design_only",
       "reference_source_ids": [],
-      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "No individual source inspection is claimed for these named comparison APIs; the row records the explicit NativeWeave design boundary, supported by the linked native evidence and normative specification."
     },
     {
       "id": "DB-081",
@@ -2976,7 +2576,6 @@
       "cost": "No v1 implementation or performance claim; documented alternative only.",
       "limitations": "Only PostgreSQL/SQLite are designed current product providers; SQLx support for another backend is not a public NativeWeave provider.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B02",
         "B03"
@@ -2985,11 +2584,7 @@
       "reference_source_ids": [
         "DBSRC-07"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-082",
@@ -3007,7 +2602,6 @@
       "cost": "Requires separate cost/ownership/native parity design before surface admission.",
       "limitations": "Separate explicit queries in one transaction are available; future grid API needs ordered per-grid shape/ownership and skip/drain semantics.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B06",
         "B12"
@@ -3018,11 +2612,7 @@
         "DBSRC-16",
         "DBSRC-17"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-083",
@@ -3040,7 +2630,6 @@
       "cost": "Requires separate cost/ownership/native parity design before surface admission.",
       "limitations": "Trusted SQL CALL is possible within ordinary result rules; no output parameter or cursor ownership abstraction claimed.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B02",
         "B06",
@@ -3050,11 +2639,7 @@
       "reference_source_ids": [
         "DBSRC-06"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-084",
@@ -3072,7 +2657,6 @@
       "cost": "Requires separate cost/ownership/native parity design before surface admission.",
       "limitations": "Row streaming is specified separately; ordinary SQLx fields may materialize fully. New native streaming profile requires source-backed API and bounds.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B02",
         "B03",
@@ -3082,11 +2666,7 @@
       "reference_source_ids": [
         "DBSRC-04"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-085",
@@ -3103,7 +2683,6 @@
       "cost": "Requires separate cost/ownership/native parity design before surface admission.",
       "limitations": "Separate codecs/capabilities and wire versions before exposing; no automatic claim from upstream implementations.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B07"
       ],
@@ -3111,11 +2690,7 @@
       "reference_source_ids": [
         "DBSRC-06"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "verification/database-completion/source-inspection.json",
-        "docs/database/sqlx-retirement-study.md"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-086",
@@ -3132,7 +2707,6 @@
       "cost": "Requires separate cost/ownership/native parity design before surface admission.",
       "limitations": "Named-window registries, frame offsets/RANGE/GROUPS, SEARCH/CYCLE and lateral policies need explicit bindings and provider parity.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B11",
         "B13"
@@ -3141,11 +2715,7 @@
       "reference_source_ids": [
         "DBSRC-11"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-087",
@@ -3162,7 +2732,6 @@
       "cost": "Requires separate cost/ownership/native parity design before surface admission.",
       "limitations": "Native grouping and explicit joins available; general nested in-memory grouping would hide materialization/resource policy.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B12",
         "B14"
@@ -3171,11 +2740,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-088",
@@ -3195,7 +2760,6 @@
       "cost": "Requires separate cost/ownership/native parity design before surface admission.",
       "limitations": "No guessed SQL equivalence; explicit native windows/grouping/filters may express a particular query.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B11",
         "B13"
@@ -3204,11 +2768,7 @@
       "reference_source_ids": [
         "DBSRC-21"
       ],
-      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read.",
-      "native_evidence_paths": [
-        "docs/research/topics/R25/source-driven-seaquery.md",
-        "docs/research/topics/R25/coverage.json"
-      ]
+      "reference_source_scope": "Only the named declaration/body ranges in these source records are claimed inspected; a row may compare additional familiar API family members whose individual implementations were not read."
     },
     {
       "id": "DB-089",
@@ -3234,7 +2794,6 @@
       "cost": "Only explicit native query/value operations; no managed expression tree, runtime compilation or implicit query/result cache.",
       "limitations": "False skips callback/native construction; predicate is a normal immediate builder delegate, not Expression<Func<TEntity,bool>>.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B13"
       ],
@@ -3262,7 +2821,6 @@
       "cost": "Only explicit native query/value operations; no managed expression tree, runtime compilation or implicit query/result cache.",
       "limitations": "Native tokens are arena-scoped. Reusable C# functions construct predicates for the current query; no cross-arena predicate borrowing or expression compilation.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -3292,7 +2850,6 @@
       "cost": "Only explicit native query/value operations; no managed expression tree, runtime compilation or implicit query/result cache.",
       "limitations": "Explicit null differs from absent assignment; no default-value heuristic or automatic reflective property comparison.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B14"
       ],
@@ -3322,7 +2879,6 @@
       "cost": "Only explicit native query/value operations; no managed expression tree, runtime compilation or implicit query/result cache.",
       "limitations": "Compose separate clone count and page executions; no hidden second query or mutable out parameter. Count before pagination, use explicit transaction isolation when a consistent snapshot is required.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B11",
         "B13"
@@ -3352,7 +2908,6 @@
       "cost": "Only explicit native query/value operations; no managed expression tree, runtime compilation or implicit query/result cache.",
       "limitations": "Explicit alias scopes and nullable right-side fields; constructor/projection supplied statically, without auto-fill reflection.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B12",
         "B13"
@@ -3381,7 +2936,6 @@
       "cost": "Only explicit native query/value operations; no managed expression tree, runtime compilation or implicit query/result cache.",
       "limitations": "Required key/version values participate in the same native mutation; affected-count mismatch is a typed conflict, with no transparent retry.",
       "specification": "docs/api/database.md",
-      "signature_source": "experiments/public-api/NativeWeave.Api.Design/Database.cs",
       "tasks": [
         "B14"
       ],
@@ -3405,7 +2959,6 @@
       "cost": "Only explicit native query/value operations; no managed expression tree, runtime compilation or implicit query/result cache.",
       "limitations": "Physical partition routing, cross-shard transactions and generated schema lifecycles need a separately designed native capability; explicit sources/tables remain available.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B09",
         "B14"
@@ -3430,7 +2983,6 @@
       "cost": "Only explicit native query/value operations; no managed expression tree, runtime compilation or implicit query/result cache.",
       "limitations": "v1 has no hidden global mutable filter/cache state. Application typed query factories attach tenant/soft-delete predicates explicitly; result caching remains an application concern with explicit invalidation.",
       "specification": "docs/api/database.md",
-      "signature_source": null,
       "tasks": [
         "B13",
         "B14"

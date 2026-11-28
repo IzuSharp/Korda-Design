@@ -54,7 +54,7 @@ The shipped SQLite source is [public domain](https://sqlite.org/copyright.html).
 
 ## C++ build and developer checks
 
-Use LLVM 23.1.5 / clang-format 23.1.5 / clang-tidy 23.1.5 and C++20. [The official LLVM release](https://github.com/llvm/llvm-project/releases/tag/llvmorg-23.1.5) supplies Linux X64 tar.zst SHA-256 `c3107384835f788768f614db610e87fba7077f125ca950eb02a78bab0a308065` and tar.xz SHA-256 `f72edb0b36580ece7f52e23858f00c18fad4e87395ea7ad05d7e55c39f8fc78a`. The fixed pre-commit mirror is [`ce4bd7270237e95464b37d808b942f02785192c4`](https://github.com/pre-commit/mirrors-clang-format/commit/ce4bd7270237e95464b37d808b942f02785192c4).
+Use LLVM 23.1.5 / clang-format 23.1.5 / clang-tidy 23.1.5 and C++20. [The official LLVM release](https://github.com/llvm/llvm-project/releases/tag/llvmorg-23.1.5) supplies Linux X64 tar.zst and tar.xz. The fixed pre-commit mirror is [`ce4bd7270237e95464b37d808b942f02785192c4`](https://github.com/pre-commit/mirrors-clang-format/commit/ce4bd7270237e95464b37d808b942f02785192c4).
 
 Independently implement `.clang-format`, `.clang-tidy`, `.pre-commit-config.yaml`, incremental `.gitattributes`/`.gitignore` rules and shared CMake presets using [DesktopPlatform 6e109ef](https://github.com/ArcForges/DesktopPlatform/tree/6e109ef5d01855158c7ae3a63cd42c98db2647f3) as the requested reference. Its AGPL-marked implementation files are not copied. Filter only maintained native source/header/test paths; preserve tracked database/native binary attributes. Exclude third-party/generated sources from style checks and ignore local build/cache/user-preset state.
 

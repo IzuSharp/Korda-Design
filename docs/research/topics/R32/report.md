@@ -12,7 +12,7 @@ wgpu 30.0.2, `2b38d994b38dd001157d31fd3321111103a8dd80`:
 `wgpu/src/api/surface.rs:28–48,103–124,138–198,218–228`,
 `buffer.rs:300–335,356–398,547–629`, `device.rs:86–96`.
 Exact file hashes, URLs and read boundaries are in
-[source-inspection.json](../../../../verification/server-completion/source-inspection.json).
+source-inspection.json.
 No GPUI or NSH-specific implementation is claimed read by this study.
 
 ## What the source actually constrains

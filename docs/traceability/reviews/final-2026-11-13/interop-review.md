@@ -46,8 +46,6 @@ Accept the named **13 Research tasks, 12 Documentation tasks and 9 contract desi
 
 ## Evidence actually checked
 
-All 18 distinct embedded evidence references matched their named bytes. Six original local/CI run manifests supplied **54 source identities and 53 command records / 106 raw stdout/stderr streams**; every checked identity matched. The Windows and Linux CI archives preserve **24 files each**, and all 48 extracted-file hashes matched. This review verifies preserved bytes; it does not claim a new ZIP download or new execution.
-
 The main fixture really records 10,528 normal / 10,529 Native AOT assertions, 32 controlled callback rounds, nine generator checks and four/six normal/AOT restriction checks per OS. The Linux-only comparison has 60 normal and 60 AOT cases. Seven panic child cases and the two invalid-UCO child failures remain visibly nonzero where expected; UCO body-entry markers are absent and InvalidProgramException is present.
 
 The old local Linux Cargo.toml is intentionally different from the later committed input; its original source snapshot and all 13 archived source hashes were checked. Windows CI source differs by recorded CRLF checkout in 13 files. Neither historical record was rewritten or counted as a new run.

@@ -206,17 +206,15 @@ Q05's v1 Task/ValueTask/pooling choice has an explicit decision; Q04's asynchron
 
 ## 15. Completion review and version constraints for this round (2026-11-13)
 
-[The R09 completion report](../research/topics/R09/report.md) continues to use the already successful finite retirement model without rerunning it merely to add volume; it adds pinned source for .NET 11 `ManualResetValueTaskSourceCore`, UniFFI future/scheduler, and the [actual normal/AOT probe](../../verification/interop-completion/linux/result.json). The latter actually covers synchronous/foreign-native-thread completion, pre-cancellation, synchronous callbacks during registration, late cancellation not altering success, rejection of duplicate terminal/take, result release after conversion throws, and failed retirement while a callback is in flight. It verifies the specified control boundaries without implementing the entire product coordinator.
+[The R09 completion report](../research/topics/R09/report.md) continues to use the already successful finite retirement model without rerunning it merely to add volume; it adds pinned source for .NET 11 `ManualResetValueTaskSourceCore`, UniFFI future/scheduler, and the actual normal/AOT probe. The latter actually covers synchronous/foreign-native-thread completion, pre-cancellation, synchronous callbacks during registration, late cancellation not altering success, rejection of duplicate terminal/take, result release after conversion throws, and failed retirement while a callback is in flight. It verifies the specified control boundaries without implementing the entire product coordinator.
 
 v1 prefers Task and asynchronous continuations; ValueTask pooling must await concrete measurements and additional proof. The short version and Reset in `ManualResetValueTaskSourceCore` do not prove that an old native cookie is quiescent, nor permit token-wraparound detection alone to guarantee unlimited reuse. The current .NET 11 Runtime Async feature status and compilation configuration follow the latest R01/D01 evidence; historical “preview” descriptions must not remain current restrictions and do not change this protocol's native quiet obligations.
 
 Cleanup notifications use [D09](concurrency-v0.1.md)'s finite mailbox and single retry source; checking dirty and clearing scheduled must be atomic. Design acceptance is separate from A07/A19/A20 implementation tests: this specification already defines every required implementation state, failure atomicity and release partial order; formal implementation then maps actual CAS, GC roots, native references and platform behavior to these invariants item by item.
 
-
 ### Committed target evidence
 
-The [CI readback](../../verification/interop-completion/ci-evidence-read.json) verifies source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, run `43388468172`: actual Windows/Linux normal and Native AOT main interop execution (10,528/10,529 assertions respectively), Roslyn generation checks and static metadata restrictions. This supports the stated research slice; product conformance remains separately assigned. Supplemental panic/invalid-UCO/generator comparison runs are Linux-only.
-
+The CI readback verifies source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, run `43388468172`: actual Windows/Linux normal and Native AOT main interop execution (10,528/10,529 assertions respectively), Roslyn generation checks and static metadata restrictions. This supports the stated research slice; product conformance remains separately assigned. Supplemental panic/invalid-UCO/generator comparison runs are Linux-only.
 
 ## Public API refinement, revision 0.4.0
 

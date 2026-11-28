@@ -34,6 +34,6 @@ Acceptance requires both providers with source-tree-external PackageReference JI
 
 ## Historical evidence
 
-Do not rewrite accepted hashes or old verifier conditions. Keep `docs/current-scope.json`, the historical contracts and raw Rust research evidence unchanged. `tools/verify_cpp_migration.py` validates the new overlay and invokes the unchanged DB-Scope-01 gate in a detached worktree of Design `8298dc4128b745cf1809bad0c3cf02c45eb7f522`; the existing earlier-history gate remains separate. Neither document gate proves product execution. Plan records actual source transitions, tests, reviews, PRs, merges, CI and final gaps.
+Current document checks use [the CI registry](../../eng/ci/README.md). Historical acceptance applies to its original revision; it is not replayed for ordinary document edits and does not establish product execution.
 
 DB-API-01, DB-Perf-01, new ORM capabilities, a benchmark campaign, other platform acceptance and public publication are outside this batch. Stop after the authorized migration and acceptance; if a key capability or validation remains missing, report the task as incomplete.

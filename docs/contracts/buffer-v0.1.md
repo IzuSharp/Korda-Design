@@ -67,15 +67,13 @@ The actual Interop fixture is NativeWeave commit `4a4adc883b80719d2a9b2bfb03be5e
 
 [The R10 report and evidence](../research/topics/R10/report.md) record the exact `Bytes::from_owner` behavior in Bytes1.12.1: ownership of the owner is transferred first, then AsRef is called once to obtain a stable view; the owner is destroyed only after all clones are released. Conversion to BytesMut allocates and copies. This public API can reuse the backing-owner lifetime, but does not turn an arbitrary temporary managed Span into native input that is safe to retain long term.
 
-[This round's normal/AOT experiments](../../verification/interop-completion/linux/result.json) verify u64 extent overflow, the isize upper bound and finite budgets, as well as an independently owned result remaining valid after operation release and being released in finally if conversion fails. The existing [source-lifecycle evidence](../../verification/source-lifecycle/results.json) continues to support the separation between Body completion and the final Bytes backing owner; successful runs are not repeated.
+This round's normal/AOT experiments verify u64 extent overflow, the isize upper bound and finite budgets, as well as an independently owned result remaining valid after operation release and being released in finally if conversion fails. The existing source-lifecycle evidence continues to support the separation between Body completion and the final Bytes backing owner; successful runs are not repeated.
 
 The sole allocator/release pair for an owned buffer/result must come from the Engine that created it, and a view is valid only within an explicit lease. Native/managed memory budgets separately account for queued, retained, pinned and transferred results; transferring an operation budget must not lose accounting for held-result bytes. Explicit profiles control copying in the initial product; routes without test evidence must not claim zero-copy behavior or a bound on total RSS. This design may be accepted after independent review; production buffer forms and long-duration memory tests remain assigned to A04/A20/B15/B22.
 
-
 ### Committed target evidence
 
-The [CI readback](../../verification/interop-completion/ci-evidence-read.json) verifies source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, run `43388468172`: actual Windows/Linux normal and Native AOT main interop execution (10,528/10,529 assertions respectively), Roslyn generation checks and static metadata restrictions. This supports the stated research slice; product conformance remains separately assigned. Supplemental panic/invalid-UCO/generator comparison runs are Linux-only.
-
+The CI readback verifies source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, run `43388468172`: actual Windows/Linux normal and Native AOT main interop execution (10,528/10,529 assertions respectively), Roslyn generation checks and static metadata restrictions. This supports the stated research slice; product conformance remains separately assigned. Supplemental panic/invalid-UCO/generator comparison runs are Linux-only.
 
 ## Public API refinement, revision 0.4.0
 

@@ -22,7 +22,7 @@ The experiment requires finite early-ready and blocked-tail/cleanup/error
 fallback assertions, independent source review and paired ordinary measurements
 against `17da`. It remains unselected for publication/performance acceptance
 until these pass and show a measurable benefit. The current integrated path and
-its evidence are in [query-semantics.md](query-semantics.md#current-integrated-candidate).
+its evidence are in [query-semantics.md](query-semantics.md#fixed-key-find-and-pre-commit-state-proof).
 Earlier checkpoint text below retains its original source and status.
 
 The completed two-round ordinary comparison rejected this experiment. The

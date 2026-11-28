@@ -1,5 +1,3 @@
-> **Research asset location correction:** these historical execution identities remain unchanged. Current source is `experiments/native-slices/` and original evidence is `verification/native-slices/original-pr1/` in NativeWeave-Design. See `docs/traceability/research-asset-migration.md` and its per-file mapping. No formal product implementation is authorized in this phase.
-
 # R27/R29 — actual native Service/Body tests, beyond the finite model
 
 Status: partially evidenced, not an independent review or production Server. Exact source **5dd696725afe75f2b8b03b104c8275db50dcf2c7**, [run43363994414](https://github.com/IzuSharp/NativeWeave/actions/runs/43363994414). Both Windows2022 and Ubuntu24.04 passed **four actual Rust tests** against Hyper1.12.0, hyper-util0.1.21, Tower0.5.3 and Tokio1.54.1 with a persisted lockfile. These are distinct from the older abstract Python admission model; no model counts are reported as network execution.
@@ -20,11 +18,11 @@ A compiled native service can wait for external completion and return a native B
 
 Retain separate request/body/callback/cleanup ownership. Do not confuse the stream-slot lease with a byte lease: Bytes may outlive a delivered frame and must retain their own accounting until their last relevant borrower is done. No TLS, external TCP, HTTP2 credit exercise, time-limited abort/recovery, client-disconnect storm, multicore weak-memory model, long soak or process RSS bound is proven here. Actix worker-affinity and Pingora proxy scope remain source-researched alternatives, not executed implementations in this fixture.
 
-The historical run used NativeWeave `verification/native-slices/server-linux` and
+The historical run used NativeWeave the historical research fixture and
 `server-windows`; its byte-preserved current location is NativeWeave-Design
-`verification/native-slices/original-pr1/`, as mapped above. B16/B17/B20 must add the
+the historical research fixture, as mapped above. B16/B17/B20 must add the
 foreign managed Handler bridge and full resource/cancel/close tests before product
 acceptance. Research/design acceptance uses the bounded evidence and independent
 review; it does not wait for that future product implementation. The current required
 Rust-host selection and additional real TCP HTTP1/HTTP2, TLS and protocol probes are
-in the main R27 report and `verification/server-completion/`.
+in the main R27 report and the historical research fixture.

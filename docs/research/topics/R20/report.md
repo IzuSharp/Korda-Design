@@ -1,13 +1,12 @@
 # R20 — SQLite native worker, cancellation and administrative serialization
 
-Research consolidation: 2026-11-12 (America/Los_Angeles); author `/root/database_research`. Baselines Design `ba21ecb5c2299b303584b120f2e6bd1c6d74783a`, Plan `5b346ebb5acdb387077d0faae16b00bbc77cb299`. **Independent acceptance review pending; no product implementation or performance acceptance claimed.** Current evidence and explicit stage obligations are in [evidence.json](evidence.json), [coverage.json](coverage.json), and [completion record](../../../../verification/database-completion/task-status.json).
-
+Research consolidation: 2026-11-12 (America/Los_Angeles); author `/root/database_research`. Baselines Design `ba21ecb5c2299b303584b120f2e6bd1c6d74783a`, Plan `5b346ebb5acdb387077d0faae16b00bbc77cb299`. **Independent acceptance review pending; no product implementation or performance acceptance claimed.** Current evidence and explicit stage obligations are in evidence.json, coverage.json, and completion record.
 
 ## Current conclusion and reused work
 
 The ordinary SQLite profile is SeaQuery + SQLx inside the same maintainer-precompiled Rust Engine as PostgreSQL. Optional SeaORM projection support can reuse that native boundary without generated Rust entities. Microsoft.Data.Sqlite/SQLitePCL.raw remain comparisons. SQLx's existing worker, SQLite VM and native transactions are reused; C# does not implement a database engine or create another worker pool.
 
-The existing report/evidence already inspected worker commands, ExecuteIter, progress handlers, rollback/drop and shutdown. The preserved [retirement study](../../../database/sqlx-retirement-study.md) and `verification/source-lifecycle/results.json` contain actual Windows/Linux six-case evidence. They must no longer be described as wholly unexecuted merely because this task's graph was planned. They still do not establish a complete product adapter or SQLite VM audit.
+The existing report/evidence already inspected worker commands, ExecuteIter, progress handlers, rollback/drop and shutdown. The preserved [retirement study](../../../database/sqlx-retirement-study.md) and the historical research fixture contain actual Windows/Linux six-case evidence. They must no longer be described as wholly unexecuted merely because this task's graph was planned. They still do not establish a complete product adapter or SQLite VM audit.
 
 ## Lifetime and cancellation decision
 
@@ -23,13 +22,11 @@ The SQLite profile declares journal/WAL, synchronous, foreign_keys, busy_timeout
 
 New source inspection finds SQLx SQLite migration `lock` and `unlock` are no-ops. Calling Migrator on two unrelated application pool connections is therefore not a complete migration-serialization design. The administrative path owns a dedicated connection and obtains SQLite write admission with BEGIN IMMEDIATE before reading ledger/applying the supported transactional migration batch. SQLx's nested transaction/savepoint behavior can retain its existing apply/ledger mechanism under that outer transaction. Nontransactional maintenance is an explicit exclusive administrative operation; never silently enable no_tx inside this atomic profile. B08 must test concurrent processes and crash/recovery under the selected journal policy.
 
-
-
-Independent review reproduced the exact public API chain in three real Linux Rust tests: `Connection::begin_with("BEGIN IMMEDIATE")` yields a depth-tracked `Transaction`; `Migrator::run(&mut *tx)` uses nested savepoints and preserves that outer transaction; explicit outer rollback undoes both schema and ledger, including a failing second migration. Reject every `m.no_tx` before acquiring the transaction. Raw `query("BEGIN IMMEDIATE")` is prohibited here: it leaves SQLx `is_in_transaction()` false and causes Migrator to fail with a nested-BEGIN error. Commit only on successful migration; rollback on error, and quarantine/close on cleanup failure. The [independent source and results](../../../../verification/interop-completion/db-review-migration/result.json) prove this finite public path, not cross-process crash/recovery or the future C# product.
+Independent review reproduced the exact public API chain in three real Linux Rust tests: `Connection::begin_with("BEGIN IMMEDIATE")` yields a depth-tracked `Transaction`; `Migrator::run(&mut *tx)` uses nested savepoints and preserves that outer transaction; explicit outer rollback undoes both schema and ledger, including a failing second migration. Reject every `m.no_tx` before acquiring the transaction. Raw `query("BEGIN IMMEDIATE")` is prohibited here: it leaves SQLx `is_in_transaction()` false and causes Migrator to fail with a nested-BEGIN error. Commit only on successful migration; rollback on error, and quarantine/close on cleanup failure. The independent source and results prove this finite public path, not cross-process crash/recovery or the future C# product.
 
 ## Evidence and acceptance boundary
 
-[The completion fixture](../../../../experiments/database-completion/README.md) adds native foreign-key/savepoint behavior, migration checksum mismatch and atomic failed DDL, explicit joins and changesets. The common Linux run passed five tests; independent review and cross-platform evidence are separate records. Original Python SQLite probes remain SQL semantic counterexamples, not Rust execution.
+The completion fixture adds native foreign-key/savepoint behavior, migration checksum mismatch and atomic failed DDL, explicit joins and changesets. The common Linux run passed five tests; independent review and cross-platform evidence are separate records. Original Python SQLite probes remain SQL semantic counterexamples, not Rust execution.
 
 The current research design resolves worker ownership, cooperative cancellation limits, safe pool reuse and the native administration mechanism. Future B03/B05/B08 must implement and validate busy/locked, filesystem failures, concurrent migration, late cancellation, C# AOT and long load. No “async” API claims that SQLite VM execution itself becomes nonblocking or instantaneously cancellable.
 
@@ -62,4 +59,4 @@ The following original source observations are retained with their original read
 
 ## CI confirmation at the published fixture commit
 
-GitHub run `43388468172`, source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, independently executed the same five metadata/SQLite cases on Windows and Linux and all six PostgreSQL cases on Linux PostgreSQL 18.0. The author read raw suite logs and verified every archived file, input snapshot and stream hash; the [confirmation](../../../../verification/database-completion/ci-confirmation.json) records exact artifact identities, image digest and CRLF/LF differences. These are 11 unique native research cases with 16 CI executions, not new product/AOT tests or a second technical reviewer. This task claims only its mapped cases above.
+Historical CI corroborated the mapped native research cases on their stated platforms. This was not new product/AOT acceptance or an additional technical review.

@@ -10,7 +10,7 @@ At Cargo `3acc79c0c841844675bc53a605922dbfc441e750`, the compiler-artifact JSON 
 
 ## Executed complete consumer path
 
-The new [Engine fixture](../../../../experiments/engine-completion/run.py) builds a genuine miniz_oxide0.9.1 Rust cdylib, packages a static C# facade plus `runtimes/<rid>/native/` asset, copies only an independent consumer into a separate working directory, then performs RID-free `dotnet build` and `dotnet run`. Cargo/rustc/rustup are removed from the consumer's effective PATH and relevant tool-home environment; the runner asserts none is discoverable. The package has no .targets/.props/.rs files that could invoke a hidden native build.
+The new Engine fixture builds a genuine miniz_oxide0.9.1 Rust cdylib, packages a static C# facade plus `runtimes/<rid>/native/` asset, copies only an independent consumer into a separate working directory, then performs RID-free `dotnet build` and `dotnet run`. Cargo/rustc/rustup are removed from the consumer's effective PATH and relevant tool-home environment; the runner asserts none is discoverable. The package has no .targets/.props/.rs files that could invoke a hidden native build.
 
 The consumer restores the local NuGet, executes zlib interoperability in both directions with .NET ZLibStream, adds a new ordinary C# record, rebuilds with `--no-restore`, and verifies the native binary SHA is unchanged. Finally it explicitly publishes for the host RID with PublishAot=true and runs that executable outside the Rust build tree. Linux result: three Rust tests, sixteen ordinary consumer checks, seventeen AOT checks. This is a stronger consumer mechanism test than a direct project reference to a native build target.
 

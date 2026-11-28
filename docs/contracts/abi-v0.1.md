@@ -78,17 +78,15 @@ Malformed-but-valid-memory tests belong in ordinary fuzzing; deliberately invali
 
 ## 9. Completion evidence and research acceptance boundary (2026-11-13)
 
-R03 now has a canonical [report](../research/topics/R03/report.md), evidence and coverage. Existing two-OS layout/AOT samples are retained. The new [interop completion manifest](../../verification/interop-completion/linux/result.json) actually runs the static C boundary and 10,000 independently checked extent cases; the [binding comparison](../../verification/interop-completion/binding-linux/result.json) executes csbindgen DllImport and framework LibraryImport against one native export in normal and Native AOT modes. `uint64_t` lengths still require `isize::MAX`/budget checks before constructing a Rust slice; arithmetic checks never validate an arbitrary address.
+R03 now has a canonical [report](../research/topics/R03/report.md), evidence and coverage. Existing two-OS layout/AOT samples are retained. The new interop completion manifest actually runs the static C boundary and 10,000 independently checked extent cases; the binding comparison executes csbindgen DllImport and framework LibraryImport against one native export in normal and Native AOT modes. `uint64_t` lengths still require `isize::MAX`/budget checks before constructing a Rust slice; arithmetic checks never validate an arbitrary address.
 
-The isolated [invalid UCO experiment](../../verification/interop-completion/uco-invalid-linux/result.json) publishes a char/bool callback but terminates both normal and AOT children with unhandled `InvalidProgramException` before the callback body executes. This scoped observation supports rejecting such public signatures; it does not establish how an outer managed catch behaves or every ABI failure mode. No `catch` inside the callback can repair a body that was never entered.
+The isolated invalid UCO experiment publishes a char/bool callback but terminates both normal and AOT children with unhandled `InvalidProgramException` before the callback body executes. This scoped observation supports rejecting such public signatures; it does not establish how an outer managed catch behaves or every ABI failure mode. No `catch` inside the callback can repair a body that was never entered.
 
 [D03](../generators/binding-pipeline.md) fixes generation authority and completeness diagnostics; [D09](concurrency-v0.1.md) fixes Engine scheduling and shutdown; [D12](../verification/models-and-matrix.md) records product test obligations separately. The declaration/ownership/version decisions are eligible for independent design acceptance now. A01/A02/A12 must still implement and execute the complete generated golden matrix before product release; that future matrix is not a prerequisite for accepting its design.
 
-
 ### Committed target evidence
 
-The [CI readback](../../verification/interop-completion/ci-evidence-read.json) verifies source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, run `43388468172`: actual Windows/Linux normal and Native AOT main interop execution (10,528/10,529 assertions respectively), Roslyn generation checks and static metadata restrictions. This supports the stated research slice; product conformance remains separately assigned. Supplemental panic/invalid-UCO/generator comparison runs are Linux-only.
-
+The CI readback verifies source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, run `43388468172`: actual Windows/Linux normal and Native AOT main interop execution (10,528/10,529 assertions respectively), Roslyn generation checks and static metadata restrictions. This supports the stated research slice; product conformance remains separately assigned. Supplemental panic/invalid-UCO/generator comparison runs are Linux-only.
 
 ## Public API refinement, revision 0.4.0
 

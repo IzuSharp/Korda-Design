@@ -1,6 +1,6 @@
 # R31 — Reference Application, Idempotent Recovery, and Equivalent-Workload Validation
 
-Date: 2026-11-12 (America/Los_Angeles). Original task packets/baselines/hashes and SQLite execution records remain traceable. Current baselines are Design `ba21ecb5c2299b303584b120f2e6bd1c6d74783a` and Plan `5b346ebb5acdb387077d0faae16b00bbc77cb299`; current architecture and research supplements were integrated by `/root/database_research`, with independent acceptance review awaiting recording. Actual new PG response-loss/concurrent-snapshot probes are in the [completion fixture](../../../../experiments/database-completion/README.md); execution status is established by [task-status](../../../../verification/database-completion/task-status.json) and original manifests. No C#/Rust product was implemented, and research execution is not equated with product AOT/long-workload acceptance. See [D20](../../../verification/reference-application.md) for the detailed specification.
+Date: 2026-11-12 (America/Los_Angeles). Original task packets/baselines/hashes and SQLite execution records remain traceable. Current baselines are Design `ba21ecb5c2299b303584b120f2e6bd1c6d74783a` and Plan `5b346ebb5acdb387077d0faae16b00bbc77cb299`; current architecture and research supplements were integrated by `/root/database_research`, with independent acceptance review awaiting recording. Actual new PG response-loss/concurrent-snapshot probes are in the completion fixture; execution status is established by task-status and original manifests. No C#/Rust product was implemented, and research execution is not equated with product AOT/long-workload acceptance. See [D20](../../../verification/reference-application.md) for the detailed specification.
 
 ## 1. Selected Reference Scenario
 
@@ -39,15 +39,13 @@ The hash comes from a validated business DTO and semantic version, while scope c
 
 ## 4. Actual Research Prototype and Execution Records
 
-[idempotency_experiment.py](idempotency_experiment.py) is an original minimal SQLite prototype from this round, using only the standard library and a temporary database cleaned up after exit. It is not a NativeWeave product API. `connect` enables foreign keys/synchronous FULL; setup uses WAL; every command uses a separate connection and BEGIN IMMEDIATE; hash comparison occurs inside the write transaction; operations/items/outbox share one COMMIT.
+idempotency_experiment.py is an original minimal SQLite prototype from this round, using only the standard library and a temporary database cleaned up after exit. It is not a NativeWeave product API. `connect` enables foreign keys/synchronous FULL; setup uses WAL; every command uses a separate connection and BEGIN IMMEDIATE; hash comparison occurs inside the write transaction; operations/items/outbox share one COMMIT.
 
 Actual execution command:
 
 ```text
 python docs/research/topics/R31/idempotency_experiment.py > docs/research/topics/R31/experiment-result.json
 ```
-
-The main process exited 0, with empty stderr. Environment: Python3.12.14, SQLite3.53.1, Linux6.18.57 x64/glibc2.41. To fully record D12 requirements, the final result was rerun through an instrumented wrapper; actual argv, UTC start/end times, and raw-stream hashes are in [run-manifest.json](run-manifest.json), without fabricating the first run's timing. Script SHA256 and stdout SHA256, expected subprocess exit17, and versions/OS/configuration are in evidence.run_manifest; the [original stdout](experiment-result.json) is retained in full.
 
 | Actual assertion | Result |
 | --- | --- |
@@ -91,4 +89,4 @@ D20/B21 connect both native Engines through one business-operation definition; o
 
 ## CI confirmation at the published fixture commit
 
-GitHub run `43388468172`, source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`, independently executed the same five metadata/SQLite cases on Windows and Linux and all six PostgreSQL cases on Linux PostgreSQL 18.0. The author read raw suite logs and verified every archived file, input snapshot and stream hash; the [confirmation](../../../../verification/database-completion/ci-confirmation.json) records exact artifact identities, image digest and CRLF/LF differences. These are 11 unique native research cases with 16 CI executions, not new product/AOT tests or a second technical reviewer. This task claims only its mapped cases above.
+Historical CI corroborated the mapped native research cases on their stated platforms. This was not new product/AOT acceptance or an additional technical review.

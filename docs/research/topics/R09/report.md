@@ -6,7 +6,7 @@ Date: 2026-11-12. Author: interop_design. Status: **partially_evidenced; design 
 
 ## 1. Inputs, Goals, and Non-Goals
 
-Pinned Design baseline `1f7d89aa754647a6a530fa34a49acc4b0f5d9997`, Plan baseline `da9e4a6337a5af0ec3d5e40a4695a2760d6ac5f5`. R09 task packet revision `0.1.1`, SHA256 `b695871a811c8d556edf74d8f75a2f2997bbb808286ae2abea49bd2db45d6afd`; D06 revision `0.1.1`, hash `0d6f8c06dbccf3fbd2a7a391addc203f797a003ede9bbf4b38edd68483917102`. The pinned remote graph and actual task packet bytes have been checked.
+Pinned Design baseline `1f7d89aa754647a6a530fa34a49acc4b0f5d9997`, Plan baseline `da9e4a6337a5af0ec3d5e40a4695a2760d6ac5f5`. R09 task packet revision `0.1.1`; D06 revision `0.1.1`, hash `0d6f8c06dbccf3fbd2a7a391addc203f797a003ede9bbf4b38edd68483917102`. The pinned remote graph and actual task packet bytes have been checked.
 
 The goal is a natural Task/async/await and CancellationToken experience, explicitly handling synchronous completion, synchronous execution during cancellation registration, duplicate terminal states, late cancellation, result-owner transfer, reentrant Dispose, and stalled cleanup. Ordinary application developers do not write Rust. Synchronous Engines are not forced into a general asynchronous runtime; database commit effects are not replaced by Task cancellation status.
 
@@ -25,13 +25,7 @@ These are directly implementable recommended choices awaiting independent review
 
 ## 3. Pinned Source and Coverage
 
-| Source | SHA | Mechanisms read |
-| --- | --- | --- |
-| dotnet/runtime v11.0.0 | `deae2e32bf0e018e09d64597b7c59b62b73bb3ce` | CancellationTokenSource.Register, CancellationTokenRegistration, TaskCompletionSource<T>, Task completion and continuation scheduling, cancellation tests |
-| YAHA | `c386c1cc48d2e56711c15286cf2769353fdccf07` | managed begin/callback/Dispose, Rust spawn/select/oneshot/complete/abort |
-| Finite model in this repository | File SHA256 `016760cddb78698827bccc472a2d653cba55e20ba15c61c3480a3faea559cd1f` | Added setup/start/control/registration retirement partial orders and three negative controls |
-
-Itemized source evidence and blobs are in [evidence.json](evidence.json); [coverage.json](coverage.json) explicitly identifies the complete Task scheduler, ManualResetValueTaskSourceCore, Tokio internal wakers, and UniFFI async bridge as unread. Tokio and UniFFI remain future supplementary evidence for comparing alternative implementations; reading Tokio call sites in YAHA is not described as reading the complete Tokio implementation.
+Itemized source evidence and blobs are in evidence.json; coverage.json explicitly identifies the complete Task scheduler, ManualResetValueTaskSourceCore, Tokio internal wakers, and UniFFI async bridge as unread. Tokio and UniFFI remain future supplementary evidence for comparing alternative implementations; reading Tokio call sites in YAHA is not described as reading the complete Tokio implementation.
 
 ## 4. .NET Cancellation Chain: The Callback Can Precede Registration Assignment
 
@@ -79,7 +73,7 @@ The execution command from the Design repository root is:
 python3 docs/research/topics/R09/retirement_model.py
 ```
 
-The actual environment was Python 3.12.14 on Linux x86_64, with exit code 0. The code [retirement_model.py](retirement_model.py), original [stdout](model-stdout.txt), [stderr](model-stderr.txt), [results](retirement-result.json), and [run record](model-run.json) with times, command, and hashes are all retained. The model ran before its first Git commit; the run explicitly records `source_commit=null`, the baseline commit, and exact model SHA256. It does not invent an old commit containing new code or present a research run as a product acceptance manifest.
+The actual environment was Python 3.12.14 on Linux x86_64, with exit code 0. The code retirement_model.py, original stdout, stderr, results, and run record with times, command, and hashes are all retained. The model ran before its first Git commit; the run explicitly records `source_commit=null`, the baseline commit, and exact model SHA256. It does not invent an old commit containing new code or present a research run as a product acceptance manifest.
 
 | Model | Reachable states | Explored transitions | Checked counterexamples | Reclaimed states without checked violations |
 | --- | ---: | ---: | --- | ---: |
@@ -122,7 +116,7 @@ Independent review should especially check: Owner closing before terminal/take, 
 
 ## Current completion review — source alternatives, real take-once and notification progress
 
-The existing retirement model and its541-state result remain historical evidence. This increment actually executes synchronous/native-worker terminals, precancel and late cancel, duplicate completion rejection, once-only result take, result survival after operation release and DTO-conversion cleanup. Thirty-two controlled callback/GC rounds plus managed registration barriers execute normally and as Linux Native AOT. It is a bounded research operation, not the full future A07 coordinator. Exact evidence is `verification/interop-completion/linux/result.json`.
+The existing retirement model and its541-state result remain historical evidence. This increment actually executes synchronous/native-worker terminals, precancel and late cancel, duplicate completion rejection, once-only result take, result survival after operation release and DTO-conversion cleanup. Thirty-two controlled callback/GC rounds plus managed registration barriers execute normally and as Linux Native AOT. It is a bounded research operation, not the full future A07 coordinator.
 
 Previously unread alternative mechanisms are now inspected. .NET11 ManualResetValueTaskSourceCore has a short version and requires the outer owner to prevent access across Reset; version checks and single-continuation enforcement do not make a native cookie safely reusable. UniFFI's actual WrappedFuture separates poll, complete and free; its scheduler handles wake-before-store and calls callbacks outside the internal mutex. Its Arc-backed RawWaker retains future state. These mechanisms support keeping ordinary Task/TCS as the simple initial C# contract and deferring pooling until workload evidence justifies the additional ABA/reset/await rules.
 
@@ -130,7 +124,6 @@ The new finite mailbox model supplies a concrete lost-notification counterexampl
 
 The old preview-only Runtime Async statement is historical and superseded by R01/D01's current .NET11 check. This bridge uses ordinary Task and does not require a runtime-async-specific ABI. Current source/design questions are resolved with the above evidence. Independent review remains required; full setup-allocation compensation, poisoned-worker recovery, multi-operation saturation, every target and production weak-memory/load behavior remain explicit A07/A08/A19/A20/B22 obligations.
 
-
 ## Committed Windows/Linux completion execution
 
-[CI evidence readback](../../../../verification/interop-completion/ci-evidence-read.json) verifies actual GitHub run `43388468172` at source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`: Windows x64 MSVC and Linux x64 GNU each executed normal 10,528 assertions and Native AOT 10,529, 32 controlled callback rounds per mode, nine Roslyn checks and static metadata/AOT restriction checks. All command exits and source hashes were verified; Windows checkout CRLF accounts for its distinct input hashes. This extends the main fixture only. Linux-only generator-comparison/panic/invalid-UCO supplemental studies are not mislabeled as Windows results. Deliberate reflection fallback negative cases retain their IL2026/IL3050 diagnostics. Product package/full-protocol/long-load obligations remain separate.
+CI evidence readback verifies actual GitHub run `43388468172` at source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`: Windows x64 MSVC and Linux x64 GNU each executed normal 10,528 assertions and Native AOT 10,529, 32 controlled callback rounds per mode, nine Roslyn checks and static metadata/AOT restriction checks. All command exits and source hashes were verified; Windows checkout CRLF accounts for its distinct input hashes. This extends the main fixture only. Linux-only generator-comparison/panic/invalid-UCO supplemental studies are not mislabeled as Windows results. Deliberate reflection fallback negative cases retain their IL2026/IL3050 diagnostics. Product package/full-protocol/long-load obligations remain separate.

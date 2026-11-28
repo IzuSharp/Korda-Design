@@ -10,8 +10,12 @@ Korda provides the PostgreSQL/SQLite Fluent ORM. Public packages and namespaces 
 | [Getting started](getting-started.md) and [guides](guides.md) | Current copyable models and full product examples |
 | [Documentation system](documentation-system.md) and [API standard](../standards/csharp-public-api-and-documentation.md) | Generated references, naming and exact compatibility obligations |
 
-Exact candidate source, local execution and PR CI results belong to Plan's DB-Rename-01 record. This task stops for maintainer review and does not publish a release.
+Current source, execution and delivery conclusions belong to Korda and Plan.
 
-## Frozen compatibility inputs
+## Historical design catalogs
 
-The non-Server JSON files retained at their original `docs/api/` paths, including `public-api.json`, are immutable pre-scope inputs used by existing binding/API checks. They describe historical declarations and do not define the current installable surface. Tests retain their pinned detached checkout of `c62cdb8aee833b6ab1a03e29a3f59f81a1b483f9`. The prior DB-API-01 `fluent-orm.json` retains its accepted source/hash; the new naming overlay explicitly translates only the ten managed attribute identities. Historical source evidence is not new execution evidence.
+The retained coverage matrices and declaration catalog describe earlier design
+proposals. They preserve feature mappings, signatures and semantic policies, not
+the current installable surface. Use the compiled reference above for current APIs.
+CI validates the current catalog structure and schema without replaying historical
+commits or claiming product acceptance.

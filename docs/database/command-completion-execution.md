@@ -1,7 +1,7 @@
 # One-shot database command completion — DB-Exec-07
 
 Current implementation and evidence are governed by the
-[integrated execution target](query-semantics.md#current-integrated-candidate).
+[integrated execution target](query-semantics.md#fixed-key-find-and-pre-commit-state-proof).
 Completion is implemented, and fixed-key Find now reuses a private compiled
 shape. The following proposal and its original per-call Find observation remain
 the historical basis for the change, not the successor's execution description.

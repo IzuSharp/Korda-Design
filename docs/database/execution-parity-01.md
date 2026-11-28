@@ -1,628 +1,234 @@
-# DB-Exec-Parity-01: measured execution-path strategy
+# DB-Exec-Parity-01: execution decisions and measured limits
 
-**Current owner scope:** all long measurements and before-long supplements are
-cancelled in this round. Continue finite diagnostics and ordinary short A/B.
-[Plan Scope08](https://github.com/IzuSharp/Plan/blob/c7c66d56649192512204ca14fc2860ba99336b80/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/short-only-scope-08.md)
-supersedes the unexecuted 1800-second requirements below. No long cell started;
-the former0/4 is a cancelled plan, not an outstanding gate. A future long test is
-only potentially useful after short results are very close to Dapper; this is
-not automatic authorization to start one. Do not infer sustained parity from
-short samples. All original evidence and failed experiments keep their identities.
+This document consolidates the retained and rejected execution experiments. The
+latest recorded selection contains five performance strategies and a separate
+native-owner correctness repair. The final-frame pool, local queue preference and
+completion-tail variants were rejected. It does not claim Dapper.AOT parity,
+framework-only zero allocation or sustained capacity.
 
-## Continuation13: reject final-frame rental08 after ordinary short results
+All measurements were local Linux x64 work. The proposed long campaign and its
+long before-supplements were cancelled before they started. The short results
+below do not authorize another campaign or further product changes. Plans and
+observed delivery outcomes belong to [Plan](https://github.com/IzuSharp/Plan);
+product correctness, Native AOT packages and release checks belong to
+[Korda](https://github.com/IzuSharp/Korda).
 
-[Plan Continuation13](https://github.com/IzuSharp/Plan/blob/ee1148884041a14e6c046c8ff0c83b7b126bde54/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/continuation-13.md)
-closes the one predefined twelve-process comparison. Retain the five05 strategies
-and the separate metadata-before-native-owner-adoption fix. Do not include the
-private frame pool, its diagnostic hooks, tail06 or local07 in the product.
-The earlier continuation sections below preserve their historical states.
+## Preserved contract and measured priority
 
-Both ordinary Korda routes contained the same cleanup, with identical native04
-images and actual locked NuGet PackageReference AOT consumers. Source69b/treef766
-is ownership05/parity05.2; source13b/tree1547f404 is frame08/parity08.1. Local03
-sourcec429eff is a separate diagnostic identity. The observed resource saving
-therefore cannot be credited to moving metadata before owner construction.
+Retain C# Fluent, Native AOT, C++ libpq/sqlite3 execution and independent
+PostgreSQL/SQLite packages. Input snapshots, fresh metadata/DDL behavior, failure
+ordering, cancellation, row borrowing, early stop, Unknown transaction outcomes,
+resource admission and safe connection return remain obligations. The measured
+workloads use their original complete-result oracles and batch32 limits; larger
+batches were diagnostic sensitivity, not a changed business contract.
 
-All24,576 measured businesses and1,302,528 result rows passed the original53-row
-oracle. Managed process allocation fell about60.77–60.82 KB/business in all four
-pairs (11.77–11.78%). This proves a useful resource mechanism; the264–318 B excess
-over the earlier60,504 B scoped target remains unassigned process-level variation.
-It does not prove faster queries or zero framework allocation.
+At the initial measured boundary, hot Prepare's 1,000-row client CPU was about
+8.80× Dapper for SQLite and 8.74× for PostgreSQL, despite only about 802/550 B
+extra managed allocation. Mapper/list allocations were almost equal. SQLite had
+no Dapper statement-reuse advantage in that comparison; PostgreSQL wire volume
+differed by 71 B for identical DataRows, and Korda's direct poll count remained two.
 
-| Provider | CPU change, rounds1 /2 | p99 change, rounds1 /2 | Five-second released-idle RSS change, B |
+A batch-size probe changed native batches/jobs from 32/34 to 8/10 to 4/6. Native
+queue/worker/ready/managed-take observations supported investigating repeated
+handoffs. Sampled spin leaves and runtime sensitivity did not identify one
+exclusive caller, establish kernel wakeup cost or justify global runtime tuning.
+
+## Retained strategies
+
+| Strategy | Boundary and reason | Measured limits |
+| --- | --- | --- |
+| Admitted managed execution of native pulls (Worker-D) | Reuse bounded admission and the shared ThreadPool; execute an already admitted native pull and its result take in one managed work item | Fewer native queue jobs are not fewer FFI entries; the explicit run entry adds a crossing |
+| Exact canonical decimal recognition | Recognize only the complete valid canonical precision/scale form, retaining all validation sites and the original JSON fallback | Decimal-specific benefit; integer/control cases and aggregate latency do not uniformly improve |
+| SQLite short-lived prepare flags | Use flags appropriate to statements prepared/finalized per business operation, allowing SQLite lookaside | No statement cache or claim that every process allocation belongs to Korda |
+| Private relation branch transfer | Consume an exclusively owned temporary RelationBatch branch after successful import instead of cloning it | Public Combine retains snapshot/reuse semantics; no public consuming API or relation cache |
+| Bounded private relation capacity | Reserve at most 2,048 bytes for an eligible fresh private branch, otherwise retain original growth | Repeated resource benefit, with mixed CPU/tail results; cache and process RSS claims do not follow |
+
+### Admitted pull execution and retirement
+
+The existing bounded coordinator reservation and never-inline shared ThreadPool
+worker provide the managed scheduling boundary. A nonblocking native admit entry
+performs validation, input snapshot, Session admission, generation/cancellation
+setup and Source/channel retirement reservation before managed queue acceptance.
+The initiating public Async call never waits for provider completion. Deferred
+work owns references; a synchronous OwnerLease, Span or borrowed pointer cannot
+escape into the queue.
+
+Queued work has one run-versus-abandon claim. Source/Session close, scheduler
+rejection and pre-run cancellation must settle accepted work and release tickets
+without self-waiting or a retained ownership cycle. Synchronous run reuses the
+original open, complete metadata validation, second admission, fetch, cancellation
+detach, completion and error enrichment. It does not create another provider
+algorithm or bypass fresh DDL checks.
+
+The same worker takes the result only after native run returns and setup, controls,
+callbacks and cancellation-registration drains allow it. MRVTS continuations remain
+asynchronous. Bounded readiness callbacks cannot run user continuation code on the
+unmanaged stack. Native Source management, cursor final close, Source join and
+transaction workers remain independent; no dedicated managed pool is introduced.
+
+Retirement covers the exported run frame's final accessor, not only an inner
+worker destructor. Source join cannot report quiescence while an admitted native
+frame still accesses channel, session, source or provider state. Ready, result take
+and final retirement are separate events. Preserve rich errors, correlation,
+priority, late PostgreSQL failure, bounded drain, poisoning and Unknown COMMIT.
+
+Required correctness boundaries include held native run with public Async return,
+rejected scheduling after accepted admission, pre-run abandonment, Source close,
+duplicate/stale work, draining controls, owner-adoption failure, held row plus
+Dispose and late old-generation work. The old ABI retains its meaning; the private
+extension is negotiated for both providers.
+
+### Decimal configuration
+
+Recognition is restricted to the exact canonical valid form. Malformed,
+overflowing, unsupported or noncanonical input uses the original JSON/error path.
+All original profile/OID checks, three validation positions and error precedence
+remain. SQLite decimal rejection still precedes parsing; other codecs are unchanged.
+There is no mutable codec cache or pointer-identity shortcut.
+
+For 1,000 decimal values, the isolated diagnostic observed JSON parses fall from
+4,000 to zero and public allocations from 48,000 to 1,000, while 3,000 validations
+remained. Ordinary decimal32/decimal1000/wide32 screens improved in their recorded
+scope; the 1,000-decimal CPU still remained about 8.5× Dapper. Control regressions
+and later PostgreSQL queued-p99/idle-RSS risks remain part of the conclusion.
+
+### SQLite preparation
+
+The original per-request prepare/finalize path supplied `SQLITE_PREPARE_PERSISTENT`,
+which disables lookaside in the inspected SQLite implementation. The retained
+change uses v3 flags zero while preserving SQL, parameter binding, automatic schema
+reprepare, metadata validation, effect ordering and finalization. Repeated Host
+allocation benefit was observed with unchanged engine work. This is a resource
+optimization, not parity or a cross-execution statement cache.
+
+### Private relation ownership transfer
+
+The isolated related32 construction showed 31 clones per business, 120,776 B of
+managed clone allocation and 54,932 tape bytes copied. Clone accounted for about
+17.6% of the approximately 686 KB total; SelectParent remained a larger separate
+cost. Build overlap excluded those diagnostic timings from CPU/latency claims.
+
+Only RelationBatch's exclusively owned temporary branch may use the consuming
+import. Under the existing fail-fast gates, the original SnapshotAndImport keeps
+dependency retention, selection/seal/source validation, finite quotas, parameter
+collision checks and metadata updates. Only successful completion commits
+consumption. Mark the source disposed/context sealed without a new allocating or
+fallible step; release its original reference after destination retention is safe.
+Every pre-commit failure leaves source ownership intact. The existing caller
+cleans up a later union failure.
+
+Public Combine still snapshots and permits source reuse. Key snapshots, duplicate
+positions, native collation, one SQL statement, shared result budgets, DDL and error
+ordering remain. Equivalent command bytes, failed-import reuse, public reuse,
+private invalidation, invalid concurrent/self/cross-source cases and zero final
+owners are required controls. No full relation plan cache or new native path is
+implied by removing a clone.
+
+### Bounded private capacity
+
+After clone removal, the diagnostic measured 98 tape-growth allocations and
+129,328 B per related32 request. The retained hint reserves at most 2,048 bytes
+for a fresh private branch, using the first completed branch's capacity only when
+immutable key-component encoded lengths match. Different lengths or unsuitable
+builders use the original growth path. Public From/Combine, quotas, error order,
+input snapshots and ownership are unchanged.
+
+Actual growth plus reserve allocation fell to 80,224 B per business, saving
+49,104 B; growth copying fell from 63,488 to 7,936 B. The 31 new reserve arrays
+are counted. Original row/digest/SQL/protocol and zero-owner controls passed.
+Ordinary related32 allocation fell by about 49 KB in all four comparison pairs,
+while CPU/p50/p99 changes were mixed. Gen0 increased and Gen1 decreased. No
+idle-release RSS or pause credit was established by this isolated screen, and
+its saving must not be added to a different native-identity group.
+
+## Separate correctness repair: metadata before native adoption
+
+Plan/CTE object initializers previously adopted a native result into a finalizable
+SafeHandle before allocating metadata. A metadata failure could cause both the
+raw catch and a later finalizer to release the address. The native registry had
+no generation protection for a subsequently reused address. This was a
+source-confirmed risk, not an observed corruption or ABA incident.
+
+Complete metadata inside the existing raw-owner try/catch before native-result
+adoption. DatabaseOwner calls SetHandle last; the subsequent existing property
+assignments do not allocate. Preserve native status/null checks, validation,
+Compile/Cte and origin-publication order. The allocation/OOM order explicitly
+changes. Synthetic failures were separate local tests, not shipping callbacks or
+a claim of real OOM injection.
+
+The reviewed source was Korda `106fe68b6f6c2537f478daf65a71ab97cc4b15ff`, tree
+`f7660759bba43ae83324620e2fb731efd479c3b5`. Both sides of the final pool comparison
+contained this repair, so its effect cannot be credited to the pool.
+
+## Rejected alternatives and reasons
+
+| Alternative | Outcome and retained reason |
+| --- | --- |
+| Common completion publication / later tail06 | The intended mechanism and correctness were observed, but a repeatable common CPU/tail/memory benefit was absent; keep asynchronous MRVTS completion |
+| PostgreSQL interrupt-hook removal | The hook wrote an unused flag and its mechanism changed, but ordinary endpoint benefit did not repeat; hook count was not an allocation count |
+| Lease zero-owner Release bypass | No stable CPU improvement |
+| Ready-row completion | Context/correctness checks passed; PostgreSQL thousand-row CPU and p50 regressed in both reversed rounds |
+| HostPull local queue preference (local07) | Default-scheduler correctness passed, but useful CPU reduction did not repeat; retain the existing queue policy |
+| Private final-frame rental (frame08) | Repeated allocation saving came with an unacceptable/inconsistent common CPU, tail and idle-memory tradeoff |
+| Unconditional PostgreSQL chunk32 | Rejected before implementation: unfinished chunks can hide earlier rows when a later server error arrives, and exceed the one-row lookahead/admission boundary |
+
+### Completion-tail and queue findings
+
+Tail06's mixed PostgreSQL CPU decreased in both reversed rounds (−3.85%/−2.25%),
+but SQLite changed direction (−5.30%/+1.92%) and PostgreSQL released-idle RSS rose
+in both rounds. SQLite thousand-row and early-stop risks remained. Correctness
+alone did not justify adopting a more complex completion boundary.
+
+The local07 comparison changed only HostPull's default queue preference. Relative
+CPU changes were SQLite +17.42%/−0.68% and PostgreSQL +6.55%/+0.06%. A type-test or
+queue primitive was not proved to be the exclusive regression cause. Runtime
+stealing and a dispatch quantum do not establish bounded fairness. No
+provider-specific switch, extra favorable rounds or combined tail variant was
+selected after rejection.
+
+### Final-frame rental and resource costs
+
+The rejected pool covered only Seal's graph slow-path frames with
+`4096 < logicalLength <= 65536`, using a lazy private
+`ArrayPool<byte>.Create(65536, 4)`. The copyable encoded command remained a borrow;
+Seal owned one local rental through synchronous Compile and metadata/origin
+completion, returned exactly once with `clearArray:true`. Header/native views used
+logical length, reserved bytes were initialized and bucket tails excluded. Public
+snapshots, quotas, error order, stack path and smaller/larger fresh arrays remained.
+Poison/re-rent execution tested that native literals/origins owned copied bytes.
+
+The inspected configurable pool uses a bucket SpinLock and no automatic trimming.
+Four reachable buckets can retain 491,520 B payload, with related32 alone retaining
+262,144 B; these are cache bounds, not active-memory or RSS bounds. A miss allocates
+instead of rejecting business work. Return clears the full actual array even if
+the bucket subsequently discards it. Cold allocation, initialization, clear cost
+and idle residency count against any allocation benefit.
+
+All 24,576 measured businesses and 1,302,528 rows passed the original 53-row oracle.
+Managed process allocation fell about 60.77–60.82 KB/business (11.77–11.78%). The
+264–318 B difference from the earlier scoped target remained unassigned
+process-level variation; no exclusive attribution was invented.
+
+| Provider | CPU change, rounds 1 / 2 | p99 change, rounds 1 / 2 | Five-second released-idle RSS change, B |
 | --- | --- | --- | --- |
-| SQLite | +22.80% /−0.93% | +29.48% /−2.82% | +45,056 /+143,360 |
-| PostgreSQL | +0.84% /−18.66% | −5.31% /−5.88% | +667,648 /+548,864 |
-
-The common candidate does not establish the predeclared acceptable CPU/tail/memory
-tradeoff. Reject it without an optional mixed gate, additional favorable rounds,
-provider-specific fork or long test. The bad SQLite interval is an observation,
-not proof that a pool lock or clear exclusively caused it. External scheduling
-was not proved exclusive; variability does not justify discarding the interval.
-Process peak RSS and GC pause decreased, while released-idle RSS increased; both
-outcomes remain in Plan, with GC counts and pauses kept at process scope.
-
-Normal Binding correctness, real dual-provider Relations with poison/re-rent,
-and ten separately built failures at actual encoding/metadata/origin sites passed.
-The first Relations compiler failure remains a failed attempt. The local resource
-fixture observed cold67,000 B including nested pool construction1,400 B, three
-warm rent/return pairs at0 B and a forced miss65,560 B. Its held references and
-post-return scans prevent CPU, RSS and full-query credit. Actual ordinary ELF
-readback confirms the size branch, ownership handoff, logical length and clearing
-arguments; it does not establish runtime hit rates, lock cost or indirect slots.
-
-The prior five retained performance strategies are unchanged: bounded admitted
-managed execution of native pulls, exact canonical decimal recognition with
-preserved fallback/validation positions, SQLite lifetime-appropriate prepare
-flags, exclusively owned private relation-branch transfer, and bounded private
-relation capacity with original growth fallback. The independent owner fix is
-a correctness repair. No public API, ABI, statement/plan cache, runtime spin
-setting, batch size or workload contract is changed by rejecting08.
-
-Substantial gaps remain. This screen's ownership05 related32 CPU is3.22–4.56 times
-Dapper in SQLite and7.61–10.05 inPG; managed process bytes are about6.97/10.08 times.
-The older text1000 CPU gap persists with only about1% allocation difference, so a
-final-frame buffer optimization cannot explain that execution gap. No exact
-exclusive RhSpinWait stage time, full parity, zero framework allocation or sustained
-capacity is claimed. Further product work requires a new measured causal hypothesis;
-none is selected by this rejection. Preserve the earlier PG queued-p99 and idle-RSS
-risks when describing the retained changes.
-
-The finite final integration review found no identified contract/evidence blocker
-for normal merging of current Korda106/treef766; existing PR CI45995931048 passed.
-Normal main CI, rule-selected release and actual public NuGet AOT verification
-remain their existing delivery steps and require observed outcomes. No CI benchmark,
-profiling, calibration or pressure action is added or indirectly invoked. All long
-measurements and long before supplements remain cancelled.
-
-## Continuation12: correct native adoption before the pool comparison
-
-[Plan Continuation12](https://github.com/IzuSharp/Plan/blob/e3d967580801f5e0e73ce6407cfefc323a6259fa/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/continuation-12.md)
-records a separately reviewed correctness defect inherited by both05 and the
-initial08 source. Plan/CTE object initializers adopted the native result into a
-finalizable SafeHandle before allocating metadata. Metadata failure could cause
-the raw catch and later finalizer both to release that address; the actual native
-registry has no generation to protect an address that is subsequently reused.
-This is source-confirmed risk, not an observed runtime corruption or ABA incident.
-
-The independent fix completes metadata under the existing raw-owner try/catch
-before adopting the native result. The current DatabaseOwner constructor calls
-SetHandle last, and subsequent existing auto-property assignments do not allocate.
-Native status/null checks, validation, Compile/Cte and origin-publication order
-remain. Metadata moves before wrapper allocation; exact allocation/OOM order is
-explicitly changed. Synthetic failure validation remains a separate local test
-identity, with no shipping fault callback or genuine OOM requirement.
-
-Local fix69b2383dadc280f1a81de592592a1442069eed0c and published Korda
-106fe68b6f6c2537f478daf65a71ab97cc4b15ff share tree
-f7660759bba43ae83324620e2fb731efd479c3b5. This correctness repair is included in
-PR40; frame-pool08 remains isolated and unadopted. Both ordinary comparison sides
-will carry the same repair: ownership05/parity05.2 and frame-pool08/parity08.1.
-The old05 measurements retain their old identities; the repair earns no pool
-performance credit. This correction supersedes any earlier instruction to
-preserve the faulty cleanup statements verbatim while retaining their intended
-single-owner/error contracts.
-
-The finite twelve-process related32 comparison and lifetime/resource gates from11
-remain. Each existing ordinary consumer additionally records five seconds after
-drain, outside measured CPU/allocation, without forced GC. Report released-idle
-RSS with that scope, not minimum reclaimed RSS or private-pool-exclusive memory.
-No08 workload benefit is established yet, and no long or additional broad campaign
-is selected. All existing CI and independent provider-package routing remain;
-no profiling or benchmark is added to CI. Plan owns artifact/readback and recovery
-receipts, including the completed07 archive and closed experiments.
-
-## Historical Continuation11: reject pull-local07; isolate final-frame rental08
-
-[Plan Continuation10](https://github.com/IzuSharp/Plan/blob/639e9f3abdd72cc72650c9f0d09d9897c8e4d448/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/continuation-10.md)
-closes pull-local07. Actual default-scheduler correctness, both ordinary ELF
-analyses and all twelve predefined text1000 processes completed. CPU relative
-to integrated05 was SQLite +17.42% / -0.68%, PG +6.55% / +0.06%; no useful reduction
-repeated. Reject pull-local07, skip its conditional mixed gate and extra rounds, and keep
-integrated05. The actual shared Signal type-test belongs to candidate cost; it
-is not independently proved to cause the regression. Tail06 stays rejected.
-
-The subsequent [Plan Continuation11](https://github.com/IzuSharp/Plan/blob/1932bf37b40119cc392d6d7c0f19bf5cd99db460/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/frame-pool-08-hypothesis.md)
-selects one independent **resource experiment**, not an adopted sixth component.
-Start from Korda `2ea67ce1902f330679c3ebff4d6d5733be20f69c`, tree
-`4e3989f2ce9e0c554585aab5a8bbb656e689b18d`. Source/ABI and locked runtime reviews
-support a finite lifetime experiment after the measured related32 final-frame
-allocation of 60,504 B for 60,480 logical bytes. Its 59,680 B tape copy remains.
-This target does not explain or promise to close the current several-times
-text1000 CPU gap.
-
-### Selected boundary and ownership
-
-Only `QueryCommand.Seal` graph slow-path frames with
-`4096 < logicalLength <= 65536` may use a private
-`ArrayPool<byte>.Create(65536, 4)`. Initialize it at the first eligible rental.
-Keep the 4096-byte single-root stack path, smaller/larger fresh arrays, Render,
-CreateCte, complete tape copying, fixups, sidecars and synchronous native Compile.
-Do not combine another queue, graph cache, source-tape transfer or Shared pool.
-
-Seal owns one local rental protected by try/finally established before Encode
-can rent. Acquire it at the original final-array allocation point, after the
-same preceding validation, and assign the owner before later encoding can throw.
-The copyable EncodedCommand is only a borrowed descriptor; it must not dispose,
-store the buffer in persistent query state or require a per-call heap lease.
-Carry explicit logical length into the header and native view, initialize all
-reserved bytes, and exclude oversized bucket tails. Preserve input snapshots,
-public Combine, logical quotas, DDL/mapper/origin identity and error order.
-
-Retain the frame through synchronous Compile and the original metadata/origin
-completion flow. Return it exactly once, to its original private pool, with
-`clearArray:true`; preserve the original native-owner cleanup on all exits.
-Native input borrowing ends on synchronous return, while actual literal and
-origin storage is copied into owned native bytes. Actual poison/re-rent plan
-execution must verify that boundary rather than treating the ABI text as a test.
-
-### Explicit resource tradeoffs
-
-The locked .NET11 source is VMR 297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f,
-runtime deae2e32bf0e018e09d64597b7c59b62b73bb3ce. ConfigurableArrayPool uses a bucket
-SpinLock and has no automatic trim. Four reachable buckets can retain 491,520 B
-payload plus object/metadata costs; related32 alone can cache 262,144 B payload.
-These are cache bounds, not active-memory/RSS bounds. More simultaneous rentals
-can allocate; a miss never becomes a business refusal.
-
-Related32's cold rental is a 65536-byte array, about 65,560 B with its x64 array
-header, 5,056 B above the old exact-size array; pool initialization is additional.
-Return clears the full actual array even if a full bucket then discards it.
-Measure any initial encoding clear as well. Static cache residency can remain
-after idle. Shared's TLS/partition behavior may differ, but is not another
-selected variant. Fewer allocated bytes alone do not establish CPU or memory
-benefit.
-
-### Validation and selection
-
-Use the existing affected API/Binding/relation/public-package AOT routes and
-finite lease controls for boundary/dirty frames, logical lengths, post-rent
-Encode failure, native error/null, held borrowing, poison/re-rent and public
-snapshots. Any synthetic metadata/origin fault uses a separately identified
-local test build; do not add shipping global failure callbacks or force OOM.
-CI correctness must contain no allocation profiling or performance campaign.
-
-Separately identified local diagnostics must count actual rents/returns, lengths,
-miss/new-array and cold cost, and clearing bytes. Ordinary measurements use actual
-local NuGet PackageReference AOT consumers and preserve generated code, symbols,
-packages and native hashes. The first screen is only related32: 05/candidate/Dapper,
-then reverse, on both providers, C1/batch32/persistent, 2048 measured businesses
-and 128 extra warmups. Report net bytes, CPU, p50/p95/p99, GC, exact RSS/idle scope
-and separate PG cost. A material resource saving must repeat without an unacceptable
-CPU/tail/memory regression. Select any subsequent finite concurrent/mixed check
-only to answer a concrete unresolved risk; no automatic broad matrix or long run.
-
-Reject or narrow if lifetime, snapshots, logical quotas or error ordering change,
-if allocation merely moves, or if observed CPU/tail/residency defeats the saving.
-No implementation, safety execution or benefit is claimed at this design stage.
-The five integrated05 components remain selected. Public C# Fluent, Native AOT,
-C++ libpq/sqlite3 and two independent packages remain the product contract.
-
-## Historical Continuation09: close tail06 and isolate HostPull queue preference
-
-[Plan Continuation09](https://github.com/IzuSharp/Plan/blob/2d2a90afe5385adf0dea743347955c9335ee59e1/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/continuation-09.md)
-closes the tail-completion experiment after actual mechanism,114 ordinary
-processes and12 final short mixed cells. **Do not adopt tail06.** Keep the five
-integrated05 components at Korda `2ea67ce1902f330679c3ebff4d6d5733be20f69c`, tree
-`4e3989f2ce9e0c554585aab5a8bbb656e689b18d`: Worker-D, exact valid decimal
-configuration parsing, SQLite short-lived prepare flags, private relation branch
-transfer and bounded private relation capacity. Their remaining gaps and risks
-stay in Plan; this selection does not grant parity or sustained-load acceptance.
-
-Tail06 passed actual correctness and changed the intended delivery mechanism.
-PG mixed CPU decreases in both reversed rounds (-3.85%/-2.25%), but SQLite mixed
-CPU changes direction (-5.30%/+1.92%). SQLite thousand-row and early-stop risks
-remain, and PG released-idle RSS increases in both rounds. The repeated net
-benefit needed for a common implementation is absent. Preserve the rejected
-source and all positive/negative evidence; do not add a provider switch or combine
-tail06 with the next experiment. Integrated05 keeps asynchronous MRVTS completion.
-
-The subsequent [Plan pull-local07 hypothesis](https://github.com/IzuSharp/Plan/blob/2d2a90afe5385adf0dea743347955c9335ee59e1/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/pull-local-07-hypothesis.md)
-precedes this strategy and any product edit. The existing measured cursor
-lifetimes contain33 coordinator turns per text1000 business. Before-tail traces
-cross sender/executor thread identities on440/528 SQLite and456/528 PG offers;
-actual matching ELF instructions pass preferLocal:false. This supports a bounded
-queue-preference experiment. It does not establish global-queue exclusive CPU,
-ordinary migration frequency, kernel wakeups, cache loss or the entire cause of
-RhSpinWait. Local push still requests workers and permits stealing.
-
-### Single-variable implementation boundary
-
-Add a minimal internal singleton adapter forwarding the mature runtime's existing
-`UnsafeQueueUserWorkItem(IThreadPoolWorkItem, preferLocal:true)` overload. Select
-it only as HostPullController's default when no test scheduler is injected. Keep
-the existing CallbackCoordinator/global adapter source unchanged, including its
-constant false argument, and leave command, cursor-close, callback-registration
-and AsyncOperation default selection unchanged. No custom queue/pool, trampoline,
-shared preference field, inline execution, runtime setting, provider condition or
-new batching algorithm is selected.
-
-Preserve integrated05's RunContinuationsAsynchronously=true, unreserved failure
-path, scheduling coalescing, native admission/run/take, generation/version,
-cancellation drain, retirement, row borrow, input snapshots, fresh DDL and error
-ordering. Both provider native libraries and public API remain identical. A new
-interface implementation may change AOT dispatch/devirtualization elsewhere;
-compare actual relevant ELF call sites rather than claiming source isolation
-guarantees identical machine code.
-
-### Actual-default progress requirements
-
-The previous RecordingScheduler explicitly queues globally. Its passing tests
-cannot establish production local-queue behavior. Add finite correctness cases
-with TestPullScheduler, TestCommandScheduler and TestCloseScheduler all null,
-using real Native AOT and both databases. Cover non-pool and pool initiation,
-public return without inline driver execution, an actually held publisher/worker
-with an independent cursor making progress, cancellation/close of independent
-work, and competing cursors completing and returning all owners. Another worker
-may steal before queue return; do not assert a new return-before-start guarantee.
-
-Preserve the selected05 contract: the same cursor's next generation need not
-complete before an old Post returns. Do not reintroduce tail06 to make a new test
-pass. Use explicit causal barriers and bounded existing timeouts, always release
-held workers on failure, and keep original rejection, cancellation, held-run and
-early-stop regressions. These are correctness checks, with no benchmark, profile,
-calibration or stress invocation in CI.
-
-Local owner pop precedes global dequeue and is LIFO. Integrated05's async MRVTS
-completion already prefers local dispatch without a captured context, so this
-change can form a repeated local pull/completion chain. Runtime stealing and a
-dispatch quantum do not prove bounded fairness. A stuck older request, impaired
-cancel/close progress, ownership leak or changed failure semantics rejects the
-candidate before timing.
-
-### Short evidence and stopping rule
-
-Build only the two new ordinary real PackageReference AOT consumers and one
-dual-provider correctness consumer initially, reusing exact native assets. Bind
-generated sources, package, ELF/debug and actual local/global queue arguments.
-Do not automatically build four diagnostic consumers. New instrumentation needs
-a specific unresolved attribution question and an identity separate from timing.
-
-Begin with text1000 C1, batch32, prepared/persistent,2,048 measured operations and
-128 warmup per process:05/local/Dapper and the completely reversed order on both
-databases. Useful repeated CPU benefit is required before the existing30-second
-35-case zero-refusal mixed contention gate, at rate500/queue64 and C4/C8 with
-separate warmup/idle observation. Retain service and scheduled tails, per-kind
-progress, allocation, GC and RSS. No automatic114-case replay or pressure-ramp
-repeat is selected. Reject a change whose mechanism is active but benefit is
-inconsistent, within observed noise, or bought with material progress/tail risk.
-Do not extend a failing experiment to seek favorable rounds. All long workloads
-remain cancelled this round.
-
-## Earlier strategy and experiment records
-
-Status: prospective causal experiments after the measured Plan gate, not adopted
-performance acceptance. The Plan gate was committed locally as
-`da20dc395ca44a0430f933aeb7a45a3ee13aa447` (tree
-`dd98f3d3d39b853ae19bf6e7a34d93b5f67cba6e`) before this Design change or product
-implementation. The companion [Plan PR36](https://github.com/IzuSharp/Plan/pull/36)
-owns actual receipts, source identities, raw archive publication, comparisons,
-failed attempts and continuation. This document will record retained and rejected
-strategies after evidence exists.
-
-## Preserved boundary
-
-Retain the C# Fluent API, Native AOT, C++ libpq/sqlite3 execution and independently
-installable PostgreSQL/SQLite packages. Internal refactoring does not authorize
-changes to input snapshot, fresh metadata/DDL behavior, failure ordering,
-cancellation, row borrow, early stop, transaction-unknown, resource admission or
-safe connection return. The original35-case workload and explicit batch32 limits
-remain acceptance inputs. Larger-batch probes are diagnostic sensitivity only.
-Runtime settings remain default in product measurements.
-
-## Measured priority
-
-Both engines execute the same narrow full-result query/row work. Hot Prepare's
-1000-row client CPU is8.80× Dapper for SQLite and8.74× for PostgreSQL, with only
-about802 B/550 B extra managed allocation. Complete Host SQL is similarly costly.
-The actual generated mapper and list allocations are almost equal. SQLite does
-not have a Dapper physical-statement reuse advantage in this contract. PostgreSQL
-wire volume differs by only71 B for1000 identical DataRows; direct Korda poll
-calls remain2 rather than scaling with row count.
-
-Measured Korda batches/native jobs scale32/34→8/10→4/6 under the batch-size probe.
-Sampled AOT spin leaves dominate the Korda CPU profile, and a repeated identical-
-binary runtime sensitivity reduces CPU without consistent endpoint latency gain.
-Actual native enqueue/worker/ready/managed-take spans show the repeated handoffs.
-These facts support testing the common completion path first. They do not assign
-all spin samples to one caller or justify changing global ThreadPool settings.
-
-## Experiment A: completion after the coordinator's final scheduling tail
-
-The native ready callback continues to do only bounded readiness bookkeeping and
-offer a managed coordinator work item. User continuation code must never run on
-the unmanaged callback stack. The first managed scheduling boundary remains.
-
-Each coordinator Execute invocation prepares its own immutable, generation-bound
-completion value. It completes all dirty/scheduled/retry bookkeeping and any
-required rescheduling before invoking that value as the last action. An internal
-stack-local publication value passed by reference is acceptable; a shared pending
-publication slot is not, because an old Execute could steal a later generation's
-publication after reentrancy. No delegate/Task allocation per batch is introduced.
-
-HostPull may disable asynchronous continuation dispatch only after that boundary
-is safe. Runtime rules for captured contexts and registration after completion
-remain intact; there is no promise that every batch becomes inline. Other
-coordinator subclasses retain their existing behavior. The unreserved local
-setup-failure path needs the same final-publication boundary.
-
-Before publication: accepted readiness/setup is known; cancellation registration
-has drained; callback/control entries are zero; native result is taken once;
-root/reservation are released once; observer failures and failed-result disposal
-are settled; the exact generation/version/result/error are captured. No gate is
-held while invoking completion.
-
-After publication starts: no controller, scheduling, owner, root, generation,
-batch or stop state may be accessed by that old invocation. A continuation or
-SynchronizationContext.Post exception after the MRVTS completion sentinel is a
-managed dispatch/execution exception. It must stay outside SchedulingFault and
-must not trigger a second setter, dispose a delivered batch, poison the next
-generation or cross back into native code. Preserve exception observation rather
-than blanket swallowing or inventing successful dispatch.
-
-Required regressions include early ready during setup, rejected scheduling/retry,
-stale/duplicate generation, held row borrow plus Dispose, unreserved stop failure,
-direct synchronous g1 consumption followed by g2 Request, delayed old publication,
-captured Post that consumes/starts g2 and then throws, and registration after
-completion. The old held-context test's meaningful ownership barriers remain;
-only assumptions about the old scheduling implementation may change. Measure
-fairness and retained publisher tails under concurrency before adoption.
-
-The causal test must count actual eligible completion delivery and thread
-boundaries, keep engine/protocol/batch counts unchanged, then measure ordinary
-same-host alternating A/B at1/32/100/1000 and early stop. A drop in one counter
-without repeatable endpoint/CPU benefit is insufficient reason to retain this
-complexity. Prior rejected callback-inline and quiet-close patches remain
-rejected evidence, not implementation templates.
-
-## Experiment B: SQLite short-lived statement allocation
-
-The measured current path prepares/finalizes one physical statement per business
-request yet supplies SQLITE_PREPARE_PERSISTENT. The locked SQLite implementation
-disables lookaside for that flag. A separate source identity may change only the
-v3 flag to0, preserving SQL, parameter binding, v3 preparation, automatic schema
-reprepare, metadata validation and effect ordering. Measure public allocator and
-SQLite lookaside counters; do not label all process allocation as framework-only.
-No statement cache is introduced by this experiment.
-
-## PostgreSQL result granularity: unconditional chunking rejected before coding
-
-The measured1000-row path allocates1000 PGRES_SINGLE_TUPLE results, so native
-result-object allocation is a valid resource target. However pinned libpq18
-chunked-row mode may clear an unfinished chunk when a later server error arrives,
-where single-row mode already delivered earlier rows. The provider regression
-requires earlier rows before a later error. Chunking also increases held provider
-rows above the existing one-row lookahead/byte-admission guarantee. Therefore
-unconditionally enabling chunk32 is rejected. No benchmark-specific SQL exception
-or weakened failure order is permitted. A different implementation requires its
-own complete contract proof and measured resource benefit.
-
-## Experiment C: omit ineffective PostgreSQL interrupt hooks
-
-The actual thousand-row path installs1002 cancellation hooks. The compiled
-weak_ptr lambda is stored in std::function's small buffer; these calls are not
-1002 proved allocations. Baseline source shows the PostgreSQL interrupt hook
-only writes an interrupted flag that is never read. Its only engine side effect
-is in the SQLite branch. PostgreSQL already observes cancellation through the
-unchanged per-row and nonblocking receive/poll checks, then bounded cleanup.
-
-An isolated candidate may install provider interrupt hooks only for SQLite and
-remove the unused interrupted flag/stores. Preserve old-token detach, every
-CallContext check/deadline, protocol drain/poisoning and Unknown commit semantics.
-The prediction is PG install1002→0 with identical SQL/protocol/rows/batches and
-unchanged SQLite behavior, not a promised malloc reduction. Actual cancellation,
-late-row error, early stop, cleanup and unknown-commit regressions plus repeated
-count/CPU A/B determine adoption. No cached Cancel identity or skipped external
-detach is introduced.
-
-## Remaining measured candidates
-
-Per-row Cancel.install, built-in codec temporaries and full-batch offset rewriting
-are observed repeated work. They may be tested individually after their ownership
-and allocation boundaries are specified. Full-batch finish rescans are a lower-
-risk but apparently small CPU target:2000 cells/1800 rewrites at1000 rows despite
-only124 B partial-batch payload movement. Any skip must preserve non-NULL empty
-cell offsets, partial/byte-limited batches and canonical frame bytes.
-
-## Current causal outcomes and selected follow-up
-
-The newer Plan checkpoint `b30caf8` records the completed isolated screens before
-this strategy update. The main task product has not yet integrated a candidate.
-Common completion A and PG cancel-hook C are not selected: the intended mechanism
-was observed but ordinary endpoint benefit did not repeat. The lease-B zero-owner
-Release bypass also did not deliver stable CPU improvement. Ready-row-C preserves
-async contexts and passed its AOT checks, but is rejected because PG thousand-row
-CPU and p50 regress in both reversed rounds. Those paths remain independent
-experiment evidence and will not be layered into the next candidate.
-
-SQLite's v3 flag change has repeated actual Host allocation benefit with unchanged
-engine work. It is retained provisionally as a resource optimization, subject to
-the final combined mixed regression gate. It does not establish query parity.
-
-### Decimal configuration: retain exact valid-path parsing
-
-PostgreSQL decimal decoding repeats the same canonical precision/scale JSON
-configuration four times per value at three preserved validation positions. The
-selected isolated implementation recognizes only the complete canonical valid
-form without constructing general JSON trees. Every original validation call,
-profile/OID check and precedence remains; malformed, overflowed, unsupported or
-noncanonical input goes to the original JSON implementation and error path. No
-mutable Codec cache, pointer identity shortcut or skipped validation is added.
-SQLite decimal rejection remains ahead of this parser; other codecs are unchanged.
-
-Repeated actual decode scopes show4000->0 JSON parses and48000->1000 public
-allocations for1000 decimal values, while3000 validations remain. Ordinary two-
-round screening shows useful decimal32/1000 and wide32 gains, but integer/control
-paths and aggregation do not all improve, and the1000-decimal CPU remains about
-8.5 times Dapper. Report the limited scope and small observed control regressions;
-final combined mixed measurements decide full adoption and any alignment claim.
-
-### Worker-D: admitted shared-ThreadPool pull execution experiment
-
-Select a distinct isolated scheduling experiment based on the measured32 batches/
-34 native jobs and queue/ready/managed-take timeline. Reuse the existing bounded
-CallbackCoordinator reservation and never-inline shared ThreadPool worker. The
-worker executes an already-admitted native cursor pull synchronously and then
-performs the existing result take in the same work item. This tests whether
-avoiding the native-queue round trip reduces the repeated ThreadPool idle/wakeup
-cost. No sampled spin instruction is assumed to belong exclusively to this path.
-
-This is a proposed private execution strategy, not product acceptance. Preserve
-C# Fluent, public signatures, Native AOT, both independent packages, native C++
-libpq/sqlite3 algorithms and all current workload/SQL/batch inputs. Native Source
-admission, management, final cursor close, Source join and transaction workers
-remain independent. The declared EngineLocalAsync model keeps native instance
-admission/control; this hybrid pull scheduling must be documented accurately if
-adopted. It does not create a dedicated managed pool or change runtime settings.
-
-A new nonblocking native prepare/admit entry must perform original validation,
-input snapshot, Session gate, generation/Cancel setup and source pending plus
-channel/source retirement reservation before managed queue acceptance. Public
-Async never waits for provider completion on its initiating thread. Deferred work
-owns its references; synchronous OwnerLease/Span/raw borrowed pointers cannot
-escape into the queue. Queued work has a unique run-versus-abandon claim. Source/
-Session close, scheduler rejection and pre-run cancellation must settle accepted
-work, release tickets and break any retained cycle without self-waiting.
-
-Synchronous run reuses original CursorPull::run/open/full metadata validation/
-second admission/fetch/Cancel detach/complete/error enrichment. It must not create
-a separate provider execution algorithm or bypass fresh DDL checks. Old request
-ABI semantics remain unchanged; a new private extension negotiates both providers.
-The same worker may take only after native run returns and the original setup,
-controls, callback and cancellation-registration drains permit it. Retain MRVTS
-asynchronous continuation behavior and do not combine common-A. A bounded ready
-callback may remain for state notification, with no user continuation on its
-native stack; callback elimination is not a claimed causal outcome.
-
-Retirement proof must cover the new exported-run frame's last accessor, not only
-the inner Worker destructor. Source join cannot report quiet while any admitted
-native frame still accesses channel/session/source/provider state. Ready, result
-take and final native retirement remain different events. Preserve all original
-rich errors, code/correlation, error priority, late PG failure, bounded drain,
-connection poisoning and Unknown commit behavior. The experiment does not touch
-transaction finish/deadline workers or redefine cancellation as native retirement.
-
-Required new proof includes held native run with public Async returning, accepted
-prepare plus rejected scheduler, pre-run abandonment and Source close, duplicate/
-stale work, controls or registration draining during run, owner-adoption failure,
-held row plus Dispose, and late old-generation work. Separate diagnostic identities
-must show actual queue, callback, FFI, SQL/protocol, batch, byte and owner counts;
-then matched ordinary A/B must show useful CPU or endpoint improvement. Retain the
-original correct path until the replacement's gates pass, then remove superseded
-internal routing while preserving public/frozen ABI compatibility. All performance
-work remains local and no CI workload is added.
-
-### Relation batch allocation: observe before selecting a strategy
-
-The original related32 case allocates about686KB per Korda business on both
-providers, versus74KB/51KB Dapper. This prioritizes shared managed construction.
-An independent diagnostic first separates key snapshot, one IndexedChild
-projection,32 From/SelectParent,31 Combine/dispose, final synchronous ToList prefix
-and post-await grouping using bounded preallocated records and same-thread
-allocation counters. Do not subtract counters across await or add inclusive nested
-scopes. Hot model/projection metadata already has caching and stack encoding;
-source counts alone do not prove the largest allocation site. No full relation-plan
-cache or public prepared overload is selected at this checkpoint. Any later change
-must preserve complete key snapshots, duplicate-position groups, native collation,
-one SQL statement, shared bounded result budget, DDL and error ordering.
-
-### Relation batch: private branch transfer selected from measured clones
-
-Recovery 03 now measures first-layer scopes in both providers and nested clone/copy
-scopes in SQLite. Each related32 business performs 31 clones: 120,776 B of managed
-allocation and 54,932 tape bytes copied. Clone accounts for 17.6% of the roughly
-686 KB total; SelectParent remains a larger independent cost. Combine is exactly
-181,760 B in both providers. These are same-thread allocations and actual copy
-events with zero-allocation controls, original 53-row digest, one SQL statement
-and zero final owners. Build overlap makes their CPU/latency data ineligible.
-
-Select an isolated internal consuming import only for RelationBatch's exclusively
-owned temporary branch. Public Combine retains full snapshot/clone semantics and
-source reuse. Under both existing fail-fast admission gates, invoke the original
-command SnapshotAndImport with the actual source command. It must retain the
-dependency, validate selection/seal/source, check finite quotas and parameter
-collisions, append, and complete all metadata updates. Only successful return
-commits consumption; mark the source binding disposed and context sealed without
-any new allocating/fallible step. The existing source gate exit releases its
-original reference, after destination retention is durable. Every pre-commit
-validation/budget/admission failure leaves source ownership intact. Later union
-failure is cleaned up by the private caller's existing disposal path.
-
-Keep key collection/value snapshots, duplicate positions, native collation, one
-SQL, shared row/byte limits, DDL and error ordering unchanged. Do not introduce
-a full relation cache, public consuming API, mapper change or new native path.
-Require equivalent submitted bytes, failed-import reuse, public snapshot reuse,
-private invalidation, cross-source/self/direct/concurrent rejection and zero
-owner leaks in actual Query.Binding AOT; run existing dual-provider Relations.
-Then demonstrate Clone31->0 and CloneCopy54,932->0 with the same diagnostic scopes,
-and repeated uninstrumented A/B with identical native bytes. These measurements
-select an experiment; they do not establish acceptance or zero framework allocation.
-
-## Recovery 04: provisional combined validation
-
-[Plan selection `338d45f`](https://github.com/IzuSharp/Plan/blob/338d45fce50d454cb282a1557452cf247b9635c6/ledger/evidence/batches/DB-Perf-01/execution-refactor/DB-Exec-Parity-01/phase-2/recovery-04/integration-selection.md)
-selects integration of Worker-D, exact decimal configuration recognition,
-short-lived SQLite prepare flags and private relation branch transfer. Each
-retains its isolated evidence identity; combined performance must be measured
-against matching unchanged-main binaries rather than added from those results.
-
-This preserves all strategies and boundaries described above. Native queue-job
-reduction is not a reduction in FFI entry count: the explicit admitted Run entry
-adds a crossing per batch. Managed continuation scheduling remains asynchronous.
-The decimal money1 CPU increase and public Combine tail variability remain open
-regression gates. No unknown `RhSpinWait` caller or kernel scheduling cause is
-assigned from leaf samples. Deep relation scopes decide whether any further
-strategy merits a separate proposal; they do not authorize a cache or public API
-change by themselves. This integration state is not final adoption or freeze.
-
-### Private relation capacity: isolated follow-up hypothesis
-
-Recovery04 deep scopes measure98 tape growth allocations/129,328 managed B per
-related32 request after clone removal, on both providers. A separate experiment
-may reserve at most2048 bytes for a fresh private branch, using the first completed
-branch capacity only when immutable key component encoded lengths match. Different
-lengths or an unsuitable builder use the original growth path. Public From and
-Combine, snapshot, quotas, error order, original growth fallback and ownership
-remain unchanged. No mutable data cache, graph-frame pooling, global initial size
-or early quota failure is introduced. Count actual bytes copied if any command
-prefix already exists. Actual dual-provider scope/oracle/ownership controls and
-reversed ordinary A/B decide adoption; the predicted49,104 B saving is not a result.
-This proposal follows Plan's `recovery-04/relation-capacity-hypothesis.md` and is
-independent of the four-candidate integration state above.
-
-### Capacity resource result and provisional integration
-
-The isolated capacity source `6b872e3` completed both-provider scope, real AOT
-correctness and reversed ordinary tests. Actual growth plus reserve allocation
-fell from129,328 to80,224 B/business (49,104 B saved), and growth copying fell
-from63,488 to7,936 B. The31 new reserve arrays are included. Public union controls,
-original row/digest/SQL/protocol and zero-owner checks passed. Ordinary related32
-process allocation fell about49KB in all four pairs; CPU/p50/p99 changes were
-mixed between AB and BA. Gen0 increased while Gen1 decreased, and no idle-release
-RSS or pause credit is available from this isolated screen.
-
-Select the private hint for combined validation solely on the repeated resource
-benefit, subject to the final mixed regression gate. Do not claim faster queries,
-add this saving to another native-identity group, or include diagnostic scopes in
-the product. Plan records the failed disk-exhaustion attempt and original error
-mapping controls. The hint remains bounded and has no public API/cache/ownership
-or quota semantic change. Integrated actual package consumers must be rebuilt.
-
-## Acceptance and delivery
-
-All performance work runs locally on Linux x64. Existing module-routed CI keeps
-compile, correctness, security, API and independent provider AOT package checks
-and rule-selected release. No benchmark, profiling, calibration, pressure action
-or indirect invocation is added to CI. Inspect the committed product diff with
-`python3 eng/ci/impact.py origin/main --output artifacts/plan.json` before push.
-
-Before adoption: independent review, required correctness/public API and actual
-standalone package consumption, repeated ordinary short A/B plus mechanism
-evidence, zero-refusal cost and bounded short pressure observations, and adequate
-comparable short before data. The owner cancelled the previously planned four
-serial1800-second campaign and its long before supplements before any started.
-Only repeatedly supported metrics may be called aligned. Report remaining gaps
-and bounded stopping reasons, then normal reviewed merges, existing main
-CI/releases and real public NuGet AOT consumption. A short pressure observation
-does not establish long-duration sustainable capacity. Delivery outcomes remain
-pending at this strategy checkpoint.
+| SQLite | +22.80% / −0.93% | +29.48% / −2.82% | +45,056 / +143,360 |
+| PostgreSQL | +0.84% / −18.66% | −5.31% / −5.88% | +667,648 / +548,864 |
+
+Process peak RSS and GC pause decreased while released-idle RSS increased. The
+SQLite regression is an observation, not proof that locking or clearing alone
+caused it. External scheduling was not proved to be exclusive either, so the bad
+interval was not discarded. The pool and diagnostic hooks remain unadopted.
+
+## Final limits
+
+The retained ownership05 related32 CPU in that screen was still 3.22–4.56× Dapper
+for SQLite and 7.61–10.05× for PostgreSQL; managed process bytes were about
+6.97×/10.08×. The earlier text1000 CPU gap persisted with only about 1% allocation
+difference. A final-frame buffer optimization cannot explain that whole gap.
+
+Keep source inspection, instrumented diagnostics, ordinary PackageReference AOT
+comparisons and actual delivery outcomes distinct. No exclusive RhSpinWait stage
+time, zero framework allocation, full parity or long-duration capacity was proved.
+Further optimization requires a new measured causal hypothesis. CI continues only
+its current correctness/module/package responsibilities; this document adds no
+benchmark, profiling, calibration or pressure workflow.

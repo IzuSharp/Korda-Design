@@ -25,7 +25,7 @@ owner/lease proof for validity and lifetime.
 Tonic 0.14.9 decode length/decompression checks, rmcp 3.10.0 Host/Origin/body limits,
 rustls 0.23.46 fatal error and certificate validation, and retained Bytes/permit work
 are read or executed as linked by R28/R29 and
-[source-inspection.json](../../../../verification/server-completion/source-inspection.json).
+source-inspection.json.
 The new Rust fixture actually rejects overlong/truncated/invalid-compression gRPC,
 forbidden MCP Host/Origin, a streaming body over cap without Content-Length, untrusted
 TLS certificates and incorrect server names. It uses only public library APIs.
@@ -78,10 +78,9 @@ where applicable, fault injection and Windows/Linux AOT tests. A source review p
 finite negative cases supports design acceptance; it does not assert production fuzz
 coverage, proof against hostile in-process code, or a whole-process RSS bound.
 
-
 ## Dependency and distribution inventory
 
-`verification/server-completion/package-identities.json` ties executed Cargo packages
+the historical research fixture ties executed Cargo packages
 to their VCS commits and compares the read Tonic/rmcp files to the published source.
 `dependency-inventory.json` enumerates the 157 locked registry packages and records
 available package license metadata/file hashes. Target-specific packages not downloaded
@@ -92,16 +91,15 @@ texts and current advisories before release. Test TLS keys are generated ephemer
 historical stored-key input bytes are explicitly omitted with their original hashes
 and run logs preserved, rather than copied into public evidence.
 
-
 ### Verified Windows/Linux research CI
 
 CI run [43388468172](https://github.com/IzuSharp/NativeWeave-Design/actions/runs/43388468172)
 tested source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`. Protocol13/13 and
 Kestrel Native AOT5/5 passed on both Windows2022 and Ubuntu24.04. Their actual
 run manifests, stdout/stderr and source snapshots are retained under
-`verification/completion-ci/43388468172/`; author checks of each raw log/input hash and
+the historical research fixture; author checks of each raw log/input hash and
 exact Windows LF-to-CRLF conversion are recorded in
-`verification/server-completion/ci-verification.json`. This extends platform coverage
+the historical research fixture. This extends platform coverage
 for these same distinct cases, not their product/FFI/soak scope or independent review.
 
 ## Protocol cardinality correction from independent review
@@ -113,6 +111,5 @@ with INVALID_ARGUMENT3 on the second complete message before dispatch. Multiple-
 client/bidirectional streams use a separate mode and bounded aggregate quotas. This
 public Codec policy is independently reproduced in five reviewer cases and in the
 author's corrected 19-case protocol fixture; original 13-case CI remains historical.
-See `verification/database-completion/server-review-cardinality/result.json` and
-`verification/server-completion/protocol-reviewed-local/run.json`. Neither finite
+json`. Neither finite
 suite is represented as full protocol security certification.

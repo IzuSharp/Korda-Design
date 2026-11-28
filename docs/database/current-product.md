@@ -2,7 +2,7 @@
 
 The existing product is the PostgreSQL/SQLite Fluent ORM with C# application models, DTOs and static mappings over the C++20 database engine. libpq and sqlite3 perform provider execution. [DB-API-01 behavior](fluent-orm.md) remains in force; [DB-Rename-01](db-attribute-names.md) changes the ten public attributes to `Db` names while preserving behavior. Exact current commands and module selection come from [Korda AGENTS](https://github.com/IzuSharp/Korda/blob/main/AGENTS.md); actual source/test identities belong to Plan and the product PR.
 
-The current [DB-Exec-02 target](query-semantics.md#current-execution-path-target-db-exec-02)
+The current [DB-Exec-02 target](query-semantics.md)
 rebuilds the complete driver-to-Fluent execution path while retaining this product
 surface. The cursor pull/scoped-span route and direct final close are implemented
 in published source `bc6ba1ae0ece02ecc2c0860776605f3c838f3ff8`. The

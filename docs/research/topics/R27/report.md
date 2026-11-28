@@ -1,6 +1,6 @@
 # R27 — Required Rust Server Engine and its Adapter
 
-Historical research began on 2026-11-12, with supplementary evidence through 2026-11-13; see [evidence.json](evidence.json) for the current task packet/baseline/hash. Status: an implementable independent Engine architecture has been selected; Rust is required by the project mission; product Rust/C#/AOT and performance tests have not been run. The specification is synchronized with [D18](../../../server/hosting-and-streaming.md).
+Historical research began on 2026-11-12, with supplementary evidence through 2026-11-13; See the research conclusions and limits in this report. Status: an implementable independent Engine architecture has been selected; Rust is required by the project mission; product Rust/C#/AOT and performance tests have not been run. The specification is synchronized with [D18](https://github.com/IzuSharp/Korda-Design/blob/c62cdb8aee833b6ab1a03e29a3f59f81a1b483f9/docs/server/hosting-and-streaming.md).
 
 ## 1. The Problem to Solve
 
@@ -16,7 +16,7 @@ Design decision: the required Rust Server accepts an explicit set of typed C# Ha
 | Tokio | tokio-1.54.1 / `b53b2001ed2ccfd9b87e32a0c6da1a1eebdc80b8` | mpsc bounded send765–825/reserve1070–1126 |
 | Axum | axum-v0.8.9 / `c59208c86fded335cd85e388030ad59347b0e5ae` | serve run258–305/connection dispatch383–421 |
 
-See [evidence](evidence.json) and [coverage](coverage.json) for URLs/blobs/licenses and coverage status. Pinned Tokio/Hyper/Axum licenses were identified as MIT; Axum's actual license path is `axum/LICENSE`, and the unsuccessful search for a nonexistent root `LICENSE` was not presented as successful. Regarding YetAnotherHttpHandler, this review uses only the limited evidence already registered by the interop topic to check FFI cost/owner pitfalls; this round does not renew a claim to have read the whole project.
+See evidence and coverage for URLs/blobs/licenses and coverage status. Pinned Tokio/Hyper/Axum licenses were identified as MIT; Axum's actual license path is `axum/LICENSE`, and the unsuccessful search for a nonexistent root `LICENSE` was not presented as successful. Regarding YetAnotherHttpHandler, this review uses only the limited evidence already registered by the interop topic to check FFI cost/owner pitfalls; this round does not renew a claim to have read the whole project.
 
 | Candidate | Choice |
 | --- | --- |
@@ -73,10 +73,9 @@ The package can be installed and versioned separately and reject unsupported cap
 
 Q15's Rust foundation requirement is determined by the user's goals. The initial implementation design chooses Tokio/Hyper/hyper-util/Tower, with optional Axum routing reuse; ordinary C# applications need no Rust recompilation per Handler. Equivalent-load tests measure costs objectively; the Rust architecture requirement does not justify claiming a performance victory already exists.
 
-B17 produces the independent engine, ABI adaptation, and minimal handler; B20 validates cancel/completion/retire interleavings, scheduler reentrancy, and shutdown; B23 aligns protocols/TLS/hardware/data/error semantics and measures CPU, memory, tail latency, crossings, and copies; B24 executes actual Windows/Linux AOT app loading and version rejection. Complete product execution has not occurred; new research runs are in verification/server-completion, and existing native-slice/retained-byte evidence remains reused.
+B17 produces the independent engine, ABI adaptation, and minimal handler; B20 validates cancel/completion/retire interleavings, scheduler reentrancy, and shutdown; B23 aligns protocols/TLS/hardware/data/error semantics and measures CPU, memory, tail latency, crossings, and copies; B24 executes actual Windows/Linux AOT app loading and version rejection. Complete product execution has not occurred; the recorded native-slice and retained-byte studies remain scoped historical research.
 
 Independent Review interfaces: R07/R08 check owned results and quiescence; R26 checks that the managed comparator and product Host are not conflated; R29 checks double accounting during copies, byte-credit deadlocks, and slow readers; R17 checks that end-to-end comparisons do not cherry-pick the best Rust microbenchmarks. This author does not claim to have accepted their own new design.
-
 
 ## Current completion and architecture correction (2026-11-12)
 
@@ -90,7 +89,7 @@ architecture decisions, while their scoped source/evidence identities remain his
 
 D18 now defines the native Handler/Body bridge and retirement protocol; D19 binds
 Tonic/rmcp/rustls to that same host. New actual protocol/network/TLS evidence is in
-`verification/server-completion/`, with exact commands/source hashes and retained prior
+the historical research fixture, with exact commands/source hashes and retained prior
 attempts. Native HTTP1/HTTP2 loopback and bounded TLS tests are real executions, but
 not a C# Server product, equivalent-load benchmark or production soak. The existing
 Body/Bytes/permit and finite credit models are reused without inflating their coverage.
@@ -100,14 +99,13 @@ B16/B17/B20/B22/B23 implementation, complete cross-language transport and long-l
 acceptance remain explicit obligations. Independent review and graph integration
 must bind this exact revised content before acceptance.
 
-
 ### Verified Windows/Linux research CI
 
 CI run [43388468172](https://github.com/IzuSharp/NativeWeave-Design/actions/runs/43388468172)
 tested source `7ea84e11ee19e6dad4503a5872eb27c6c7f44e80`. Protocol13/13 and
 Kestrel Native AOT5/5 passed on both Windows2022 and Ubuntu24.04. Their actual
 run manifests, stdout/stderr and source snapshots are retained under
-`verification/completion-ci/43388468172/`; author checks of each raw log/input hash and
+the historical research fixture; author checks of each raw log/input hash and
 exact Windows LF-to-CRLF conversion are recorded in
-`verification/server-completion/ci-verification.json`. This extends platform coverage
+the historical research fixture. This extends platform coverage
 for these same distinct cases, not their product/FFI/soak scope or independent review.
