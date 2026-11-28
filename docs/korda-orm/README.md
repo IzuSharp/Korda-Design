@@ -15,6 +15,7 @@ The reopened0.2 selection supersedes the earlier own Binder/Projector default.
 | [Architecture](architecture.md) | Module dependencies, package proposal, decisions and migration boundary |
 | [Shared contracts](contracts.md) | Versioned semantic interfaces for parallel implementation |
 | [Implementation specification](implementation-spec.md) | Fixed declarations, algorithms, lifecycle, diagnostics and shared fixtures |
+| [Fixed language surface](language-surface.md) | Complete finite Fluent overloads, relational/mutation policies, exact node payloads and conversion lineage |
 | [Mature execution reuse](mature-execution.md) | Original/runtime AOT paths, four databases, faults and performance evidence |
 | [Generator integration](generation-integration.md) | Normal SG, portable host, static registration and build alternatives |
 | [Java/jOOQ execution options](java-execution-options.md) | Execution-source translation, actual Graal/JDBC native route and tradeoffs |

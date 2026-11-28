@@ -116,6 +116,15 @@ that an open generic Dapper wrapper is not intercepted. A normal generator emits
 factory subclasses and static registration directly; developers retain natural
 Fluent terminals and known DTO/record/init mapping.
 
+Execution owns ProviderCodecCatalog, ProviderCodecCatalogBuilder and closed generic
+ProviderCodecs interfaces as fixed in the execution packet. A provider service
+receives an immutable catalog explicitly; ordinary factories use that provider's
+declared defaults. Types contains pure snapshot/conversion helpers, with snapshot
+callbacks carried by Contracts.SqlType<T>, and AdvancedTypes contains neutral
+factories. Neither pure module creates a competing runtime registry. Catalog
+construction rejects duplicate closed entries, and result conversion provenance
+survives projection and nested wrappers before a typed reader is bound.
+
 Pin the upstream version and isolate its dependency in Execution. Upgrades rerun
 factory API, lifecycle, generator, diagnostic and exact-package tests. No runtime
 fork is required for the selected baseline. One small GetCommand override closes

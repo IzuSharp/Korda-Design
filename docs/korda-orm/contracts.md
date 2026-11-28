@@ -49,6 +49,13 @@ split across assemblies. Extending a query cannot mutate another query. Alias
 text is independent of RelationId; dialect-specific identifier equivalence is an
 additional validation after common Ordinal collision checks.
 
+TableKeyDefinition declares ordered key columns, primary/unique status,
+AllNotNull and IsPartial. Table.Define(name) has no key assertions; its explicit
+key overload freezes the metadata and As preserves it with a fresh RelationId.
+Generated schemas provide declared keys. Partial/expression keys do not prove
+presence or scalar cardinality; manually supplied metadata is a caller assertion,
+not a runtime schema verification promise.
+
 Ordinary values create captured typed slots in an immutable sidecar, not literals
 inside the AST. Nodes/templates retain no request values. ParameterValues holds
 BoundValue<T> cells plus frozen SlotId lookup; Accept calls a generic visitor,
@@ -56,6 +63,14 @@ never reflection or MakeGenericType. Builder Add rejects duplicate identities;
 With deliberately replaces one slot in a new snapshot. Unused known superset
 values are allowed and not bound. Arrays/bytes/lists are snapshotted once; custom
 mutable payloads require an explicit static snapshot policy.
+
+That policy is Contracts.SqlType<T>.Snapshot, supplied by the exact SqlTypes.Define
+overloads; Contracts never consults a Types registry. Only the declared BCL
+whitelist receives automatic identity, and byte[] receives copying. Unknown
+structs/arrays/references remain result-only until an explicit callback is supplied.
+Capture calls it once, Nullable lifts it, and Merge/Bind/Render never copy frozen
+cells again. Generated code can copy a static type's policy through the public
+snapshotSource overload without reading internal state.
 
 Condition represents SQL TRUE/FALSE/UNKNOWN. Equality to a nullable NULL stays
 `= parameter`; IsNull and null-safe distinctness are separate. Empty IN is FALSE,
@@ -69,6 +84,14 @@ native result conversion; exact-decimal SUM/AVG and integer exact AVG are reject
 on SQLite. Float/double aggregates return nullable double. MIN/MAX preserve SQL type
 with nullable empty-set result. A caller wanting approximate integer AVG explicitly
 casts to Double. These rules and concrete numeric overloads are fixed by Expressions.
+
+Same-width integer arithmetic widens operands/results to Int64; float/double
+arithmetic uses Double; decimal remains decimal with unknown result facets unless
+explicitly declared. Nullable operands preserve nullable results. Integer division
+and modulo return nullable Int64 and retain each server's zero-division behavior.
+Mixed widths require an explicit Cast. Explicit int16/int32 Cast results carry
+cast.int16.checked/cast.int32.checked through aliases, derived/CTE outputs and
+nested leaves; strict ordinary readers are not relaxed to accommodate those casts.
 
 ## ORM-C02 — pure rendering and capability contract
 
@@ -154,6 +177,19 @@ ValidateReaderColumn(DbDataReader,int,ResultColumn,RowMember). BindReader return
 closed `Func<DbDataReader,int,T>`; no codec lookup occurs per row. Tokenize validates
 actual physical count/order/aliases/accepted storage representations once before
 materializing the first row. It does not infer provider representation from DTO T.
+
+Execution owns the one immutable ProviderCodecCatalog/Builder with closed generic
+write/read interfaces. Provider services take the catalog explicitly and ordinary
+factories use their declared defaults. Pure Types/AdvancedTypes conversion helpers
+do not introduce a second runtime registry. Missing write codec is BIND-005;
+missing/wrong-closed read codec is MAP-002. Invalid or duplicate catalog entries
+fail TYPE-001 at construction, without replacing an existing codec silently.
+
+Bind combines member/column ConversionId: use the nonnull one, use equal IDs once,
+and reject two different nonnull IDs with MAP-002. Alias/CTE/derived/nested wrappers
+preserve this metadata. Collection physical reads use owned ReadOnlyMemory<byte>
+with nested.payload.utf8, retaining the actual JSON/JSONB/TEXT SQL identity; hidden
+optional-row presence uses an explicitly cast Int64 and a synthetic long reader.
 
 The default mapping is strictly bound to the declared template. Declared projection
 reordering is allowed and changes the immutable ordinal plan; unexpected reader

@@ -7,6 +7,9 @@ contradiction is returned to the contract owner rather than silently redesigned.
 The shared declarations below are compiled as a disposable specification check.
 Throw-only bodies in that check stand for the algorithms specified here and in the
 owning packet; they are not product implementations or acceptable shipping stubs.
+The companion language-surface declarations and exact Types snapshot/conversion
+helpers also passed separate assembly/public-consumer compilation. These checks
+establish type/accessibility consistency, not execution of the specified algorithms.
 
 ## 1. Decisions that implementers must not reopen
 
@@ -45,13 +48,13 @@ the analyzer is the specific netstandard2.0 exception in the generation design.
 | Internal project / directory | Required initial files | References |
 | --- | --- | --- |
 | `src/Orm/Contracts/Korda.Orm.Contracts.csproj` | `SqlTypeDescriptor.cs`, `Identity.cs`, immutable handles, `Nodes/{Query,Expressions,Dml,Relational,Advanced,Nested}.cs`, `ParameterValues.cs`, `ResultShape.cs`, `ParameterLayout.cs`, `Diagnostics.cs`, `Rendering/IDialectRules.cs` | BCL only |
-| `src/Orm/Types/Korda.Orm.Types.csproj` | `SqlTypes.cs`, `SqlType.cs`, `ConversionCatalog.cs` | Contracts |
+| `src/Orm/Types/Korda.Orm.Types.csproj` | `SqlTypes.cs`, `SqlType.cs`, `ValueSnapshots.cs`, `StaticConversion.cs`, `ConversionComposition.cs` | Contracts; pure typed helpers, no execution registry |
 | `src/Orm/Language/Korda.Orm.Language.csproj` | `Query/`, `Expressions/`, `Dml/`, `Relational/` containing operators, `Sql.*.cs` facade fragments and validators | Contracts, Types |
 | `src/Orm/Rendering/Korda.Orm.Rendering.csproj` | `SqlRenderer.cs`, `RenderContext.cs`, `ScopeFrame.cs`, `TemplateFingerprint.cs`, `Capability.cs` | Contracts, Types, Language |
 | `src/Orm/Dialects/{PostgreSql,Sqlite,MySql,MariaDb}/` | one project each, `Profile.cs`, `CapabilityTable.cs`, `Lowering.cs`, `TypeNames.cs` | Contracts, Types, Language, AdvancedTypes, Nested; never Rendering or provider drivers |
 | `src/Orm/Schema/Korda.Orm.SchemaModel.csproj` | `Model/`, `Format/`, `Generation/` files fixed in ORM-SCHEMA | Contracts, Types |
-| `src/Orm/Execution/` | `OrmSession.cs`, `QueryExecutionExtensions.cs`, `Mapping.cs`, `LayoutCommandFactory.cs`, `InvocationLease.cs`, `CommandOptions.cs`, `Metadata/ISchemaCatalogReader.cs` | Contracts, Types, Language, Rendering, Schema, Dapper.AOT 1.1.0 |
-| `src/Orm/Providers/{PostgreSql,Sqlite,MySql}/` | provider project, `SessionFactory.cs`, `ParameterCodec.cs`, `ReaderCodec.cs`, `ServerProfile.cs`, `MetadataReader.cs` | Execution, Schema and only that provider's driver |
+| `src/Orm/Execution/` | `OrmSession.cs`, `QueryExecutionExtensions.cs`, `Mapping.cs`, `LayoutCommandFactory.cs`, `InvocationLease.cs`, `CommandOptions.cs`, `ProviderCodecCatalog.cs`, `ProviderCodecCatalogBuilder.cs`, `ProviderCodecs.cs`, `AssemblyInfo.cs`, `Metadata/ISchemaCatalogReader.cs` | Contracts, Types, Language, Rendering, SchemaModel, Dapper.AOT 1.1.0 |
+| `src/Orm/Providers/{PostgreSql,Sqlite,MySql}/` | provider project, `SessionFactory.cs`, `ParameterCodec.cs`, `ReaderCodec.cs`, `ServerProfile.cs`, `MetadataReader.cs` | Execution, SchemaModel, AdvancedTypes, matching dialect(s), and only that provider's driver; MySql references both MySql/MariaDb dialects |
 | `src/Orm/Generation/` | `OrmGenerator.cs`, `Models/`, `Emit/`, `Diagnostics.cs` | build-only Roslyn and JSON dependencies |
 | `src/Orm/AdvancedTypes/`, `src/Orm/Nested/` | neutral descriptors/operations/decoders from their packets | pure language/types; provider encodings belong to providers |
 | `src/Orm/SchemaTool/` | `Program.cs`, `AcquireCommand.cs`, `ValidateCommand.cs`, `GenerateCommand.cs` | Schema plus explicitly selected metadata adapters |
@@ -83,6 +86,8 @@ The compile check uses those exact accessibility choices; the public consumer
 uses factories and cannot construct unchecked nodes or invocation objects.
 
 ```csharp
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace Korda.Orm;
@@ -105,7 +110,9 @@ public sealed record SqlTypeDescriptor(SqlTypeId Id, Type ClrType,
 public sealed class SqlType<T>
 {
     public SqlTypeDescriptor Descriptor { get; }
-    internal SqlType(SqlTypeDescriptor descriptor) => Descriptor = descriptor;
+    internal Func<T, T>? Snapshot { get; }
+    internal SqlType(SqlTypeDescriptor descriptor, Func<T, T>? snapshot = null)
+        => (Descriptor, Snapshot) = (descriptor, snapshot);
 }
 public sealed class Param<T>
 {
@@ -124,13 +131,15 @@ public sealed class ListParam<T>
 public static class SqlTypes
 {
     public static SqlType<T> Define<T>(SqlTypeDescriptor descriptor) => throw new NotImplementedException();
+    public static SqlType<T> Define<T>(SqlTypeDescriptor descriptor, Func<T, T> snapshot) => throw new NotImplementedException();
+    public static SqlType<T> Define<T>(SqlTypeDescriptor descriptor, SqlType<T> snapshotSource) => throw new NotImplementedException();
     public static SqlType<T?> Nullable<T>(SqlType<T> type) where T : struct => throw new NotImplementedException();
     public static SqlType<T?> NullableReference<T>(SqlType<T> type) where T : class => throw new NotImplementedException();
-    public static SqlType<int> Int32 { get; } = new(new(new("int32"), typeof(int), SqlNullability.NonNull, new()));
-    public static SqlType<long> Int64 { get; } = new(new(new("int64"), typeof(long), SqlNullability.NonNull, new()));
-    public static SqlType<long?> NullableInt64 { get; } = new(new(new("int64"), typeof(long?), SqlNullability.Nullable, new()));
-    public static SqlType<string> Text { get; } = new(new(new("text"), typeof(string), SqlNullability.NonNull, new()));
-    public static SqlType<bool> Boolean { get; } = new(new(new("boolean"), typeof(bool), SqlNullability.NonNull, new()));
+    public static SqlType<int> Int32 { get; } = new(new(new("int32"), typeof(int), SqlNullability.NonNull, new()), static value => value);
+    public static SqlType<long> Int64 { get; } = new(new(new("int64"), typeof(long), SqlNullability.NonNull, new()), static value => value);
+    public static SqlType<long?> NullableInt64 { get; } = new(new(new("int64"), typeof(long?), SqlNullability.Nullable, new()), static value => value);
+    public static SqlType<string> Text { get; } = new(new(new("text"), typeof(string), SqlNullability.NonNull, new()), static value => value);
+    public static SqlType<bool> Boolean { get; } = new(new(new("boolean"), typeof(bool), SqlNullability.NonNull, new()), static value => value);
 }
 
 public sealed class ParameterValues
@@ -176,11 +185,21 @@ public static class ConditionOperations
     public static Condition Not(this Condition value) => throw new NotImplementedException();
 }
 public sealed record SortField(IField Field, SortDirection Direction, NullOrder Nulls);
-public abstract class TableLike { public RelationId Id { get; protected init; } }
+public abstract class TableLike
+{
+    public RelationId Id { get; internal init; }
+    internal TableLike() { }
+}
+public sealed record TableKeyDefinition(ImmutableArray<string> Columns,
+    bool IsPrimary, bool AllNotNull, bool IsPartial = false);
 public sealed class Table : TableLike
 {
+    internal Table(RelationId id, SqlName name, string? alias,
+        ImmutableArray<TableKeyDefinition> keys) => throw new NotImplementedException();
     public static Table Define(SqlName name) => throw new NotImplementedException();
+    public static Table Define(SqlName name, ImmutableArray<TableKeyDefinition> keys) => throw new NotImplementedException();
     public Field<T> Column<T>(string name, SqlType<T> type) => throw new NotImplementedException();
+    public Field<T> Column<T>(string name, SqlType<T> type, string? conversionId) => throw new NotImplementedException();
     public Table As(string alias) => throw new NotImplementedException();
 }
 public sealed record ResultColumn(int Ordinal, string Alias, SqlTypeDescriptor Type,
@@ -193,7 +212,7 @@ public sealed record ResultMember(string Name, int FirstOrdinal, int Width,
     NestedShapeDescriptor? Nested = null);
 public sealed record NestedJsonMember(int CellIndex, string Name,
     ResultMemberKind Kind, SqlTypeDescriptor LogicalType,
-    NestedShapeDescriptor? Nested = null);
+    NestedShapeDescriptor? Nested = null, string? ConversionId = null);
 public sealed record NestedShapeDescriptor(string Id,
     ImmutableArray<ResultColumn> RowColumns,
     ImmutableArray<ResultMember> RowMembers,
@@ -417,12 +436,24 @@ Contracts-to-Language dependency. In addition to the compact declarations above,
 the implementation adds these internal constructors/properties, with the same
 friend-assembly list: Field<T>(SqlType<T>, SqlNode, ParameterValues),
 Condition(SqlNode, ParameterValues), Query<T>(Projection<T>, QueryNode,
-ParameterValues), and Table(RelationId, SqlName, string? alias). Each has readonly
+ParameterValues), and Table(RelationId, SqlName, string? alias,
+ImmutableArray<TableKeyDefinition> keys). Each has readonly
 Node and Captured properties; Table exposes an internal TableNode. QueryNode is the
 abstract base of SelectNode and SetNode; DmlNode is the base of the three mutation
 nodes. Public methods never accept an arbitrary SqlNode. Table.Define allocates a
 RelationId; As allocates a new one and Column constructs its ColumnNode against
-that table instance. Projection stores frozen fields and the union of their values.
+that table instance. Table.Define(name) declares no keys. The overload freezes the
+ordered column-name lists and rejects empty/duplicate columns or multiple primary
+keys; As preserves that metadata while allocating the new RelationId. Generated
+schema supplies actual declared primary/unique column keys. Expression indexes
+are not column keys; partial keys never establish presence or at-most-one proofs.
+AllNotNull must be true for a key-based outer-row presence proof. A complete
+equality restriction on one nonpartial unique key can establish SQLite scalar
+cardinality; a nullable key requires proof that each restricted value is non-NULL.
+Manual metadata is an explicit caller assertion and is not a live schema or
+uniqueness verification guarantee. Collect does not require a key proof; its
+ordering contract and ties are fixed by ORM-NESTED. Projection stores frozen
+fields and the union of their values.
 ParameterValues.MergeCaptured(left,right) is internal, rejects distinct cells for
 one SlotId, and is the sole merge helper used by every language task. Explicit
 invocation values cannot override a captured slot accidentally; conflicting cells
@@ -451,12 +482,43 @@ MakeGenericType. Only the provider adapter converts to its DbParameter represent
 Normal ADO.NET Value assignment may box value types; typed NpgsqlParameter<T> can
 retain T. Neither path is described as universally allocation-free.
 
-Primitive/value types and strings are copied by value/reference as appropriate.
-`byte[]`, arrays and IEnumerable list inputs are snapshotted on capture/binding;
-the input enumerable is consumed once. Mutable custom reference payloads require a
-registered snapshot converter. Missing converter is `KORM-BIND-005`; there is no
-undocumented borrow-across-await mode in this baseline. An explicitly immutable
-custom type may register identity snapshotting with its codec contract.
+Snapshot policy is attached directly to Contracts.SqlType<T> as the internal
+Func<T,T>? Snapshot; Contracts never calls back into a Types registry. Define<T>
+without a policy attaches identity only to the fixed BCL scalar/nullable whitelist
+and a copying policy to byte[]. Unknown custom types, including structs containing
+references and arbitrary arrays, retain a null policy for result-only descriptions.
+Capturing such a nonnull input fails KORM-BIND-005 until an explicit policy is
+supplied. IsValueType is never evidence of deep immutability.
+
+Define<T>(descriptor, Func<T,T>) rejects a null callback. The alternative
+Define<T>(descriptor, SqlType<T> snapshotSource) copies the source's policy while
+validating the new descriptor; this is the public seam used by generated consumers
+that cannot access internal Snapshot. It does not invent a missing source policy.
+Nullable lifts the original policy with null bypass; NullableReference likewise
+preserves the policy and bypasses accepted null. A missing policy stays missing.
+The policy is not part of SQL descriptor equality or template fingerprinting.
+
+With/Add/Eq(value) capture validates input nullability, bypasses accepted null or
+calls the policy exactly once, validates its returned value and stores private T.
+A required input or copied value that is null fails KORM-BIND-004. Missing/throwing
+snapshot policy fails KORM-BIND-005 with its original exception. WithList/AddList
+consume the source once and apply the element policy once per input element.
+Bind, MergeCaptured and RenderAndBind reuse already frozen cells and do not call
+snapshot delegates again. ParameterValues has no public getter exposing a private
+mutable T graph. Delegate implementations and provider conversions must be pure.
+
+Types.ValueSnapshots.Array<TElement>(SqlType<TElement>) returns the exact
+Func<TElement[],TElement[]> copier: allocate one same-length array, preserve order,
+validate each element's nullability and use its declared snapshot policy. Missing
+element policy fails instead of shallow-copying an unknown mutable element.
+Advanced SqlArray.Create(elementType,values) owns its frozen array and returns
+copies of mutable elements through public access; its explicit whole-value identity
+policy is therefore safe. JsonCodec<T>.Snapshot serializes with JsonTypeInfo<T>,
+then deserializes a private T graph with the same metadata. ParameterValues retains
+that private T, and the provider later serializes it for transport. This deliberately
+incurs a capture serialization/deserialization and a transport serialization; it
+is not an immutable-JSON-byte cell or a zero-copy promise. An explicit immutable
+JSON value wrapper may use its declared identity policy instead.
 
 For an expanded list, ElementIndex identifies the element in its one frozen typed
 list. The final occurrence ordinal increases for each emitted reference, including
@@ -480,12 +542,12 @@ is discovered instead of adding a second incompatible node type in its assembly.
 
 | Owner | Node records and ordered fields |
 | --- | --- |
-| Types/query | `ColumnNode(RelationId, SqlName, SqlTypeDescriptor)`, `ParameterNode(SlotId, SqlTypeDescriptor)`, `LiteralNode(TypedLiteral, SqlTypeDescriptor)`, `AliasNode(SqlNode, string)` |
-| Expressions | `CompareNode(ComparisonKind, left, right)`, `JunctionNode(BooleanKind, children)`, `NotNode(child)`, `NullTestNode(child, negated)`, `InNode(item, listOrQuery, negated)`, `ArithmeticNode(kind,left,right)`, `FunctionNode(FunctionId,args,type)`, `CaseNode(branches,else,type)`, `CastNode(value,type)` |
-| Query | `SelectNode(projection,from,joins,where,groupBy,having,windows,orderBy,limit,offset,distinct,ctes,lockClause)` |
-| Relational | `TableNode`, `DerivedTableNode(query,relationId,alias)`, `JoinNode(kind,left,right,on)`, `CteDefinitionNode(id,name,columns,query,recursive)`, `CteReferenceNode(id,relationId,alias)`, `SetNode(kind,left,right)`, `WindowNode(partition,order,frame)` |
-| DML | `InsertNode(target,columns,source,conflict,returning)`, `UpdateNode(target,assignments,from,where,returning)`, `DeleteNode(target,using,where,returning)` |
-| Advanced/nested | Typed nodes enumerated in their packets; they use the same parameter, scope, type and lowering visitors |
+| Types/query | `ParameterNode(SlotId,SqlTypeDescriptor)`, `LiteralNode(TypedLiteral,SqlTypeDescriptor)`, `AliasNode(SqlNode,string)`; `TableNode(RelationId,SqlName,string? alias,ImmutableArray<TableKeyDefinition> keys)`; ColumnNode includes its optional read ConversionId as fixed in language-surface |
+| Expressions | Compare/Junction/Not/NullTest/In plus the exact Between/Arithmetic/Function/Cast/Nullability/Case/Like/Row records in language-surface; result-producing nodes carry explicit ResultType and ConversionId |
+| Query | Exact SelectNode with Qualify, DistinctSpecNode and LockClauseNode; JoinNode stores only Right/On, never repeats the already visited left prefix; SetNode preserves its own Order/Limit/Offset/Ctes tail |
+| Relational | Exact CteDefinition/Reference, DerivedTable, WindowFrame/Window/NamedWindow, Over, Exists and ScalarSubquery records in language-surface; CTE body may be the explicitly permitted query or returning mutation |
+| DML | Exact Assignment/ConflictTarget/Conflict/InsertSource/Insert/Update/Delete/Excluded/ProjectionItem/ReturningProjection records in language-surface; AllowAllRows and Ctes are explicit data |
+| Advanced/nested | Exact records in ORM-ADVANCED-TYPES/ORM-NESTED, using the same scope/type/lowering visitors; NestedJsonMember includes scalar-leaf ConversionId |
 
 The common visitor uses a NodeKind switch and exhaustively dispatches the record's
 fields. Unknown tags are `KORM-MODEL-001`, never arbitrary ToString output. No
@@ -592,6 +654,34 @@ Static conversions are pure, deterministic and side-effect-free, so preflight an
 parameter creation can share their validation without a hidden mutable cache.
 Profile equality compares family/version interval/placeholders and settings sorted
 Ordinal by content, never ImmutableDictionary reference equality.
+
+Execution owns the sole immutable ProviderCodecCatalog and its builder. Exact
+IProviderWriteCodec<T>/IProviderReadCodec<T>, AddWrite/AddRead/Build and lookup
+signatures are fixed in ORM-EXECUTION. Keys are SQL identity and optional read
+conversion ID; buckets retain statically closed invariant interface entries and
+select the requested T without reflection, a Type-key dictionary or MakeGenericType.
+Invalid/duplicate registrations fail KORM-TYPE-001 while constructing the catalog.
+The three provider service constructors take (profile,catalog), and their ordinary
+session factories use explicit DefaultCodecs. A custom caller copies a default
+catalog in the builder and adds complete closed entries; it cannot overwrite one
+silently. Types/AdvancedTypes provide pure factories/conversion helpers, not a
+second runtime registry. Execution friend access is limited to the three named
+provider assemblies and explicitly named tests.
+
+Before binding a scalar reader, combine RowMember and ResultColumn conversion IDs:
+if one is null use the other; if both match Ordinal use it once; if both are nonnull
+and differ fail KORM-MAP-002. BindReader receives that effective ID. Alias,
+CTE/derived, scalar-subquery, OVER and nested scalar leaves preserve lineage;
+CASE/Coalesce/row and set compatibility enforce the fixed matching-ID rules.
+Known checked conversion failure is KORM-TYPE-005; required DBNull is MAP-003.
+
+A collection's physical payload uses ReadOnlyMemory<byte> and the dedicated
+nested.payload.utf8 read ID with the profile's actual JSON/JSONB/TEXT identity.
+The closed codec returns owned strict UTF-8 for the bounded decoder, not a guessed
+DTO reader. Optional-row presence is logical Int64 with explicit SQL BIGINT /
+INTEGER / SIGNED casts for PG / SQLite / MySQL-Maria and a synthetic long RowMember.
+These physical plans are validated once by the outer Tokenize. Decoder budgets
+bound accepted data/objects; they do not promise to prevent provider buffering.
 
 Fixed endpoints are:
 

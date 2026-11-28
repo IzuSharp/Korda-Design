@@ -186,6 +186,49 @@ Use these ordered stages; no implementation task chooses a replacement architect
    and statically registered codecs. Roslyn, schema discovery and generator
    dependencies are absent from the application's runtime dependency closure.
 
+Schema output names and public wrappers are fixed in ORM-GENERATOR: the generation
+namespace contains Tables, with typed wrappers in TableRefs, records in Rows and
+declared types in Types. Wrappers expose Table, typed column fields, As(alias) and
+static Metadata; their Table.Define call attaches genuine complete column-key
+metadata. They do not introduce a per-table query/execution hierarchy. Offline
+physical generation and the analyzer share source-level neutral models/emission,
+not a cross-target reference to the analyzer DLL. The tool references the real
+net11 SchemaModel; the analyzer links its portable source subset.
+
+Generated type construction preserves the input snapshot contract. Built-in
+scalars use SqlTypes.Define<T>(descriptor); its closed default table includes
+byte[] copying. An explicit binding uses the public
+SqlTypes.Define<T>(descriptor, SqlType<T> snapshotSource) overload, which copies
+the source's internal snapshot policy. The policy-bearing application member is
+created through Define<T>(descriptor, Func<T,T> snapshot) or another declared
+typed factory. Consumer-generated source never accesses internal Snapshot. Only
+a generator-owned enum may receive the known immutable `static value => value`
+policy directly. Arbitrary structs, reference types and raw arrays do not acquire
+an inferred identity/shallow-copy policy.
+
+A custom binding must identify a static SqlType<TColumn> for its final column
+carrier and nullability. A nullable custom column uses an explicit column binding
+to a declared nullable static member; the application can build it with Nullable
+or NullableReference, which lift the original policy and bypass null. The offline
+emitter does not infer whether an unknown CLR name denotes a struct or class.
+Both generation modes preserve this policy while copying column facets, physical
+SQL identity and nullability. A missing/inaccessible/wrong closed member gives
+ORMGEN004; a statically known required/nullable mismatch gives ORMGEN005. Symbol
+validation cannot prove that a static getter returns a non-null policy. Missing
+policy or a snapshot exception at non-null capture gives KORM-BIND-005; required
+input/output null gives KORM-BIND-004. Read-only type use does not demand a snapshot.
+Product fixtures cover a mutable reference inside a struct, exact once-only copy
+counts, nullable policy bypass and a captured value remaining unchanged after the
+caller mutates its original object. They are required implementation checks, not
+newly completed research experiments.
+
+The generated wrapper initializes fields through the public
+Table.Column<T>(string name, SqlType<T> type, string? conversionId) overload,
+passing SchemaTypeBinding.CodecId. Generated RowMember metadata keeps that same
+ID. Consequently scalar, closed Row and derived-column projections retain the
+declared conversion even when no generated DTO is selected; equal column/member
+IDs are applied once by the shared binding rule.
+
 JSON parsing reuses **System.Text.Json 11.0.0**. The official package includes a
 netstandard2.0 asset; do not write a custom JSON parser. Link the Schema module's
 small format reader/model sources into the generator so validation rules have one
@@ -239,7 +282,7 @@ An unregistered conversion is not an excuse for `object` or `Convert.ChangeType`
 
 ### Strict mapping algorithm
 
-Preflight matches the pure `Projection<T>.ResultShape` against the compiled member
+Preflight matches the pure `Projection<T>.Shape` against the compiled member
 descriptor: degree, aliases, SQL/CLR compatibility through the declared codec,
 nullable-to-nonnullable rules and nested presence policy. This does not inspect
 runtime DTO objects. Reject missing, duplicate, unknown or incompatible mappings
@@ -266,8 +309,60 @@ At the first materialized row, generated `Tokenize` must:
    parameter values and connection strings are excluded.
 
 `Bind` invokes ProviderServices.BindReader<TMember> once per known scalar member
-and stores typed readonly Func<DbDataReader,int,TMember> delegates. Tokenize calls
+and stores typed readonly Func<DbDataReader,int,TMember> delegates. First call
+ValidateResult(column, member), which validates both conversion declarations.
+Resolve their effective read ID exactly as follows:
+
+| Member ConversionId | Column ConversionId | Effective ID/result |
+| --- | --- | --- |
+| null | null | null; ordinary strict reader |
+| null | non-null C | C |
+| non-null M | null | M |
+| non-null M | Ordinal-equal M | M, executed once |
+| non-null M | different non-null C | KORM-MAP-002 during Bind, before command creation |
+
+After successful validation, emit
+`var effectiveReadConversion = member.ConversionId ?? column.ConversionId` and
+`services.BindReader<TMember>(column.Type, effectiveReadConversion)`. The shared
+rule applies to scalar, closed Row, generated/manual DTO, nested scalar-leaf and
+dynamic-record plans. Nested binding carries the leaf's conversion ID into its
+logical column while preserving the physical descriptor for reader validation.
+Flattened leaves retain RowColumns conversion IDs; JSON leaves retain
+NestedJsonMember.ConversionId and select ORM-NESTED's fixed typed decoder.
+Cast IDs use checked JSON integer decoding; aggregate decimal IDs use the declared
+decimal-string wire representation. An unknown custom JSON wire conversion fails
+KORM-NESTED-006 in preflight. Wrapping a collection does not erase this metadata.
+No separate codec composition is inferred. A composed custom conversion must
+have one explicit registered ID. This preserves an expression's aggregate or cast
+conversion for an ordinary DTO member with no attribute conversion. In particular,
+Cast projections targeting Int16/Int32 carry cast.int16.checked/cast.int32.checked;
+integer SUM carries aggregate.int-sum.decimal.
+
+Required product fixtures inspect the exact BindReader ID, read cast values
+123/456 into short/int DTO members without conversion attributes, and retain null
+for an all-NULL nullable-decimal integer SUM. A counted fixture.identity.int64
+codec verifies that member-only and equal column/member IDs execute once per
+value. Two individually registered but different IDs (cast.int16.checked and
+fixture.other.int16) must fail KORM-MAP-002 with zero BindReader/CreateCommand
+calls for a one-member DTO and a nested one-member row. A nested JSON collection
+cell carrying cast.int32.checked must decode 456 and retain that ID through an
+outer nested wrapper. These are implementation
+acceptance cases, not additional claims about the completed research suite.
+
+Tokenize calls
 ProviderServices.ValidateReaderColumn for the actual physical representation.
+Each physical ordinal has its own leaf validator member. A hidden discriminator
+uses a synthetic non-null Int64 member and profile-specific BIGINT/INTEGER/SIGNED
+SQL cast; its logical values remain 0 and 1. A child scalar uses its own CLR type
+and effective conversion metadata. A collection binds
+BindReader<ReadOnlyMemory<byte>>(physical.Type, "nested.payload.utf8") and uses
+that required transport carrier for validation. The physical SQL identity remains
+the selected profile's actual json/jsonb/text type. Its closed codec produces
+owned strict UTF-8 bytes for the bounded decoder; required DBNull fails MAP-003.
+Payload budgets bound accepted data, not earlier provider buffer allocation.
+Never request a scalar reader codec for an outer NestedRow<T>
+or ImmutableArray<T>. The original physical column remains available for actual
+metadata validation even when a present child's logical member is non-null.
 `Read` walks reader columns once in ordinal order, dispatches on cached tokens,
 invokes those delegates and stores values in typed locals. The delegate owns
 DBNull behavior: non-null descriptors fail KORM-MAP-003 and allowed nullable
@@ -406,8 +501,9 @@ arrays refer to their declared base/element type, retaining domain identity.
    invalid unless an explicitly supported recursive type contract is added later.
    Unknown SQL types remain unresolved requirements and block code generation;
    they do not become `object` or strings automatically.
-4. Apply overrides to a copy, then validate again. A type override must name a
-   statically registered SQL/CLR conversion/codec; a spelling override cannot
+4. Apply the authoritative override list to a copy, then validate again. A type
+   override must declare a static SQL/CLR binding; the compiler checks its symbol
+   and execution checks its actual selected-provider codec; a spelling override cannot
    change database identity or silently merge two members.
 5. Sort types and relations by stable ID with `StringComparer.Ordinal`; sort keys,
    foreign keys and overrides by their stable IDs. Sort columns by ordinal.
