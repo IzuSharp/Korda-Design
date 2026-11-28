@@ -101,9 +101,13 @@ there is no zero-allocation claim for building a new AST and SQL string.
 
 The first product validation profiles are **PostgreSQL 18**, **SQLite 3.45 or later
 with the exact runtime library recorded**, **MySQL 8.4**, and **MariaDB 11.8**.
-PostgreSQL and SQLite are the initial release candidates. MySQL and MariaDB are
-independent subsequent provider/dialect tracks; their contract and pure rendering
-work can start alongside the first two. These are selected validation profiles,
+PostgreSQL and SQLite form the first validation wave. MySQL and MariaDB are
+independent provider/dialect tracks whose contract and pure rendering work can
+start alongside the first two. This plan's final mandatory acceptance covers all
+four profiles and the declared advanced/nested feature matrix; early validation
+of one profile or package does not authorize a partial release. A narrower release
+requires a separately reviewed scope and dependency-graph revision. These are
+selected validation profiles,
 not a claim of support for every newer or older release. Exact server patch
 versions, extensions, modes, SQLite compile options, and driver versions must be
 recorded by each implementation's acceptance tests.
